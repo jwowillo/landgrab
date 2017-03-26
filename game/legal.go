@@ -50,7 +50,7 @@ func LegalMoves(s *State) []Move {
 //
 // A Move is legal iff:
 //   - the Move's Piece belongs to the current Player.
-//   - the Moves stays within the confines of the Board.
+//   - the Move's stays within the confines of the Board.
 //   - the Move doesn't overlap with any other Board Piece's belonging to the
 //   current Player.
 func IsLegalMove(s *State, m Move) bool {
