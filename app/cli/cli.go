@@ -20,7 +20,7 @@ var shouldNotWait bool
 
 const (
 	// pieceCount for each game.Player.
-	pieceCount = 4
+	pieceCount = 5
 	// damage for each game.Piece.
 	damage = 1
 	// life of each game.Piece.
@@ -50,7 +50,7 @@ func main() {
 	)
 	p1, p2 := choosePlayers(w)
 	s := game.NewState(r, p1, p2)
-	for !s.IsGameOver() {
+	for s.Winner() == game.NoPlayer {
 		printStateAndPrompt(w, s)
 		w.Flush()
 		if !shouldNotWait {

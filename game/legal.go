@@ -3,13 +3,13 @@ package game
 // LegalPlays returns all the legal Plays for the State's current Player.
 func LegalPlays(s *State) []Play {
 	bs := bucketByPiece(LegalMoves(s))
-	var noMove Move
-	for i, b := range bs {
-		bs[i] = append(b, noMove)
+	for _, b := range bs {
+		b = append(b, NoMove)
 	}
-	var ps []Play
-	for _, p := range combinations(bs) {
-		p = removeMove(noMove, p)
+	cs := combinations(bs)
+	ps := make([]Play, 0, len(cs))
+	for _, p := range cs {
+		p = removeMove(NoMove, p)
 		if IsLegalPlay(s, p) {
 			ps = append(ps, p)
 		}
@@ -20,7 +20,7 @@ func LegalPlays(s *State) []Play {
 // IsLegalPlay returns true iff the Play is legal at the current State.
 //
 // A Play is legal iff all Moves in the play are legal after performing the
-// Moves preceeding them.
+// Moves preceding them.
 func IsLegalPlay(s *State, ms Play) bool {
 	s = clone(s)
 	for _, m := range ms {
@@ -35,7 +35,10 @@ func IsLegalPlay(s *State, ms Play) bool {
 // LegalMoves returns all legal Moves for the State's current Player.
 func LegalMoves(s *State) []Move {
 	var ms []Move
-	for _, p := range s.pieces[s.CurrentPlayer()] {
+	for _, p := range s.currentPlayerPieces() {
+		if p == NoPiece {
+			continue
+		}
 		for _, d := range Directions() {
 			m := NewMove(p, d)
 			if IsLegalMove(s, m) {
@@ -55,7 +58,7 @@ func LegalMoves(s *State) []Move {
 //   current Player.
 func IsLegalMove(s *State, m Move) bool {
 	isLegalPiece := false
-	for _, p := range s.pieces[s.CurrentPlayer()] {
+	for _, p := range s.currentPlayerPieces() {
 		isLegalPiece = isLegalPiece || m.Piece() == p
 	}
 	if !isLegalPiece {
@@ -68,7 +71,10 @@ func IsLegalMove(s *State, m Move) bool {
 	if r < 0 || r >= size || c < 0 || c >= size {
 		return false
 	}
-	for _, p := range s.pieces[s.CurrentPlayer()] {
+	for _, p := range s.currentPlayerPieces() {
+		if p == NoPiece {
+			continue
+		}
 		if m.Piece() != p && s.CellForPiece(p) == cell {
 			return false
 		}

@@ -17,10 +17,9 @@ type Piece struct {
 	life, damage int
 }
 
-// NewPiece identified by the PieceID with the given life and damage.
-func NewPiece(id PieceID, l, d int) Piece {
+// newPiece identified by the PieceID with the given life and damage.
+func newPiece(id PieceID, l, d int) Piece {
 	p := Piece{id: id, life: l, damage: d}
-	id++
 	return p
 }
 
@@ -39,5 +38,8 @@ func (p Piece) Damage() int {
 	return p.damage
 }
 
+// NoPieceID is the ID of no Piece.
+const NoPieceID = -1
+
 // NoPiece is the absence of a Piece on a Cell.
-var NoPiece = NewPiece(-1, 0, 0)
+var NoPiece = newPiece(NoPieceID, 0, 0)
