@@ -7,13 +7,13 @@ import (
 	"github.com/jwowillo/landgrab/player"
 )
 
-var standardRules = game.NewRules(5, 1, 3, 1, 1)
-
 func BenchmarkNextState(b *testing.B) {
 	p1 := player.NewGreedy()
 	p2 := player.NewGreedy()
 	for i := 0; i < b.N; i++ {
-		game.NextState(game.NewState(standardRules, p1, p2))
+		s := game.NewState(game.StandardRules, p1, p2)
+		s = game.NextState(s)
+		s = game.NextState(s)
 	}
 }
 
@@ -21,7 +21,7 @@ func BenchmarkGame(b *testing.B) {
 	p1 := player.NewGreedy()
 	p2 := player.NewGreedy()
 	for i := 0; i < b.N; i++ {
-		s := game.NewState(standardRules, p1, p2)
+		s := game.NewState(game.StandardRules, p1, p2)
 		for s.Winner() == game.NoPlayer {
 			s = game.NextState(s)
 		}

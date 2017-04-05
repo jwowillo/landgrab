@@ -1,0 +1,4 @@
+BenchmarkNextState-4   	    1000	   1848140 ns/op
+BenchmarkGame-4        	       5	 226313086 ns/op
+PASS
+ok  	github.com/jwowillo/landgrab/benchmark	3.385s

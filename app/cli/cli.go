@@ -1,95 +1,70 @@
-// Package main runs a CLI landgrab interface.
-package main
+// Package cli ...
+package cli
 
 import (
-	"bufio"
-	"flag"
 	"fmt"
 	"io"
-	"os"
 	"sort"
 	"strings"
 
 	"github.com/jwowillo/landgrab/game"
-	"github.com/jwowillo/landgrab/player"
 )
 
-// shouldNotWait being true means the CLI doesn't ask for enter to be pressed to
-// cintinue.
-var shouldNotWait bool
-
-const (
-	// pieceCount for each game.Player.
-	pieceCount = 5
-	// damage for each game.Piece.
-	damage = 1
-	// life of each game.Piece.
-	life = 3
-	// damageIncrease applied whenever a game.Piece destroys an enemy
-	// game.Piece.
-	damageIncrease = 1
-	// lifeIncrease applied whenever a game.Piece destroys an enemy
-	// game.Piece.
-	lifeIncrease = 1
-)
-
-// players available for use.
-var players = map[string]game.Player{
-	"greedy": player.NewGreedy(),
-	"random": player.NewRandom(),
+// ReadWriter ...
+type ReadWriter struct {
+	io.Reader
+	io.Writer
+	writeFunc  func()
+	shouldWait bool
 }
 
-// main prompts for a game.Player 1 and 2 then plays a game of landgrab with the
-// them.
-func main() {
-	w := bufio.NewWriter(os.Stdout)
-	r := game.NewRules(
-		pieceCount,
-		damage, life,
-		damageIncrease, lifeIncrease,
-	)
-	p1, p2 := choosePlayers(w)
-	s := game.NewState(r, p1, p2)
+// NewReadWriter ...
+func NewReadWriter(r io.Reader, w io.Writer, wf func(), sw bool) *ReadWriter {
+	return &ReadWriter{
+		Reader:     r,
+		Writer:     w,
+		writeFunc:  wf,
+		shouldWait: sw,
+	}
+}
+
+// Run ...
+//
+// If player 1 or player 2 are nil, ask for them.
+func Run(w *ReadWriter, ps map[string]game.Player, p1, p2 game.Player) {
+	fmt.Fprintf(w, clear())
+	fmt.Fprintf(w, title())
+	fmt.Fprintln(w)
+	w.writeFunc()
+	if p1 == nil {
+		p1 = choosePlayer(w, ps, game.Player1)
+	}
+	if p2 == nil {
+		p2 = choosePlayer(w, ps, game.Player2)
+	}
+	s := game.NewState(game.StandardRules, p1, p2)
 	for s.Winner() == game.NoPlayer {
 		printStateAndPrompt(w, s)
-		w.Flush()
-		if !shouldNotWait {
+		w.writeFunc()
+		if w.shouldWait {
 			waitForEnter(w)
 		}
 		s = game.NextState(s)
 	}
 	printState(w, s)
-	w.Flush()
-}
-
-// init parses command-line flags.
-func init() {
-	flag.BoolVar(
-		&shouldNotWait,
-		"dont-wait",
-		false,
-		"doesn't wait for enter if true",
-	)
-	flag.Parse()
-}
-
-// choosePlayers prompts the user for two game.Players and returns the user's
-// choice.
-func choosePlayers(w *bufio.Writer) (game.Player, game.Player) {
-	fmt.Fprintf(w, clear())
-	fmt.Fprintln(w, title())
-	p1 := choosePlayer(w, game.Player1)
-	fmt.Fprintln(w)
-	p2 := choosePlayer(w, game.Player2)
-	return p1, p2
+	w.writeFunc()
 }
 
 // choosePlayer prompts for a single game.Player for the game.PlayerID and
 // returns the choice.
-func choosePlayer(w *bufio.Writer, id game.PlayerID) game.Player {
+func choosePlayer(
+	w *ReadWriter,
+	ps map[string]game.Player,
+	id game.PlayerID,
+) game.Player {
 	var p game.Player
 	var playerNames []string
-	for option := range players {
+	for option := range ps {
 		playerNames = append(playerNames, option)
 	}
 	sort.Strings(playerNames)
@@ -102,10 +77,10 @@ func choosePlayer(w *bufio.Writer, id game.PlayerID) game.Player {
 		for _, option := range playerNames {
 			fmt.Fprintf(w, "* %s\n", option)
 		}
-		w.Flush()
+		w.writeFunc()
 		var choice string
-		fmt.Scanf("%s", &choice)
-		p = players[choice]
+		fmt.Fscanf(w, "%s", &choice)
+		p = ps[choice]
 	}
 	return p
 }
@@ -185,14 +160,14 @@ func blue(s string, args ...interface{}) string {
 }
 
 // printStateandPrompt prints the game.State and prompts to continue.
-func printStateAndPrompt(w io.Writer, s *game.State) {
+func printStateAndPrompt(w io.ReadWriter, s *game.State) {
 	printState(w, s)
 	fmt.Fprintln(w)
 	printPrompt(w, s)
 }
 
 // printState prints the game.State.
-func printState(w io.Writer, s *game.State) {
+func printState(w io.ReadWriter, s *game.State) {
 	fmt.Fprint(w, clear())
 	fmt.Fprintln(w, title())
 	fmt.Fprintln(w, board(s))
@@ -201,13 +176,14 @@ func printState(w io.Writer, s *game.State) {
 }
 
 // printPrompt prints a prompt for the current game.Player.
-func printPrompt(w io.Writer, s *game.State) {
+func printPrompt(w io.ReadWriter, s *game.State) {
 	fmt.Fprintln(w, prompt(s))
 }
 
 // waitForEnter blocks until enter is pressed.
-func waitForEnter(w *bufio.Writer) {
+func waitForEnter(w *ReadWriter) {
+	fmt.Fprintln(w)
 	fmt.Fprintln(w, "Press enter for next turn.")
-	w.Flush()
-	fmt.Scanf("%s")
+	w.writeFunc()
+	fmt.Fscanf(w, "%s")
 }

@@ -47,3 +47,6 @@ func (r Rules) DamageIncrease() int {
 func (r Rules) LifeIncrease() int {
 	return r.lifeIncrease
 }
+
+// StandardRules ...
+var StandardRules = NewRules(5, 1, 3, 1, 1)

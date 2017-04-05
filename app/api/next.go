@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"github.com/jwowillo/landgrab/game"
-	"github.com/jwowillo/pack"
 	"github.com/jwowillo/trim"
 	"github.com/jwowillo/trim/application"
 	"github.com/jwowillo/trim/response"
@@ -33,13 +32,7 @@ func (c nextController) Trimmings() []trim.Trimming {
 }
 
 func (c nextController) Handle(r trim.Request) trim.Response {
-	s, err := game.Next(r.Context()[nextStateKey].(*game.State))
-	if err != nil {
-		return response.NewJSON(
-			pack.AnyMap{"message": err},
-			trim.CodeBadRequest,
-		)
-	}
+	s := game.NextState(r.Context()[nextStateKey].(*game.State))
 	return response.NewJSON(stateToMap(s), trim.CodeOK)
 }
 

@@ -19,6 +19,40 @@ const (
 	min = -max - 1
 )
 
+// random game.Play from the list.
+func random(ps []game.Play) game.Play {
+	return ps[gen.Intn(len(ps))]
+}
+
+// best game.Plays from the given game.State.
+//
+// Returns a list of game.Plays that all had the highest found value from the
+// given game.State. To find this, the value of the next game.State from the
+// current one is minimized, since the next game.State is for the enemy.
+func best(s *game.State, ps []game.Play) []game.Play {
+	best := max
+	bestDistance := max
+	var bestPlays []game.Play
+	for _, p := range ps {
+		n := game.NextStateWithPlay(s, p)
+		v := value(n)
+		if v == best {
+			d := totalDistance(n)
+			if totalDistance(n) < bestDistance {
+				bestDistance = d
+				bestPlays = []game.Play{p}
+			} else {
+				bestPlays = append(bestPlays, p)
+			}
+		}
+		if v < best {
+			best = v
+			bestPlays = []game.Play{p}
+		}
+	}
+	return bestPlays
+}
+
 // value of the game.States is the sum of the current game.Player's lifes and
 // damages minus the sum o fthe next game.Player's lifes and damages.
 //
@@ -41,28 +75,28 @@ func value(s *game.State) int {
 	return x
 }
 
-// random game.Play from the list.
-func random(ps []game.Play) game.Play {
-	return ps[gen.Intn(len(ps))]
-}
-
-// best game.Plays from the given game.State.
-//
-// Returns a list of game.Plays that all had the highest found value from the
-// given game.State. To find this, the value of the next game.State from the
-// current one is minimized, since the next game.State is for the enemy.
-func best(s *game.State, ps []game.Play) []game.Play {
-	best := max
-	var bestPlays []game.Play
-	for _, p := range ps {
-		v := value(game.NextStateWithPlay(s, p))
-		if v == best {
-			bestPlays = append(bestPlays, p)
-		}
-		if v < best {
-			best = v
-			bestPlays = []game.Play{p}
+// totalDistance using the manhattan metric between all game.Pieces.
+func totalDistance(s *game.State) int {
+	total := 0
+	for _, pa := range s.CurrentPlayerPieces() {
+		for _, pb := range s.NextPlayerPieces() {
+			a := s.CellForPiece(pa)
+			b := s.CellForPiece(pb)
+			total += manhattanDistance(a, b)
 		}
 	}
-	return bestPlays
+	return total
+}
+
+// manhattanDistance between two game.Cells.
+func manhattanDistance(a, b game.Cell) int {
+	dr := a.Row() - b.Row()
+	if dr < 0 {
+		dr = -dr
+	}
+	dc := a.Column() - b.Column()
+	if dc < 0 {
+		dc = -dc
+	}
+	return dc
 }

@@ -2,7 +2,7 @@ package game
 
 // LegalPlays returns all the legal Plays for the State's current Player.
 func LegalPlays(s *State) []Play {
-	bs := bucketByPiece(LegalMoves(s))
+	bs := bucketByPiece(s)
 	for _, b := range bs {
 		b = append(b, NoMove)
 	}
@@ -83,16 +83,18 @@ func IsLegalMove(s *State, m Move) bool {
 }
 
 // bucketByPiece buckets the list of Moves by the Piece that made the Move.
-func bucketByPiece(moves []Move) [][]Move {
-	buckets := make(map[Piece][]Move)
-	for _, move := range moves {
-		buckets[move.Piece()] = append(buckets[move.Piece()], move)
+func bucketByPiece(s *State) [][]Move {
+	buckets := make([][]Move, s.Rules().PieceCount())
+	pc := s.Rules().PieceCount()
+	for _, move := range LegalMoves(s) {
+		id := int(move.Piece().ID()) % pc
+		buckets[id] = append(buckets[id], move)
 	}
-	bucketed := make([][]Move, len(buckets))
-	i := 0
+	var bucketed [][]Move
 	for _, bucket := range buckets {
-		bucketed[i] = bucket
-		i++
+		if len(bucket) != 0 {
+			bucketed = append(bucketed, bucket)
+		}
 	}
 	return bucketed
 }

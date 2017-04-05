@@ -21,20 +21,22 @@ import (
 // TODO: Properly build game.Rules, game.Players, and game.States when that is
 // implemented.
 
-// Configure the application.API to serve the landgrab api.
-func Configure(api *application.API) {
+// New ...
+func New() *application.Application {
+	app := application.NewAPI()
 	for _, t := range []trim.Trimming{
 		trimming.NewAllow(trim.MethodGet),
 		trimming.NewCache(-1, 10000),
 	} {
-		api.AddTrimming(t)
+		app.AddTrimming(t)
 	}
 	for _, c := range []application.DescribedController{
 		newController{},
 		nextController{},
 	} {
-		api.AddDescribedController(c)
+		app.AddDescribedController(c)
 	}
+	return app.Application
 }
 
 const descriptionBase = "description/"
