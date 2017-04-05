@@ -43,8 +43,9 @@ Run `make` to build all interfaces. More specifically:
 
 ## Tests
 
-Run tests with `./run_tests`. Pass the `--benchmark` flag to also run
+Run tests with `sh run_tests.sh`. Pass the `--bench` flag to also run
 benchmarks.
+
 
 ## Running
 
