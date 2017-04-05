@@ -48,9 +48,16 @@ benchmarks.
 
 ## Running
 
-Run the CLI with `run_landgrab_cli` after running `make cli`. Accepted flags
+Run the CLI with `landgrab_run_cli` after running `make run_cli`. Accepted flags
 are:
 
-* `--dont-wait`: Don't prompt the user to press enter before the next turn.
+* `--wait`: Prompt the user to press enter before the next turn. Defaults to
+  true.
 * `--player1`: Don't prompt the user for a player one and use this instead.
 * `--player2`: Don't prompt the user for a player two and use this instead.
+
+Run the web application with `landgrab_run_web` after running `make run_web`.
+Accepted flags are:
+
+* `--host`:
+* `--port`:

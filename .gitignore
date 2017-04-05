@@ -1,2 +1,6 @@
-run_landgrab_cli
+pubspec.lock
+build
+.swp
+.pub
+.packages
 doc
