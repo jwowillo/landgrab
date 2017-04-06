@@ -1,4 +1,4 @@
-name: web
+name: landgrab
 description: A simple AngularDart app
 version: 0.0.1
 #homepage: https://www.example.com
@@ -22,3 +22,5 @@ transformers:
     - 'package:angular2/common.dart#COMMON_PIPES'
     entry_points: web/main.dart
 - dart_to_js_script_rewriter
+- $dart2js:
+    commandLineOptions: [--show-package-warnings]

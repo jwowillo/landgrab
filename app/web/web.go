@@ -39,6 +39,6 @@ func configs(sd, h, sf string) (
 		clientConf.CacheDuration = 0
 		staticConf.CacheDuration = 0
 	}
-	staticConf.IncludeFiles = []string{"config.js", "config.production.js"}
+	staticConf.Include = []string{".js"}
 	return clientConf, application.APIDefault, staticConf
 }

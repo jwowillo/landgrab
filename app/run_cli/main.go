@@ -11,15 +11,13 @@ import (
 	"github.com/jwowillo/landgrab/player"
 )
 
-// players available for use.
-var players = map[string]game.Player{
-	"greedy": player.NewGreedy(),
-	"random": player.NewRandom(),
-}
-
 func main() {
 	w := bufio.NewWriter(os.Stdout)
 	app := cli.New(os.Stdin, w, func() { w.Flush() }, shouldWait)
+	players := make(map[string]game.Player)
+	for _, p := range player.All() {
+		players[p.Name()] = p
+	}
 	for _, key := range []string{player1, player2} {
 		if _, ok := players[key]; key != "" && !ok {
 			fmt.Fprintf(w, "%s isn't a valid player\n", key)
@@ -27,7 +25,7 @@ func main() {
 			os.Exit(1)
 		}
 	}
-	app.Run(players, players[player1], players[player2])
+	app.Run(player.All(), players[player1], players[player2])
 }
 
 var (

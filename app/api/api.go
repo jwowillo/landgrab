@@ -33,6 +33,7 @@ func New() *application.Application {
 	for _, c := range []application.DescribedController{
 		newController{},
 		nextController{},
+		playersController{},
 	} {
 		app.AddDescribedController(c)
 	}

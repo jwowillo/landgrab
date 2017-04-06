@@ -30,8 +30,8 @@ The rules of the game are:
 
 Run `make` to build all interfaces. More specifically:
 
-* `make cli`: Builds the CLI app.
-* `make web`: Builds the web app.
+* `make run_cli`: Builds the CLI app.
+* `make run_web`: Builds the web app.
 * `make mobile`: Builds the mobile apps.
 
 ## Documentation

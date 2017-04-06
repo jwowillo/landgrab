@@ -9,6 +9,22 @@ import (
 	"github.com/jwowillo/landgrab/game"
 )
 
+// Described ...
+type Described interface {
+	game.Player
+	Name() string
+	Description() string
+}
+
+// All ...
+func All() []Described {
+	return []Described{
+		NewRandom(),
+		NewGreedy(),
+		NewSearch(),
+	}
+}
+
 // gen random values.
 var gen = rand.New(rand.NewSource(time.Now().Unix()))
 
