@@ -2,26 +2,12 @@
 <section>
   <h2>Choose players:</h2>
   <form>
-    <div class="columns">
-      <div>
-        <h3>Player 1:</h3>
-        <p *ngFor="let player of players()">
-          <input type="radio" name='player1' value='{{ player.name }}' />
-          <span style="text-transform: capitalize"><b>{{ player.name }}</b></span>:
-          {{ player.description }}
-        </p>
-      </div>
-      <div>
-        <h3>Player 2:</h3>
-        <p *ngFor="let player of players()">
-          <input type="radio" name='player2' value='{{ player.name }}' />
-          <span style="text-transform: capitalize"><b>{{ player.name }}</b></span>:
-          {{ player.description }}
-        </p>
-      </div>
+    <div class='columns'>
+      <player-choice-form [id]='player1'></player-choice-form>
+      <player-choice-form [id]='player2'></player-choice-form>
     </div>
     <div>
-      <input type="checkbox" name="wait" />
+      <input type='checkbox' name='wait' />
       <b>Wait</b>:
       for acknowledgement before making an AI move
     </div>

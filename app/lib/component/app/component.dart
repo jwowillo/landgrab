@@ -1,30 +1,18 @@
-import 'dart:async';
-
 import 'package:angular2/core.dart';
 
+import 'package:landgrab/component/player_choice_form/component.dart';
 import 'package:landgrab/model/player.dart';
-import 'package:landgrab/service/players_service.dart';
 
+// AppComponent shows the GameFormComponent until it is submitted and then shows
+// the GameComponent until the game is complete.
 @Component(
   selector: 'app',
   templateUrl: 'template.html',
-  providers: const [PlayersService],
+  directives: const [PlayerChoiceFormComponent],
 )
-class AppComponent implements OnInit {
-  final PlayersService _service;
-
-  AppComponent(this._service);
-
-  @override
-  Future ngOnInit() async {
-    try {
-      await _service.load();
-    } catch (error) {
-      print(error);
-    }
-  }
-
-  List<Player> players() {
-    return _service.players;
-  }
+class AppComponent {
+  // player1's PlayerID.
+  final PlayerID player1 = PlayerID.player1;
+  // player2's PlayerID.
+  final PlayerID player2 = PlayerID.player2;
 }
