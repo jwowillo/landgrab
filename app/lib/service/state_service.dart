@@ -17,19 +17,21 @@ class StateService {
   Future<State> initial(Player p1, Player p2) async {
     Map<String, dynamic> json =
         await _api('/new', {'player1': p1.name, 'player2': p2.name});
-    return _stateToJSON(json['data']);
+    return _mapToState(json['data']);
   }
 
   /// Next State for the given State.
   Future<State> next(State s) async {
-    Map<String, dynamic> json = _mapToJSON(s);
-    // TODO: Serialize the json into serialized.
+    String serialized =
+        Uri.encodeQueryComponent(JSONEncoder.convert(_stateToMap(s)));
     String serialized = '';
     Map<String, dynamic> json = await _api('/next', {'state': serialized});
-    return _stateToMap(json['data']);
+    return _mapToState(json['data']);
   }
 
-  State _stateToMap(Map<String, dynamic> map) {
+  /// _mapToState converts a map of the form the API server returns for States
+  /// to a State.
+  State _mapToState(Map<String, dynamic> map) {
     PlayerID current = PlayerID.noPlayer;
     if (map['currentPlayer'] == 1) {
       current = PlayerID.player1;
@@ -70,11 +72,14 @@ class StateService {
         winner: winner);
   }
 
-  Map<String, dynamic> _mapToState(State s) {
+  /// _stateToMap converts a State to a Map of the form the API server expects.
+  Map<String, dynamic> _stateToMap(State s) {
     // TODO: Implement.
     return {};
   }
 
+  /// _api makes a request to the path at the API server with the given query
+  /// string.
   Future<Map<String, dynamic>> _api(
       String path, Map<String, String> query) async {
     Uri uri = new Uri(path: Config.API_URL + path, queryParameteters: query);

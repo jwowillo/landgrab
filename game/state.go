@@ -20,8 +20,8 @@ func NewState(r Rules, p1, p2 Player) *State {
 	cs := make([]Cell, r.PieceCount()*2)
 	ps := newCellMap(r.BoardSize())
 	for i := 0; i < r.PieceCount(); i++ {
-		p1 := newPiece(PieceID(i), r.Life(), r.Damage())
-		p2 := newPiece(PieceID(i+r.PieceCount()), r.Life(), r.Damage())
+		p1 := NewPiece(PieceID(i), r.Life(), r.Damage())
+		p2 := NewPiece(PieceID(i+r.PieceCount()), r.Life(), r.Damage())
 		c1 := NewCell(0, i*2+1)
 		c2 := NewCell(r.BoardSize()-1, i*2+1)
 		pieces[p1.ID()] = p1
@@ -40,6 +40,38 @@ func NewState(r Rules, p1, p2 Player) *State {
 		cellsToPieceIDs:    ps,
 		players:            []Player{Player1: p1, Player2: p2},
 		pieces:             pieces,
+	}
+}
+
+// NewStateFromInfo creates a State using info from a game already in progress.
+func NewStateFromInfo(
+	rules Rules,
+	currentPlayer PlayerID,
+	p1 Player, p2 Player,
+	p1Pieces []Piece, p2Pieces []Piece, pieces map[Cell]Piece,
+) *State {
+	ps := make([]Piece, len(p1Pieces)+len(p2Pieces))
+	for _, p := range p1Pieces {
+		ps[p.ID()] = p
+	}
+	for _, p := range p2Pieces {
+		ps[p.ID()] = p
+	}
+	cs := make([]Cell, rules.PieceCount()*2)
+	cm := newCellMap(rules.BoardSize())
+	for c, p := range pieces {
+		cs[p.ID()] = c
+		cm.Set(c, p.ID())
+	}
+	return &State{
+		player1PiecesAlive: len(p1Pieces),
+		player2PiecesAlive: len(p2Pieces),
+		currentPlayer:      currentPlayer,
+		rules:              rules,
+		players:            []Player{Player1: p1, Player2: p2},
+		pieces:             ps,
+		pieceIDsToCells:    cs,
+		cellsToPieceIDs:    cm,
 	}
 }
 
