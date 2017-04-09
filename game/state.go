@@ -108,7 +108,7 @@ func (s *State) Player1Pieces() []Piece {
 // Player2Pieces returns all the Pieces which belong to the Player with PlayerID
 // Player2.
 func (s *State) Player2Pieces() []Piece {
-	return removePiece(s.player1Pieces(), NoPiece)
+	return removePiece(s.player2Pieces(), NoPiece)
 }
 
 // Pieces ...

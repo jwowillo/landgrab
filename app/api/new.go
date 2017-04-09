@@ -1,9 +1,8 @@
 package api
 
 import (
-	"encoding/json"
-
 	"github.com/jwowillo/landgrab/game"
+	"github.com/jwowillo/landgrab/player"
 	"github.com/jwowillo/trim"
 	"github.com/jwowillo/trim/application"
 	"github.com/jwowillo/trim/response"
@@ -19,8 +18,6 @@ const (
 	newPath = "/new"
 	// newDescription is the path to the newController's description.
 	newDescriptionPath = descriptionBase + "new.json"
-	// newRulesKey is the key for the game.Rules passed in the trim.Context.
-	newRulesKey = "rules"
 	// newPlayer1Key is the key for the game.Player for player 1 passed in
 	// the trim.Context.
 	newPlayer1Key = "player1"
@@ -54,10 +51,10 @@ func (c newController) Trimmings() []trim.Trimming {
 // Handle the trim.Request by converting the trim.Context to a new game.State
 // and returning a JSON representation of it.
 func (c newController) Handle(r trim.Request) trim.Response {
-	p1 := r.Context()[newPlayer1Key].(game.Player)
-	p2 := r.Context()[newPlayer2Key].(game.Player)
+	p1 := r.Context()[newPlayer1Key].(player.Described)
+	p2 := r.Context()[newPlayer2Key].(player.Described)
 	s := game.NewState(game.StandardRules, p1, p2)
-	return response.NewJSON(stateToMap(s), trim.CodeOK)
+	return response.NewJSON(stateToMap(s, p1, p2), trim.CodeOK)
 }
 
 type validateNew struct {
@@ -71,17 +68,16 @@ func newValidateNew() validateNew {
 func (v validateNew) Handle(r trim.Request) trim.Response {
 	p1Args := r.FormArgs()[newPlayer1Key]
 	p2Args := r.FormArgs()[newPlayer2Key]
-	if len(p1Args) != 1 {
+	if len(p1Args) != 1 || len(p2Args) != 1 {
 		return errBadPlayer
 	}
-	if len(p2Args) != 1 {
-		return errBadPlayer
+	players := make(map[string]player.Described)
+	for _, p := range player.All() {
+		players[p.Name()] = p
 	}
-	var p1, p2 game.Player
-	if err := json.Unmarshal([]byte(p1Args[0]), p1); err != nil {
-		return errBadPlayer
-	}
-	if err := json.Unmarshal([]byte(p2Args[0]), p2); err != nil {
+	p1 := players[p1Args[0]]
+	p2 := players[p2Args[0]]
+	if p1 == nil || p2 == nil {
 		return errBadPlayer
 	}
 	r.SetContext(newPlayer1Key, p1)

@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/jwowillo/landgrab/game"
+	"github.com/jwowillo/landgrab/player"
 	"github.com/jwowillo/pack"
 	"github.com/jwowillo/trim"
 	"github.com/jwowillo/trim/application"
@@ -62,8 +63,27 @@ func read(path string) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
-func stateToMap(s *game.State) pack.AnyMap {
-	return pack.AnyMap{}
+func stateToMap(s *game.State, p1, p2 player.Described) pack.AnyMap {
+	m := make(pack.AnyMap)
+	if s.Winner() != game.NoPlayer {
+		m["winner"] = s.Winner()
+	}
+	m["currentPlayer"] = s.CurrentPlayer()
+	m["player1"] = p1.Name()
+	m["player2"] = p2.Name()
+	m["boardSize"] = s.Rules().BoardSize()
+	ps := make(map[int]interface{})
+	for _, p := range s.Pieces() {
+		pm := make(pack.AnyMap)
+		pm["life"] = p.Life()
+		pm["damage"] = p.Damage()
+		c := s.CellForPiece(p)
+		pm["cell"] = []int{c.Row(), c.Column()}
+		pm["player"] = s.PlayerForPiece(p)
+		ps[int(p.ID())] = pm
+	}
+	m["pieces"] = ps
+	return m
 }
 
 type base struct {
@@ -76,7 +96,7 @@ func (b *base) Apply(h trim.Handler) {
 
 func badType(t string) trim.Response {
 	return response.NewJSON(
-		pack.AnyMap{"error": fmt.Sprintf("must pass a %s", t)},
+		pack.AnyMap{"message": fmt.Sprintf("must pass a %s", t)},
 		trim.CodeBadRequest,
 	)
 }

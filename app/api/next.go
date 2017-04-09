@@ -33,7 +33,7 @@ func (c nextController) Trimmings() []trim.Trimming {
 
 func (c nextController) Handle(r trim.Request) trim.Response {
 	s := game.NextState(r.Context()[nextStateKey].(*game.State))
-	return response.NewJSON(stateToMap(s), trim.CodeOK)
+	return response.NewJSON(stateToMap(s, nil, nil), trim.CodeOK)
 }
 
 type validateNext struct {

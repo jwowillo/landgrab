@@ -1,16 +1,4 @@
 <header><h1>Landgrab</h1></header>
 <section>
-  <h2>Choose players:</h2>
-  <form>
-    <div class='columns'>
-      <player-choice-form [id]='player1'></player-choice-form>
-      <player-choice-form [id]='player2'></player-choice-form>
-    </div>
-    <div>
-      <input type='checkbox' name='wait' />
-      <b>Wait</b>:
-      for acknowledgement before making an AI move
-    </div>
-    <div><button>Start</button></div>
-  </form>
+  <router-outlet></router-outlet>
 </section>

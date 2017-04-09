@@ -1,18 +1,21 @@
 import 'package:angular2/core.dart';
+import 'package:angular2/router.dart';
 
-import 'package:landgrab/component/player_choice_form/component.dart';
-import 'package:landgrab/model/player.dart';
+import 'package:landgrab/component/game/component.dart';
+import 'package:landgrab/component/game_form/component.dart';
 
-// AppComponent shows the GameFormComponent until it is submitted and then shows
-// the GameComponent until the game is complete.
+/// AppComponent establishes routing between the initial GameFormComponent and
+/// the next GameComponent.
+///
+/// AppComponent also shows diagnostic messages about the API server.
 @Component(
   selector: 'app',
   templateUrl: 'template.html',
-  directives: const [PlayerChoiceFormComponent],
+  directives: const [ROUTER_DIRECTIVES],
+  providers: const [ROUTER_PROVIDERS],
 )
-class AppComponent {
-  // player1's PlayerID.
-  final PlayerID player1 = PlayerID.player1;
-  // player2's PlayerID.
-  final PlayerID player2 = PlayerID.player2;
-}
+@RouteConfig(const [
+  const Route(path: '/', name: 'GameForm', component: GameFormComponent),
+  const Route(path: '/game', name: 'Game', component: GameComponent),
+])
+class AppComponent {}
