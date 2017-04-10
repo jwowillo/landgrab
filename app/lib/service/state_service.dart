@@ -11,7 +11,7 @@ import 'package:landgrab/model/state.dart';
 
 /// StateService is used to get initial States for games with provided Players
 /// and get the next States for given States.
-@Injectable
+@Injectable()
 class StateService {
   /// initial State for a game with the given Players.
   Future<State> initial(Player p1, Player p2) async {
@@ -23,8 +23,7 @@ class StateService {
   /// Next State for the given State.
   Future<State> next(State s) async {
     String serialized =
-        Uri.encodeQueryComponent(JSONEncoder.convert(_stateToMap(s)));
-    String serialized = '';
+        Uri.encodeQueryComponent(new JsonEncoder().convert(_stateToMap(s)));
     Map<String, dynamic> json = await _api('/next', {'state': serialized});
     return _mapToState(json['data']);
   }
@@ -39,10 +38,8 @@ class StateService {
     if (map['currentPlayer'] == 2) {
       current = PlayerID.player2;
     }
-    Player p1 =
-        new Player(map['player1']['name'], map['player1']['description']);
-    Player p2 =
-        new Player(map['player2']['name'], map['player2']['description']);
+    Player p1 = new Player(map['player1']);
+    Player p2 = new Player(map['player2']);
     Set<Piece> player1Pieces = new Set();
     Set<Piece> player2Pieces = new Set();
     Map<Cell, Piece> cells = new Map();
@@ -82,8 +79,8 @@ class StateService {
   /// string.
   Future<Map<String, dynamic>> _api(
       String path, Map<String, String> query) async {
-    Uri uri = new Uri(path: Config.API_URL + path, queryParameteters: query);
-    String raw = await HttpRequest.getString(uri.toString());
+    String queryStr = new Uri(queryParameters: query).toString();
+    String raw = await HttpRequest.getString(Config.API_URL + path + queryStr);
     return JSON.decode(raw);
   }
 }

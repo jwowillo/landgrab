@@ -5,9 +5,10 @@ enum PlayerID { noPlayer, player1, player2 }
 class Player {
   /// name of the Player.
   final String name;
+
   /// description of the Player.
   final String description;
 
   /// Player constructor initializes the Player's name and description.
-  const Player(this.name, this.description);
+  const Player(this.name, {this.description: ''});
 }

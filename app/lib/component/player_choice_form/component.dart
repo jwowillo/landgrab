@@ -46,5 +46,5 @@ class PlayerChoiceFormComponent implements OnInit {
 
   /// players is a getter for the PlayersService's Players for use from the
   /// template.
-  Set<Player> players() => _service.players;
+  Set<Player> get players => _service.players;
 }

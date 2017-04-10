@@ -24,7 +24,8 @@ class PlayersService {
     var raw = await HttpRequest.getString(Config.API_URL + '/players');
     var json = JSON.decode(raw);
     for (Map<String, String> player in json['data']['players']) {
-      players.add(new Player(player['name'], player['description']));
+      players
+          .add(new Player(player['name'], description: player['description']));
     }
   }
 }

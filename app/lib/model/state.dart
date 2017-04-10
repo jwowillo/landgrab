@@ -32,6 +32,22 @@ class State {
       this._player1Pieces, this._player2Pieces, this._cells, this.boardSize,
       {this.winner: PlayerID.noPlayer});
 
+  /// board provides a List of Lists representing the rows of the board.
+  ///
+  /// Cells are filled with NO_PIECE if not empty and the correct Piece
+  /// otherwise.
+  List<List<Piece>> get board {
+    List<List<Piece>> grid = [];
+    for (int i = 0; i < boardSize; i++) {
+      List<Piece> row = [];
+      for (int j = 0; j < boardSize; j++) {
+        row.add(pieceForCell(new Cell(i, j)));
+      }
+      grid.add(row);
+    }
+    return grid;
+  }
+
   /// pieceForCell returns the Piece a Cell contains within the State.
   ///
   /// If the Cell doesn't contain a Piece, NO_PIECE is returned.

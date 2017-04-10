@@ -15,6 +15,8 @@ import 'package:landgrab/model/player.dart';
   directives: const [PlayerChoiceFormComponent, ROUTER_DIRECTIVES],
 )
 class GameFormComponent {
+  /// player1's PlayerID.
   final PlayerID player1 = PlayerID.player1;
+  /// player2's PlayerID.
   final PlayerID player2 = PlayerID.player2;
 }

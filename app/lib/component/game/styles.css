@@ -1,0 +1,19 @@
+.player1 {
+  color: red;
+}
+
+.player2 {
+  color: blue;
+}
+
+.empty {
+  visibility: hidden;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td {
+  border: 1px solid black;
+}
