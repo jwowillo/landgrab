@@ -14,7 +14,7 @@ import 'package:landgrab/model/player.dart';
 @Component(
   selector: 'game-form',
   templateUrl: 'template.html',
-  directives: const [PlayerChoiceFormComponent, ROUTER_DIRECTIVES],
+  directives: const [PlayerChoiceFormComponent],
 )
 class GameFormComponent {
   /// player1's PlayerID.

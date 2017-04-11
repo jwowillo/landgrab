@@ -10,7 +10,7 @@ compared through all interfaces.
 
 The rules of the game are:
 
-* Each player has n = 4 pieces on a 2n + 1 by 2n + 1 board represented as a
+* Each player has n = 5 pieces on a 2n + 1 by 2n + 1 board represented as a
   grid.
 * Each piece has 3 life and does 1 damage initially. Both of these are increased
   by one when a piece levels up.
@@ -22,8 +22,7 @@ The rules of the game are:
   greater than or equal to their life attribute.
 * Pieces gain a level when they participate in destroying another piece,
   allowing their damage and life to be boosted by a fixed amount.
-* Players with no pieces at the end of a turn lose and it is possible for both
-  players to lose.
+* Players with no pieces at the end of a turn lose.
 * Each player has 30 seconds to make a move each turn.
 
 ## Installation

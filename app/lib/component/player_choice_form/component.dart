@@ -18,7 +18,7 @@ import 'package:landgrab/service/players_service.dart';
   selector: 'player-choice-form',
   templateUrl: 'template.html',
   providers: const [PlayersService],
-  pipes: const [PlayerIDToStringPipe, ToLowerNoSpace],
+  pipes: const [PlayerIDToStringPipe, ToLowerNoSpacePipe],
 )
 class PlayerChoiceFormComponent implements OnInit {
   /// id the chosen Player will have.

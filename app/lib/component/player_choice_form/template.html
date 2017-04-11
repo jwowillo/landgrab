@@ -1,4 +1,4 @@
-<h3>{{ id | playerIDToString }}:<h3>
+<h3 class='{{ id | playerIDToString | toLowerNoSpace }}'>{{ id | playerIDToString }}:</h3>
 <p *ngFor='let player of players; let i = index'>
   <input
     type='radio'

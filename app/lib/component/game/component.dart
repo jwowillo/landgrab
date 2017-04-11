@@ -7,6 +7,7 @@ import 'package:landgrab/model/board.dart';
 import 'package:landgrab/model/player.dart';
 import 'package:landgrab/model/state.dart';
 import 'package:landgrab/pipe/player_id_to_string.dart';
+import 'package:landgrab/pipe/to_lower_no_space.dart';
 import 'package:landgrab/service/state_service.dart';
 
 /// GameComponent contains a landgrab game with Players already chosen.
@@ -22,7 +23,7 @@ import 'package:landgrab/service/state_service.dart';
   styleUrls: const ['styles.css'],
   providers: const [StateService],
   directives: const [ROUTER_DIRECTIVES],
-  pipes: const [PlayerIDToStringPipe],
+  pipes: const [PlayerIDToStringPipe, ToLowerNoSpacePipe],
 )
 class GameComponent implements OnInit {
   /// _service for getting the initial and next States.

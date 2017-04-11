@@ -12,14 +12,14 @@
     </td>
   </tr>
 </table>
-<p>Current Player: {{ state?.currentPlayer  | playerIDToString }}</p>
-<p>Player 1: <span class='player1-background'>&nbsp;&nbsp;&nbsp;</span></p>
-<p>Player 2: <span class='player2-background'>&nbsp;&nbsp;&nbsp;</span></p>
-<p>cell: PIECE_ID|LIFE|DAMAGE</p>
+<p><b>Player 1:</b> <span class='player1-background'>&nbsp;&nbsp;&nbsp;</span></p>
+<p><b>Player 2:</b> <span class='player2-background'>&nbsp;&nbsp;&nbsp;</span></p>
+<p><b>Cell:</b> PIECE_ID|LIFE|DAMAGE</p>
+<p><b>Current Player:</b> <span class='{{ state?.currentPlayer | playerIDToString | toLowerNoSpace }}'>{{ state?.currentPlayer  | playerIDToString }}</span></p>
 <p *ngIf='isWinner(state?.winner)'>
-  Winner: {{ state?.winner | playerIDToString }}
+  <b>Winner:</b> <span class='{{ state?.winner | playerIDToString | toLowerNoSpace}}'>{{ state?.winner | playerIDToString }}</span>
 </p>
-<div class='column'>
-  <button [routerLink]="['GameForm']">Reset</button>
-  <button *ngIf='!isWinner(state?.winner)' (click)='next()'>Next</button>
+<div class='column button-row'>
+  <button class='player1-background' [routerLink]="['GameForm']">Reset</button>
+  <button class='player2-background' *ngIf='!isWinner(state?.winner)' (click)='next()'>Next</button>
 </div>

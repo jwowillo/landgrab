@@ -144,7 +144,7 @@ func legend() string {
 
 // prompt string.
 func prompt(s *game.State) string {
-	return fmt.Sprintf("Current player: %s", s.CurrentPlayer())
+	return fmt.Sprintf("Current player: %s", colorForPlayer(s.CurrentPlayer())(s.CurrentPlayer().String()))
 }
 
 // colorForPlayer returns a formatting function which formats a message and
