@@ -28,21 +28,20 @@ class GameComponent implements OnInit {
   /// _service for getting the initial and next States.
   final StateService _service;
 
-  /// player1 of the game.
-  final Player player1 = new Player('greedy');
-
-  /// player2 of the game.
-  final Player player2 = new Player('random');
+  // _route which triggered the GameComponent.
+  final RouteParams _route;
 
   /// _state of the game.
   State _state;
 
-  /// GameComponent constructor initialized the StateService.
-  GameComponent(this._service);
+  /// GameComponent constructor initializes the StateService and RouteParams.
+  GameComponent(this._service, this._route);
 
   /// ngOnInit loads the initial State.
   @override
   Future ngOnInit() async {
+    Player player1 = new Player(_route.get('player1'));
+    Player player2 = new Player(_route.get('player2'));
     try {
       _state = await _service.initial(player1, player2);
     } catch (error) {

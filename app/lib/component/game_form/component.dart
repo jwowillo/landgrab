@@ -1,10 +1,10 @@
+import 'dart:async';
+
 import 'package:angular2/core.dart';
 import 'package:angular2/router.dart';
 
 import 'package:landgrab/component/player_choice_form/component.dart';
 import 'package:landgrab/model/player.dart';
-
-// TODO: Find best way to pass player1 and player2 to game through router.
 
 /// GameFormComponent allows options to be selected before routing to the
 /// GameComponent.
@@ -28,4 +28,16 @@ class GameFormComponent {
 
   /// player2 chosen.
   Player player2;
+
+  /// Router to navigate with.
+  final Router _router;
+
+  /// GameFormComponent constructor initializes _router.
+  GameFormComponent(this._router);
+
+  /// start the game.
+  Future start() => _router.navigate([
+        'Game',
+        {'player1': player1.name, 'player2': player2.name},
+      ]);
 }

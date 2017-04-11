@@ -4,5 +4,5 @@
     <player-choice-form [id]='player1ID' (chosen)='player1=$event'></player-choice-form>
     <player-choice-form [id]='player2ID' (chosen)='player2=$event'></player-choice-form>
   </div>
-  <div><button [routerLink]="['Game']">Start</button></div>
+  <div><button (click)='start()'>Start</button></div>
 </form>
