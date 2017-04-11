@@ -1,18 +1,25 @@
-<a [routerLink]="['GameForm']">Back</a>
 <table>
   <tr *ngFor='let row of state?.board'>
     <td *ngFor='let piece of row'>
       <span
-        [ngClass]="{'player1': isPlayer1(piece), 'player2': isPlayer2(piece), 'empty': !isPlayer1(piece) && !isPlayer2(piece)}"
+        class='cell'
+        *ngIf='isPlayer1(piece) || isPlayer2(piece)'
+        [ngClass]="{'player1': isPlayer1(piece), 'player2': isPlayer2(piece)}"
       >
         {{ piece.id }}|{{ piece.life }}|{{piece.damage}}
       </span>
+      <span class='empty cell' *ngIf='!isPlayer1(piece) && !isPlayer2(piece)'>0|0|0</span>
     </td>
   </tr>
 </table>
 <p>Current Player: {{ state?.currentPlayer  | playerIDToString }}</p>
-<p class='player1'>Player 1: {{ state?.player1?.name }}</p>
-<p class='player2'>Player 2: {{ state?.player2?.name }}</p>
+<p>Player 1: <span class='player1-background'>&nbsp;&nbsp;&nbsp;</span></p>
+<p>Player 2: <span class='player2-background'>&nbsp;&nbsp;&nbsp;</span></p>
+<p>cell: PIECE_ID|LIFE|DAMAGE</p>
 <p *ngIf='isWinner(state?.winner)'>
   Winner: {{ state?.winner | playerIDToString }}
 </p>
+<div class='column'>
+  <button [routerLink]="['GameForm']">Reset</button>
+  <button *ngIf='!isWinner(state?.winner)' (click)='next()'>Next</button>
+</div>

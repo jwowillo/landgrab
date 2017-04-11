@@ -6,8 +6,25 @@
   color: blue;
 }
 
+.player1-background {
+  background-color: red;
+  color: white;
+}
+
+.player2-background {
+  background-color: blue;
+  color: white;
+}
+
 .empty {
   visibility: hidden;
+}
+
+.cell {
+  width: 100%;
+  height: 100%;
+  font-weight: bold;
+  text-align: center;
 }
 
 table {
@@ -15,5 +32,7 @@ table {
 }
 
 td {
-  border: 1px solid black;
+  border: 3px solid black;
+  padding: 5px;
 }
+

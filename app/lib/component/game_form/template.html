@@ -1,14 +1,8 @@
 <h2>Choose players:</h2>
 <form>
-  <div class='columns'>
-    <player-choice-form [id]='player1'></player-choice-form>
-    <player-choice-form [id]='player2'></player-choice-form>
+  <div class='column'>
+    <player-choice-form [id]='player1ID' (chosen)='player1=$event'></player-choice-form>
+    <player-choice-form [id]='player2ID' (chosen)='player2=$event'></player-choice-form>
   </div>
-  <div>
-    <input type='checkbox' name='wait' />
-    <b>Wait</b>:
-    for acknowledgement before making an AI move
-  </div>
-  <div><button>Start</button></div>
-  <a [routerLink]="['Game']">Game</a>
+  <div><button [routerLink]="['Game']">Start</button></div>
 </form>

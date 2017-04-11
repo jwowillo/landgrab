@@ -1,13 +1,12 @@
 import 'dart:async';
 
 import 'package:angular2/core.dart';
+import 'package:angular2/common.dart';
 
 import 'package:landgrab/model/player.dart';
 import 'package:landgrab/pipe/player_id_to_string.dart';
 import 'package:landgrab/pipe/to_lower_no_space.dart';
 import 'package:landgrab/service/players_service.dart';
-
-// TODO: Use @Output to set output values.
 
 /// PlayerChoiceFormComponent allows a Player to be chosen from a set of
 /// possible Players.
@@ -26,6 +25,10 @@ class PlayerChoiceFormComponent implements OnInit {
   @Input()
   PlayerID id;
 
+  /// chosen emits Players whenever a new Player is chosen.
+  @Output()
+  final EventEmitter<Player> chosen = new EventEmitter();
+
   /// _service to retrieve Players from.
   final PlayersService _service;
 
@@ -39,6 +42,7 @@ class PlayerChoiceFormComponent implements OnInit {
   Future ngOnInit() async {
     try {
       await _service.load();
+      chosen.emit(players.first);
     } catch (error) {
       print(error);
     }

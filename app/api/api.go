@@ -1,4 +1,5 @@
-// Package api ...
+// Package api has a constructor to build a trim.Application for the landgrab
+// API.
 package api
 
 import (
@@ -18,7 +19,7 @@ import (
 	"github.com/jwowillo/trim/trimming"
 )
 
-// New ...
+// New landgrab API.
 func New() *application.Application {
 	app := application.NewAPI()
 	for _, t := range []trim.Trimming{
@@ -37,8 +38,12 @@ func New() *application.Application {
 	return app.Application
 }
 
+// descriptionBase is the base folder to find endpoint descriptions in.
 const descriptionBase = "description/"
 
+// must wraps a functions output that returns a byte slice and an error and
+// panics if the error is not nil and returns the
+// application.ControllerDescription otherwise.
 func must(bs []byte, err error) *application.ControllerDescription {
 	if err != nil {
 		panic(err)
@@ -51,6 +56,8 @@ func must(bs []byte, err error) *application.ControllerDescription {
 	return d
 }
 
+// raed the file at the path and return its content as a byte slice and an error
+// if the file couldn't be read properly.
 func read(path string) ([]byte, error) {
 	f, err := os.Open(path)
 	if err != nil {
@@ -59,6 +66,8 @@ func read(path string) ([]byte, error) {
 	return ioutil.ReadAll(f)
 }
 
+// stateToMap converts a game.State and two player.Describeds into a
+// pack.AnyMap.
 func stateToMap(s *game.State, p1, p2 player.Described) pack.AnyMap {
 	m := make(pack.AnyMap)
 	if s.Winner() != game.NoPlayer {

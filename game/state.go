@@ -50,7 +50,10 @@ func NewStateFromInfo(
 	p1 Player, p2 Player,
 	p1Pieces []Piece, p2Pieces []Piece, pieces map[Cell]Piece,
 ) *State {
-	ps := make([]Piece, len(p1Pieces)+len(p2Pieces))
+	ps := make([]Piece, rules.PieceCount()*2)
+	for i := range ps {
+		ps[i] = NoPiece
+	}
 	for _, p := range p1Pieces {
 		ps[p.ID()] = p
 	}

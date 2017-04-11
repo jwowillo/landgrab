@@ -29,7 +29,7 @@ const (
 	nextPlayer1Key = "player1"
 	// nextPlayer2Key is the key for the game.Player 2 passed in the
 	// trim.Context.
-	nextPlayer2Key = "player1"
+	nextPlayer2Key = "player2"
 )
 
 // nextController is a trim.Controller used to get the next game.State from a

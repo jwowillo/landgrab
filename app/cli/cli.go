@@ -123,7 +123,7 @@ func board(s *game.State) string {
 			} else {
 				out += colorForPlayer(s.PlayerForPiece(p))(
 					"%d%d%d",
-					p.Damage(), p.ID(), p.Life(),
+					p.ID(), p.Damage(), p.Life(),
 				)
 			}
 		}
@@ -138,7 +138,7 @@ func legend() string {
 	for _, id := range []game.PlayerID{game.Player1, game.Player2} {
 		out += fmt.Sprintf("%s: %s\n", id, colorForPlayer(id)("▒"))
 	}
-	out += "cell: DAMAGE|PIECE ID|LIFE"
+	out += "cell: PIECE_ID|LIFE|DAMAGE"
 	return out
 }
 

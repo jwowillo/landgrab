@@ -4,6 +4,8 @@ import 'package:angular2/router.dart';
 import 'package:landgrab/component/player_choice_form/component.dart';
 import 'package:landgrab/model/player.dart';
 
+// TODO: Find best way to pass player1 and player2 to game through router.
+
 /// GameFormComponent allows options to be selected before routing to the
 /// GameComponent.
 ///
@@ -16,7 +18,14 @@ import 'package:landgrab/model/player.dart';
 )
 class GameFormComponent {
   /// player1's PlayerID.
-  final PlayerID player1 = PlayerID.player1;
+  final PlayerID player1ID = PlayerID.player1;
+
   /// player2's PlayerID.
-  final PlayerID player2 = PlayerID.player2;
+  final PlayerID player2ID = PlayerID.player2;
+
+  /// player1 chosen.
+  Player player1;
+
+  /// player2 chosen.
+  Player player2;
 }

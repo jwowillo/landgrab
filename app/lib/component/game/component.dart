@@ -55,7 +55,7 @@ class GameComponent implements OnInit {
     try {
       _state = await _service.next(_state);
     } catch (error) {
-      print(state);
+      print(error);
     }
   }
 

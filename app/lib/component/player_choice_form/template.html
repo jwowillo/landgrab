@@ -1,9 +1,12 @@
 <h3>{{ id | playerIDToString }}:<h3>
-<p *ngFor='let player of players'>
+<p *ngFor='let player of players; let i = index'>
   <input
     type='radio'
     name='{{ id | playerIDToString | toLowerNoSpace }}'
-    value='{{ player.name }}' />
+    [value]='player.name'
+    [checked]='i == 0'
+    (change)='chosen.emit(player)'
+    />
   <span style='text-transform: capitalize'><b>{{ player.name }}</b></span>:
   {{ player.description }}
 </p>

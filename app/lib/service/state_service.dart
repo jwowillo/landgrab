@@ -71,8 +71,47 @@ class StateService {
 
   /// _stateToMap converts a State to a Map of the form the API server expects.
   Map<String, dynamic> _stateToMap(State s) {
-    // TODO: Implement.
-    return {};
+    Map<String, dynamic> map = {};
+    if (s.currentPlayer == PlayerID.player1) {
+      map['currentPlayer'] = 1;
+    }
+    if (s.currentPlayer == PlayerID.player2) {
+      map['currentPlayer'] = 2;
+    }
+    map['player1'] = s.player1.name;
+    map['player2'] = s.player2.name;
+    if (s.winner != PlayerID.noPlayer) {
+      if (s.winner == PlayerID.player1) {
+        map['winner'] = 1;
+      }
+      if (s.winner == PlayerID.player2) {
+        map['winner'] = 2;
+      }
+    }
+    map['boardSize'] = s.boardSize;
+    Map<String, dynamic> pieces = {};
+    List<List<Piece>> board = s.board;
+    for (int i = 0; i < board.length; i++) {
+      for (int j = 0; j < board.length; j++) {
+        Piece p = board[i][j];
+        if (p.id == -1) {
+          continue;
+        }
+        Map<String, dynamic> piece = {};
+        piece['damage'] = p.damage;
+        piece['life'] = p.life;
+        if (s.playerForPiece(p) == PlayerID.player1) {
+          piece['player'] = 1;
+        }
+        if (s.playerForPiece(p) == PlayerID.player2) {
+          piece['player'] = 2;
+        }
+        piece['cell'] = [i, j];
+        pieces[p.id.toString()] = piece;
+      }
+    }
+    map['pieces'] = pieces;
+    return map;
   }
 
   /// _api makes a request to the path at the API server with the given query
