@@ -8,11 +8,10 @@ import 'package:landgrab/model/player.dart';
 import 'package:landgrab/model/state.dart';
 import 'package:landgrab/pipe/player_id_to_string.dart';
 import 'package:landgrab/pipe/to_lower_no_space.dart';
-import 'package:landgrab/service/state_service.dart';
+import 'package:landgrab/service/state.dart';
 
 /// GameComponent contains a landgrab game with Players already chosen.
-///
-/// Another parameter, named wait, can be passed. If true, the game will prompt
+/// /// Another parameter, named wait, can be passed. If true, the game will prompt
 /// the user before proceeding to the next turn.
 ///
 /// At the end of the game, a link will be provided to go back to the

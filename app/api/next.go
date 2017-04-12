@@ -90,6 +90,9 @@ func (v validateNext) Handle(r trim.Request) trim.Response {
 		return errBadState
 	}
 	s, p1, p2, err := mapToState(m)
+	if s.Rules() != game.StandardRules {
+		return errBadState
+	}
 	if err != nil {
 		return errBadState
 	}

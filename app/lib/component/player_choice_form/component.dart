@@ -6,7 +6,7 @@ import 'package:angular2/common.dart';
 import 'package:landgrab/model/player.dart';
 import 'package:landgrab/pipe/player_id_to_string.dart';
 import 'package:landgrab/pipe/to_lower_no_space.dart';
-import 'package:landgrab/service/players_service.dart';
+import 'package:landgrab/service/players.dart';
 
 /// PlayerChoiceFormComponent allows a Player to be chosen from a set of
 /// possible Players.

@@ -1,9 +1,13 @@
 import 'package:landgrab/model/board.dart';
+import 'package:landgrab/model/rules.dart';
 import 'package:landgrab/model/player.dart';
 
 /// State encapsulates all the information necessary to represent a state of the
 /// landgrab game.
 class State {
+  /// rules of the game.
+  final Rules rules;
+
   /// currentPlayer in the game.
   final PlayerID currentPlayer;
 
@@ -16,9 +20,6 @@ class State {
   /// player2 of the game.
   final Player player2;
 
-  /// boardSize of the game is the n value of the nxn game board.
-  final int boardSize;
-
   /// _player1Pieces is the set of all Pieces that belong to Player 1.
   final Set<Piece> _player1Pieces;
 
@@ -28,8 +29,8 @@ class State {
   /// _cells is a mapping of all Cells on the board to the Piece they contain.
   final Map<Cell, Piece> _cells;
 
-  const State(this.currentPlayer, this.player1, this.player2,
-      this._player1Pieces, this._player2Pieces, this._cells, this.boardSize,
+  const State(this.rules, this.currentPlayer, this.player1, this.player2,
+      this._player1Pieces, this._player2Pieces, this._cells,
       {this.winner: PlayerID.noPlayer});
 
   /// board provides a List of Lists representing the rows of the board.
@@ -38,9 +39,9 @@ class State {
   /// otherwise.
   List<List<Piece>> get board {
     List<List<Piece>> grid = [];
-    for (int i = 0; i < boardSize; i++) {
+    for (int i = 0; i < rules.boardSize; i++) {
       List<Piece> row = [];
-      for (int j = 0; j < boardSize; j++) {
+      for (int j = 0; j < rules.boardSize; j++) {
         row.add(pieceForCell(new Cell(i, j)));
       }
       grid.add(row);

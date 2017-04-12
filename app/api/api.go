@@ -10,6 +10,7 @@ import (
 	"log"
 	"os"
 	"strconv"
+	"time"
 
 	"github.com/jwowillo/landgrab/game"
 	"github.com/jwowillo/landgrab/player"
@@ -35,6 +36,7 @@ func New() *application.Application {
 		newController{},
 		nextController{},
 		playersController{},
+		rulesController{},
 	} {
 		app.AddDescribedController(c)
 	}
@@ -79,7 +81,7 @@ func stateToMap(s *game.State, p1, p2 player.Described) pack.AnyMap {
 	m["currentPlayer"] = s.CurrentPlayer()
 	m["player1"] = p1.Name()
 	m["player2"] = p2.Name()
-	m["boardSize"] = s.Rules().BoardSize()
+	m["rules"] = rulesToMap(s.Rules())
 	ps := make(map[int]interface{})
 	for _, p := range s.Pieces() {
 		pm := make(pack.AnyMap)
@@ -112,7 +114,7 @@ func mapToState(m pack.AnyMap) (
 	} else {
 		return nil, nil, nil, errors.New("bad \"currentPlayer\"")
 	}
-	r := game.StandardRules
+	r := mapToRules(pack.AnyMap(m["rules"].(map[string]interface{})))
 	p1 := choosePlayer(m["player1"].(string))
 	p2 := choosePlayer(m["player2"].(string))
 	if p1 == nil || p2 == nil {
@@ -169,14 +171,25 @@ func playerToMap(p player.Described) pack.AnyMap {
 // rulesToMap converts the game.Rules to a pack.AnyMap.
 func rulesToMap(r game.Rules) pack.AnyMap {
 	return pack.AnyMap{
-		"timerDuration":  r.TimerDuration(),
+		"timerDuration":  r.TimerDuration() / time.Second,
 		"pieceCount":     r.PieceCount(),
 		"boardSize":      r.BoardSize(),
 		"damage":         r.Damage(),
 		"life":           r.Life(),
 		"damageIncrease": r.DamageIncrease(),
-		"lifeIncease":    r.LifeIncrease(),
+		"lifeIncrease":   r.LifeIncrease(),
 	}
+}
+
+// mapToRules converts the pack.AnyMap to a game.Rules.
+func mapToRules(m pack.AnyMap) game.Rules {
+	td := time.Duration(m["timerDuration"].(float64)) * time.Second
+	pc := int(m["pieceCount"].(float64))
+	l := int(m["life"].(float64))
+	d := int(m["damage"].(float64))
+	li := int(m["lifeIncrease"].(float64))
+	di := int(m["damageIncrease"].(float64))
+	return game.NewRules(td, pc, d, l, di, li)
 }
 
 // base trim.Trimming.
