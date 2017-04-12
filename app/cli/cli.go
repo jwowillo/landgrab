@@ -134,12 +134,7 @@ func board(s *game.State) string {
 
 // legend string.
 func legend() string {
-	out := ""
-	for _, id := range []game.PlayerID{game.Player1, game.Player2} {
-		out += fmt.Sprintf("%s: %s\n", id, colorForPlayer(id)("▒"))
-	}
-	out += "cell: PIECE_ID|LIFE|DAMAGE"
-	return out
+	return "cell: PIECE_ID|LIFE|DAMAGE"
 }
 
 // prompt string.

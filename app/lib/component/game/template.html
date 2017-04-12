@@ -12,10 +12,6 @@
     </td>
   </tr>
 </table>
-<div class='column'>
-  <p><b>Player 1:</b> <span class='player1-background'>&nbsp;&nbsp;&nbsp;</span></p>
-  <p><b>Player 2:</b> <span class='player2-background'>&nbsp;&nbsp;&nbsp;</span></p>
-</div>
 <p class='center'><b>Cell:</b> PIECE_ID|LIFE|DAMAGE</p>
 <p class='center'><b>Current Player:</b> <span class='{{ state?.currentPlayer | playerIDToString | toLowerNoSpace }}'>{{ state?.currentPlayer  | playerIDToString }}</span></p>
 <p *ngIf='isWinner(state?.winner)'>

@@ -16,9 +16,9 @@ body {
 h1 {
   font-size: 2.5em;
   text-align: center;
-  color: blue;
+  color: #000080;
   text-decoration: underline;
-  text-decoration-color: red;
+  text-decoration-color: #ff3333;
 }
 
 h1, h2, h3 {
@@ -61,20 +61,20 @@ button:focus {
 }
 
 .player1 {
-  color: red;
+  color: #ff3333;
 }
 
 .player2 {
-  color: blue;
+  color: #000080;
 }
 
 .player1-background {
-  background-color: red;
+  background-color: #ff3333;
   color: white;
 }
 
 .player2-background {
-  background-color: blue;
+  background-color: #000080;
   color: white;
 }
 
