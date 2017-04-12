@@ -166,6 +166,19 @@ func playerToMap(p player.Described) pack.AnyMap {
 	return pack.AnyMap{"name": p.Name(), "description": p.Description()}
 }
 
+// rulesToMap converts the game.Rules to a pack.AnyMap.
+func rulesToMap(r game.Rules) pack.AnyMap {
+	return pack.AnyMap{
+		"timerDuration":  r.TimerDuration(),
+		"pieceCount":     r.PieceCount(),
+		"boardSize":      r.BoardSize(),
+		"damage":         r.Damage(),
+		"life":           r.Life(),
+		"damageIncrease": r.DamageIncrease(),
+		"lifeIncease":    r.LifeIncrease(),
+	}
+}
+
 // base trim.Trimming.
 type base struct {
 	handler trim.Handler
