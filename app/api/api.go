@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"strconv"
 
@@ -18,6 +19,8 @@ import (
 	"github.com/jwowillo/trim/response"
 	"github.com/jwowillo/trim/trimming"
 )
+
+// TODO: Put descriptions in code.
 
 // New landgrab API.
 func New() *application.Application {
@@ -46,12 +49,12 @@ const descriptionBase = "description/"
 // application.ControllerDescription otherwise.
 func must(bs []byte, err error) *application.ControllerDescription {
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 	d := &application.ControllerDescription{}
 	err = json.Unmarshal(bs, d)
 	if err != nil {
-		panic(err)
+		log.Println(err)
 	}
 	return d
 }

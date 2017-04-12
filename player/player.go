@@ -114,5 +114,5 @@ func manhattanDistance(a, b game.Cell) int {
 	if dc < 0 {
 		dc = -dc
 	}
-	return dc
+	return dr + dc
 }
