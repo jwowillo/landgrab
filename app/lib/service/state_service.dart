@@ -1,10 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:html';
 
 import 'package:angular2/core.dart';
 
-import 'package:landgrab/service/config.dart';
+import 'package:landgrab/service/api.dart';
 import 'package:landgrab/model/board.dart';
 import 'package:landgrab/model/player.dart';
 import 'package:landgrab/model/state.dart';
@@ -16,7 +15,7 @@ class StateService {
   /// initial State for a game with the given Players.
   Future<State> initial(Player p1, Player p2) async {
     Map<String, dynamic> json =
-        await _api('/new', {'player1': p1.name, 'player2': p2.name});
+        await api('/new', query: {'player1': p1.name, 'player2': p2.name});
     return _mapToState(json['data']);
   }
 
@@ -24,7 +23,8 @@ class StateService {
   Future<State> next(State s) async {
     String serialized =
         Uri.encodeQueryComponent(new JsonEncoder().convert(_stateToMap(s)));
-    Map<String, dynamic> json = await _api('/next', {'state': serialized});
+    Map<String, dynamic> json =
+        await api('/next', query: {'state': serialized});
     return _mapToState(json['data']);
   }
 
@@ -112,14 +112,5 @@ class StateService {
     }
     map['pieces'] = pieces;
     return map;
-  }
-
-  /// _api makes a request to the path at the API server with the given query
-  /// string.
-  Future<Map<String, dynamic>> _api(
-      String path, Map<String, String> query) async {
-    String queryStr = new Uri(queryParameters: query).toString();
-    String raw = await HttpRequest.getString(Config.API_URL + path + queryStr);
-    return JSON.decode(raw);
   }
 }
