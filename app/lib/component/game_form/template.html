@@ -1,8 +1,14 @@
-<rules [rules]='rules'></rules>
-<form>
-  <div class='column'>
-    <player-choice-form [id]='player1ID' (chosen)='player1=$event'></player-choice-form>
-    <player-choice-form [id]='player2ID' (chosen)='player2=$event'></player-choice-form>
-  </div>
-  <div class='button-row'><button class='player1-background' (click)='start()'>Start</button></div>
+<form class='column'>
+  <player-choice-form
+    [id]='player1ID'
+    [players]='players'
+    (chosen)='player1Chosen.emit($event)'
+  >
+  </player-choice-form>
+  <player-choice-form
+    [id]='player2ID'
+    [players]='players'
+    (chosen)='player2Chosen.emit($event)'
+  >
+  </player-choice-form>
 </form>

@@ -1,0 +1,33 @@
+<table>
+  <tr *ngFor='let row of grid'>
+    <td *ngFor='let piece of row'>
+      <span
+        class='cell'
+        *ngIf='isPiece(piece)'
+        [ngClass]="{'player1': isPlayer1(piece), 'player2': isPlayer2(piece)}"
+      >
+        {{ piece.id }}|{{ piece.life }}|{{piece.damage}}
+      </span>
+      <span class='empty cell' *ngIf='!isPiece(piece)'> 0|0|0</span>
+    </td>
+  </tr>
+</table>
+<div *ngIf='state != null'>
+  <p class='center'><b>Cell:</b> PIECE_ID|LIFE|DAMAGE</p>
+  <p class='center'>
+    <b>Current Player:</b>
+    <span
+      class='{{ state.currentPlayer | playerIDToString | toLowerNoSpace }}'
+    >
+      {{ state.currentPlayer  | playerIDToString }}
+    </span>
+  </p>
+  <p class='center' *ngIf='isWinner(state.winner)'>
+    <b>Winner:</b>
+    <span
+      class='{{ state.winner | playerIDToString | toLowerNoSpace}}'
+    >
+      {{ state.winner | playerIDToString }}
+    </span>
+  </p>
+</div>

@@ -5,9 +5,7 @@ import 'package:angular2/core.dart';
 
 import 'package:landgrab/service/api.dart';
 import 'package:landgrab/service/convert.dart';
-import 'package:landgrab/model/board.dart';
 import 'package:landgrab/model/player.dart';
-import 'package:landgrab/model/rules.dart';
 import 'package:landgrab/model/state.dart';
 
 /// StateService is used to get initial States for games with provided Players
@@ -30,4 +28,3 @@ class StateService {
     return mapToState(json['data']);
   }
 }
-

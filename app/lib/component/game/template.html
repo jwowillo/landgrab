@@ -1,23 +1,26 @@
-<table>
-  <tr *ngFor='let row of state?.board'>
-    <td *ngFor='let piece of row'>
-      <span
-        class='cell'
-        *ngIf='isPlayer1(piece) || isPlayer2(piece)'
-        [ngClass]="{'player1': isPlayer1(piece), 'player2': isPlayer2(piece)}"
-      >
-        {{ piece.id }}|{{ piece.life }}|{{piece.damage}}
-      </span>
-      <span class='empty cell' *ngIf='!isPlayer1(piece) && !isPlayer2(piece)'>0|0|0</span>
-    </td>
-  </tr>
-</table>
-<p class='center'><b>Cell:</b> PIECE_ID|LIFE|DAMAGE</p>
-<p class='center'><b>Current Player:</b> <span class='{{ state?.currentPlayer | playerIDToString | toLowerNoSpace }}'>{{ state?.currentPlayer  | playerIDToString }}</span></p>
-<p *ngIf='isWinner(state?.winner)'>
-  <b>Winner:</b> <span class='{{ state?.winner | playerIDToString | toLowerNoSpace}}'>{{ state?.winner | playerIDToString }}</span>
-</p>
-<div class='column button-row'>
-  <button class='player1-background' [routerLink]="['GameForm']">Reset</button>
-  <button class='player2-background' *ngIf='!isWinner(state?.winner)' (click)='next()'>Next</button>
-</div>
+<header><h1>Landgrab</h1></header>
+<section>
+  <rules [rules]='rules'></rules>
+  <board [rules]='rules' [state]='state'></board>
+  <div *ngIf='state != null' class='column button-row'>
+    <button class='player1-background' (click)='reset()'>Reset</button>
+    <button
+      class='player2-background'
+      *ngIf='!isWinner(state.winner)'
+      (click)='next()'
+    >
+      Next
+    </button>
+  </div>
+  <div *ngIf='state == null'>
+    <game-form
+      [players]='players'
+      (player1Chosen)='player1=$event'
+      (player2Chosen)='player2=$event'
+    >
+    </game-form>
+    <div class='button-row'>
+      <button class='player1-background' (click)='start()'>Start</button>
+    </div>
+  </div>
+</section>

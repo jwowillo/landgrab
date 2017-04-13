@@ -1,10 +1,5 @@
-import 'dart:async';
-import 'dart:convert';
-
 import 'package:angular2/core.dart';
 
-import 'package:landgrab/service/api.dart';
-import 'package:landgrab/service/convert.dart';
 import 'package:landgrab/model/board.dart';
 import 'package:landgrab/model/player.dart';
 import 'package:landgrab/model/rules.dart';
@@ -72,25 +67,25 @@ Map<String, dynamic> stateToMap(State s) {
   }
   map['rules'] = rulesToMap(s.rules);
   Map<String, dynamic> pieces = {};
-  List<List<Piece>> board = s.board;
-  for (int i = 0; i < board.length; i++) {
-    for (int j = 0; j < board.length; j++) {
-      Piece p = board[i][j];
-      if (p.id == -1) {
-        continue;
-      }
-      Map<String, dynamic> piece = {};
-      piece['damage'] = p.damage;
-      piece['life'] = p.life;
-      if (s.playerForPiece(p) == PlayerID.player1) {
-        piece['player'] = 1;
-      }
-      if (s.playerForPiece(p) == PlayerID.player2) {
-        piece['player'] = 2;
-      }
-      piece['cell'] = [i, j];
-      pieces[p.id.toString()] = piece;
+  Set<Piece> allPieces = new Set();
+  allPieces.addAll(s.player1Pieces);
+  allPieces.addAll(s.player2Pieces);
+  for (Piece p in allPieces) {
+    if (p.id == -1) {
+      continue;
     }
+    Map<String, dynamic> piece = {};
+    piece['damage'] = p.damage;
+    piece['life'] = p.life;
+    if (s.playerForPiece(p) == PlayerID.player1) {
+      piece['player'] = 1;
+    }
+    if (s.playerForPiece(p) == PlayerID.player2) {
+      piece['player'] = 2;
+    }
+    Cell c = s.cellForPiece(p);
+    piece['cell'] = [c.row, c.column];
+    pieces[p.id.toString()] = piece;
   }
   map['pieces'] = pieces;
   return map;

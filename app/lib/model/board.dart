@@ -13,11 +13,16 @@ class Piece {
   const Piece(this.id, this.life, this.damage);
 
   /// hashCode is the Piece's ID.
+  @override
   int get hashCode => id;
 
   /// == returns trie iff the other Piece has the same field values.
-  bool operator ==(Piece other) =>
-      other.id == id && other.life == life && other.damage == damage;
+  @override
+  bool operator ==(Object other) =>
+      other is Piece &&
+      other.id == id &&
+      other.life == life &&
+      other.damage == damage;
 }
 
 /// Cell which may contain a Piece.
@@ -32,10 +37,13 @@ class Cell {
   const Cell(this.row, this.column);
 
   /// hashCode is a combination of the Cell's row and column.
+  @override
   int get hashCode => (row << 16) ^ column;
 
   /// == returns true iff the other Cell  has the same field values.
-  bool operator ==(Cell other) => other.row == row && other.column == column;
+  @override
+  bool operator ==(Object other) =>
+      other is Cell && other.row == row && other.column == column;
 }
 
 /// NO_PIECE is used when a Piece is expected but doesn't exist.

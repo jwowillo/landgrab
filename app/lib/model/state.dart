@@ -20,33 +20,23 @@ class State {
   /// player2 of the game.
   final Player player2;
 
-  /// _player1Pieces is the set of all Pieces that belong to Player 1.
-  final Set<Piece> _player1Pieces;
+  /// player1Pieces is the set of all Pieces that belong to Player 1.
+  final Set<Piece> player1Pieces;
 
-  /// _player2Pieces is the set of all Pieces that belong to Player 2.
-  final Set<Piece> _player2Pieces;
+  /// player2Pieces is the set of all Pieces that belong to Player 2.
+  final Set<Piece> player2Pieces;
 
   /// _cells is a mapping of all Cells on the board to the Piece they contain.
   final Map<Cell, Piece> _cells;
 
-  const State(this.rules, this.currentPlayer, this.player1, this.player2,
-      this._player1Pieces, this._player2Pieces, this._cells,
-      {this.winner: PlayerID.noPlayer});
+  final Map<Piece, Cell> _pieces = {};
 
-  /// board provides a List of Lists representing the rows of the board.
-  ///
-  /// Cells are filled with NO_PIECE if not empty and the correct Piece
-  /// otherwise.
-  List<List<Piece>> get board {
-    List<List<Piece>> grid = [];
-    for (int i = 0; i < rules.boardSize; i++) {
-      List<Piece> row = [];
-      for (int j = 0; j < rules.boardSize; j++) {
-        row.add(pieceForCell(new Cell(i, j)));
-      }
-      grid.add(row);
+  State(this.rules, this.currentPlayer, this.player1, this.player2,
+      this.player1Pieces, this.player2Pieces, this._cells,
+      {this.winner: PlayerID.noPlayer}) {
+    for (Cell c in _cells.keys) {
+      _pieces[_cells[c]] = c;
     }
-    return grid;
   }
 
   /// pieceForCell returns the Piece a Cell contains within the State.
@@ -59,14 +49,21 @@ class State {
     return _cells[c];
   }
 
+  Cell cellForPiece(Piece p) {
+    if (!_pieces.containsKey(p)) {
+      return NO_CELL;
+    }
+    return _pieces[p];
+  }
+
   /// playerForPiece returns the Player a Piece belongs to.
   ///
   /// Returns PlayerID.noPlayer if no Player within the State owns the Piece.
   PlayerID playerForPiece(Piece p) {
-    if (_player1Pieces.contains(p)) {
+    if (player1Pieces.contains(p)) {
       return PlayerID.player1;
     }
-    if (_player2Pieces.contains(p)) {
+    if (player2Pieces.contains(p)) {
       return PlayerID.player2;
     }
     return PlayerID.noPlayer;
