@@ -78,7 +78,7 @@ class State {
 
   startTimer() {
     if (_timer != null) return;
-    _timer = new Timer.periodic(new Duration(milliseconds: 10), _decreaseTime);
+    _timer = new Timer.periodic(new Duration(milliseconds: 100), _decreaseTime);
   }
 
   Duration get timeRemaining => _timeRemaining;
@@ -87,6 +87,6 @@ class State {
     if (_timeRemaining.isNegative) {
       _timer.cancel();
     }
-    _timeRemaining = _timeRemaining - new Duration(milliseconds: 10);
+    _timeRemaining = _timeRemaining - new Duration(milliseconds: 100);
   }
 }

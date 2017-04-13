@@ -59,8 +59,8 @@ class BoardComponent {
   String get timeRemaining {
     int ms = state.timeRemaining.inMilliseconds;
     int s = (ms / Duration.MILLISECONDS_PER_SECOND.toDouble()).toInt();
-    ms -= s * Duration.MILLISECONDS_PER_SECOND.toDouble();
-    ms /= 10;
+    ms -= s * Duration.MILLISECONDS_PER_SECOND;
+    ms = (ms / 100).toInt();
     return '$s.$ms seconds';
   }
 }
