@@ -68,7 +68,9 @@ class GameComponent implements OnInit {
     if (state == null) return;
     try {
       state.startTimer();
-      state = await _stateService.next(state);
+      State newState = await _stateService.next(state);
+      state.stopTimer();
+      state = newState;
     } catch (error) {
       print(error);
     }

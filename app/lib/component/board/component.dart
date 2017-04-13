@@ -57,10 +57,9 @@ class BoardComponent {
   isWinner(PlayerID id) => id != PlayerID.noPlayer;
 
   String get timeRemaining {
-    int ms = state.timeRemaining.inMilliseconds;
-    int s = (ms / Duration.MILLISECONDS_PER_SECOND.toDouble()).toInt();
-    ms -= s * Duration.MILLISECONDS_PER_SECOND;
-    ms = (ms / 100).toInt();
-    return '$s.$ms seconds';
+    double s = state.timeRemaining.inMilliseconds /
+        Duration.MILLISECONDS_PER_SECOND.toDouble();
+    String converted = s.toStringAsFixed(1);
+    return '$s seconds';
   }
 }
