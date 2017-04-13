@@ -60,6 +60,7 @@ class BoardComponent {
     int ms = state.timeRemaining.inMilliseconds;
     int s = (ms / Duration.MILLISECONDS_PER_SECOND.toDouble()).toInt();
     ms -= s * Duration.MILLISECONDS_PER_SECOND.toDouble();
+    ms /= 10;
     return '$s.$ms seconds';
   }
 }
