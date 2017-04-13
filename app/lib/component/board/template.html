@@ -12,9 +12,9 @@
     </td>
   </tr>
 </table>
-<div *ngIf='state != null'>
-  <p class='center'><b>Cell:</b> PIECE_ID|LIFE|DAMAGE</p>
-  <p class='center'>
+<div class='center' *ngIf='state != null'>
+  <p><b>Cell:</b> PIECE_ID|LIFE|DAMAGE</p>
+  <p>
     <b>Current Player:</b>
     <span
       class='{{ state.currentPlayer | playerIDToString | toLowerNoSpace }}'
@@ -22,7 +22,8 @@
       {{ state.currentPlayer  | playerIDToString }}
     </span>
   </p>
-  <p class='center' *ngIf='isWinner(state.winner)'>
+  <p><b>Time Remaining:</b> {{ timeRemaining }}</p>
+  <p *ngIf='isWinner(state.winner)'>
     <b>Winner:</b>
     <span
       class='{{ state.winner | playerIDToString | toLowerNoSpace}}'

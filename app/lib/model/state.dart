@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:landgrab/model/board.dart';
 import 'package:landgrab/model/rules.dart';
 import 'package:landgrab/model/player.dart';
@@ -5,8 +7,12 @@ import 'package:landgrab/model/player.dart';
 /// State encapsulates all the information necessary to represent a state of the
 /// landgrab game.
 class State {
+  Timer _timer;
+
   /// rules of the game.
   final Rules rules;
+
+  Duration _timeRemaining;
 
   /// currentPlayer in the game.
   final PlayerID currentPlayer;
@@ -37,6 +43,7 @@ class State {
     for (Cell c in _cells.keys) {
       _pieces[_cells[c]] = c;
     }
+    _timeRemaining = rules.timerDuration;
   }
 
   /// pieceForCell returns the Piece a Cell contains within the State.
@@ -67,5 +74,19 @@ class State {
       return PlayerID.player2;
     }
     return PlayerID.noPlayer;
+  }
+
+  startTimer() {
+    if (_timer != null) return;
+    _timer = new Timer.periodic(new Duration(milliseconds: 10), _decreaseTime);
+  }
+
+  Duration get timeRemaining => _timeRemaining;
+
+  _decreaseTime(Timer t) {
+    if (_timeRemaining.isNegative) {
+      _timer.cancel();
+    }
+    _timeRemaining = _timeRemaining - new Duration(milliseconds: 10);
   }
 }

@@ -60,11 +60,14 @@ class GameComponent implements OnInit {
 
   reset() {
     state = null;
+    player1 = players.first;
+    player2 = players.first;
   }
 
   Future next() async {
     if (state == null) return;
     try {
+      state.startTimer();
       state = await _stateService.next(state);
     } catch (error) {
       print(error);
