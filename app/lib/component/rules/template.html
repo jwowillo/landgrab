@@ -1,0 +1,20 @@
+<p>Landgrab is a game where each player tries to destroy all the other player's
+pieces. The rules are:</p>
+<ul>
+  <li>Players have {{ rules?.pieceCount }} pieces on an {{ rules?.boardSize }}
+    by {{ rules?.boardSize }} board represented as a grid.</li>
+  <li>Pieces have {{ rules?.life }} life and do {{ rules?.damage }} damage
+    initially.</li>
+  <li>Player can optionally move any of their pieces one cell in the 8 cardinal
+    directions.</li>
+  <li>Collisions between pieces cause the current player's pieces to damage all
+    contacting enemy units equal to their damage amounts.</li>
+  <li>Pieces that have taken damage greater than or equal to their life are
+    removed from the board.</li>
+  <li>Pieces gain a level when they participate in destroying another piece,
+    increasing their damage by {{ rules?.damageIncrease }} and life by
+    {{ rules?.lifeIncrease }}.</li>
+  <li>Players with no pieces at the end of a turn lose.</li>
+  <li>Players have {{ rules?.timerDuration?.inSeconds }} seconds to move each
+    turn.</li>
+</ul>

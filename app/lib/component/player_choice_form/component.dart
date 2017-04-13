@@ -32,6 +32,8 @@ class PlayerChoiceFormComponent implements OnInit {
   /// _service to retrieve Players from.
   final PlayersService _service;
 
+  final Set<Player> players = new Set();
+
   /// PlayerChoiceFormComponent initializes the PlayersService.
   PlayerChoiceFormComponent(this._service);
 
@@ -41,14 +43,11 @@ class PlayerChoiceFormComponent implements OnInit {
   @override
   Future ngOnInit() async {
     try {
-      await _service.load();
+      Set<Player> retrieved = await _service.players();
+      players.addAll(retrieved);
       chosen.emit(players.first);
     } catch (error) {
       print(error);
     }
   }
-
-  /// players is a getter for the PlayersService's Players for use from the
-  /// template.
-  Set<Player> get players => _service.players;
 }
