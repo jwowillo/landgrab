@@ -13,12 +13,12 @@
     </button>
   </div>
   <div *ngIf='state == null'>
-    <game-form
+    <players-choice-form
       [players]='players'
       (player1Chosen)='player1=$event'
       (player2Chosen)='player2=$event'
     >
-    </game-form>
+    </players-choice-form>
     <div class='button-row'>
       <button class='player1-background' (click)='start()'>Start</button>
     </div>

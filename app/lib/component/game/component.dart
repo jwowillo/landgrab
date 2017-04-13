@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:angular2/core.dart';
 
 import 'package:landgrab/component/board/component.dart';
-import 'package:landgrab/component/game_form/component.dart';
+import 'package:landgrab/component/players_choice_form/component.dart';
 import 'package:landgrab/component/rules/component.dart';
 import 'package:landgrab/model/state.dart';
 import 'package:landgrab/model/rules.dart';
@@ -15,7 +15,11 @@ import 'package:landgrab/service/state.dart';
 @Component(
   selector: 'game',
   templateUrl: 'template.html',
-  directives: const [RulesComponent, GameFormComponent, BoardComponent],
+  directives: const [
+    RulesComponent,
+    PlayersChoiceFormComponent,
+    BoardComponent
+  ],
   providers: const [RulesService, PlayersService, StateService],
 )
 class GameComponent implements OnInit {
