@@ -44,6 +44,10 @@ button:focus {
   outline: none;
 }
 
+footer {
+  margin-top: 10px;
+}
+
 .button-row {
   text-align: center;
 }

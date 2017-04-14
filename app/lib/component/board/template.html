@@ -22,7 +22,7 @@
       {{ state.currentPlayer  | playerIDToString }}
     </span>
   </p>
-  <p><b>Time Remaining:</b> {{ timeRemaining }}</p>
+  <p><b>Time Remaining:</b> {{ timeRemaining.toStringAsFixed(1) }} seconds</p>
   <p *ngIf='isWinner(state.winner)'>
     <b>Winner:</b>
     <span

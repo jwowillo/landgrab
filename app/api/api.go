@@ -211,6 +211,7 @@ func badType(t string) trim.Response {
 	)
 }
 
+// TODO: Rename mapToPlayer.
 // choosePlayer with the name from player.Describeds in player.All.
 func choosePlayer(name string) player.Described {
 	for _, p := range player.All() {

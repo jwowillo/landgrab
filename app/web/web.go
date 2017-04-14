@@ -1,11 +1,13 @@
 package web
 
 import (
+	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/jwowillo/landgrab/app/api"
 	"github.com/jwowillo/trim/application"
+	"github.com/jwowillo/trim/controller"
 )
 
 // New ...
@@ -16,6 +18,12 @@ func New(sd, h, sf string) *application.Application {
 		apiConf,
 		staticConf,
 	)
+	app.AddController(controller.NewHome(
+		"/api",
+		clientConf.HomePath,
+		clientConf.CacheDuration,
+		clientConf.CacheMaxSize,
+	))
 	app.SetAPI(api.New())
 	return app.Application
 }
@@ -29,7 +37,7 @@ func configs(sd, h, sf string) (
 ) {
 	clientConf := application.ClientDefault
 	clientConf.Subdomain = sd
-	clientConf.TemplateFolder = sf
+	clientConf.HomePath = filepath.Join(sf, "index.html")
 	staticConf := application.StaticDefault
 	staticConf.BaseFolder = sf
 	if !strings.HasPrefix(h, "localhost") {
@@ -39,6 +47,6 @@ func configs(sd, h, sf string) (
 		clientConf.CacheDuration = 0
 		staticConf.CacheDuration = 0
 	}
-	staticConf.Include = []string{".js"}
+	staticConf.IncludeExtensions = []string{".js"}
 	return clientConf, application.APIDefault, staticConf
 }

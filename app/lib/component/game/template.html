@@ -1,26 +1,23 @@
-<header><h1>Landgrab</h1></header>
-<section>
-  <rules [rules]='rules'></rules>
-  <board [rules]='rules' [state]='state'></board>
-  <div *ngIf='state != null' class='column button-row'>
-    <button class='player1-background' (click)='reset()'>Reset</button>
-    <button
-      class='player2-background'
-      *ngIf='!isWinner(state.winner)'
-      (click)='next()'
-    >
-      Next
-    </button>
+<rules [rules]='rules'></rules>
+<board [rules]='rules' [state]='state'></board>
+<div *ngIf='state != null' class='column button-row'>
+  <button class='player1-background' (click)='reset()'>Reset</button>
+  <button
+    class='player2-background'
+    *ngIf='!isWinner(state.winner)'
+    (click)='next()'
+  >
+    Next
+  </button>
+</div>
+<div *ngIf='state == null'>
+  <players-choice-form
+    [players]='players'
+    (player1Chosen)='player1=$event'
+    (player2Chosen)='player2=$event'
+  >
+  </players-choice-form>
+  <div class='button-row'>
+    <button class='player1-background' (click)='start()'>Start</button>
   </div>
-  <div *ngIf='state == null'>
-    <players-choice-form
-      [players]='players'
-      (player1Chosen)='player1=$event'
-      (player2Chosen)='player2=$event'
-    >
-    </players-choice-form>
-    <div class='button-row'>
-      <button class='player1-background' (click)='start()'>Start</button>
-    </div>
-  </div>
-</section>
+</div>

@@ -56,10 +56,8 @@ class BoardComponent {
   /// isWinner returns true iff the PlayerID isn't PlayerID.noPlayer.
   isWinner(PlayerID id) => id != PlayerID.noPlayer;
 
-  String get timeRemaining {
-    double s = state.timeRemaining.inMilliseconds /
+  double get timeRemaining {
+    return state.timeRemaining.inMilliseconds /
         Duration.MILLISECONDS_PER_SECOND.toDouble();
-    String converted = s.toStringAsFixed(1);
-    return '$s seconds';
   }
 }
