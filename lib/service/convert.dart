@@ -15,8 +15,8 @@ State mapToState(Map<String, dynamic> map) {
   if (map['currentPlayer'] == 2) {
     current = PlayerID.player2;
   }
-  Player p1 = new Player(map['player1']);
-  Player p2 = new Player(map['player2']);
+  Player p1 = mapToPlayer(map['player1']);
+  Player p2 = mapToPlayer(map['player2']);
   Set<Piece> player1Pieces = new Set();
   Set<Piece> player2Pieces = new Set();
   Map<Cell, Piece> cells = new Map();
@@ -55,8 +55,8 @@ Map<String, dynamic> stateToMap(State s) {
   if (s.currentPlayer == PlayerID.player2) {
     map['currentPlayer'] = 2;
   }
-  map['player1'] = s.player1.name;
-  map['player2'] = s.player2.name;
+  map['player1'] = playerToMap(s.player1);
+  map['player2'] = playerToMap(s.player2);
   if (s.winner != PlayerID.noPlayer) {
     if (s.winner == PlayerID.player1) {
       map['winner'] = 1;
@@ -115,4 +115,20 @@ Map<String, dynamic> rulesToMap(Rules r) {
     'lifeIncrease': r.lifeIncrease,
     'damageIncrease': r.damageIncrease,
   };
+}
+
+Map<String, dynamic> playerToMap(Player p) {
+  return {'name': p.name, 'description': p.description};
+}
+
+Player mapToPlayer(Map<String, dynamic> m) {
+  String description = '';
+  if (m.containsKey('description')) {
+    description = m['description'];
+  }
+  Map<String, dynamic> args = {};
+  if (m.containsKey('arguments')) {
+    args = m['arguments'];
+  }
+  return new Player(m['name'], description: description, arguments: args);
 }

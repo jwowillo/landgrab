@@ -11,7 +11,7 @@ type Rules struct {
 }
 
 // NewRules creates Rules with the given values for the variable parts.
-func NewRules(td time.Duration, pc, d, l, di, li int) Rules {
+func NewRules(td time.Duration, pc, l, d, li, di int) Rules {
 	return Rules{
 		timerDuration:  td,
 		pieceCount:     pc,
@@ -59,4 +59,4 @@ func (r Rules) LifeIncrease() int {
 }
 
 // StandardRules ...
-var StandardRules = NewRules(30*time.Second, 5, 1, 3, 1, 1)
+var StandardRules = NewRules(30*time.Second, 5, 3, 1, 1, 1)

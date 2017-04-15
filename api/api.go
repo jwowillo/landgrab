@@ -40,6 +40,8 @@ func New() *application.Application {
 	} {
 		app.AddDescribedController(c)
 	}
+	app.AddResource("Rules", jsonRules{})
+	app.AddResource("Player", jsonPlayer{})
 	return app.Application
 }
 
@@ -79,9 +81,9 @@ func stateToMap(s *game.State, p1, p2 player.Described) pack.AnyMap {
 		m["winner"] = s.Winner()
 	}
 	m["currentPlayer"] = s.CurrentPlayer()
-	m["player1"] = p1.Name()
-	m["player2"] = p2.Name()
-	m["rules"] = rulesToMap(s.Rules())
+	m["player1"] = playerToJSON(p1)
+	m["player2"] = playerToJSON(p2)
+	m["rules"] = rulesToJSON(s.Rules())
 	ps := make(map[int]interface{})
 	for _, p := range s.Pieces() {
 		pm := make(pack.AnyMap)
@@ -114,13 +116,29 @@ func mapToState(m pack.AnyMap) (
 	} else {
 		return nil, nil, nil, errors.New("bad \"currentPlayer\"")
 	}
-	r := mapToRules(pack.AnyMap(m["rules"].(map[string]interface{})))
-	p1 := choosePlayer(m["player1"].(string))
-	p2 := choosePlayer(m["player2"].(string))
-	if p1 == nil || p2 == nil {
-		return nil, nil, nil, errors.New(
-			"bad \"player1\" or \"player2\"",
-		)
+	bs, err := json.Marshal(m["rules"])
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	r, err := jsonToRules(bs)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	bs, err = json.Marshal(m["player1"])
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	p1, err := jsonToPlayer(bs)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	bs, err = json.Marshal(m["player2"])
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	p2, err := jsonToPlayer(bs)
+	if err != nil {
+		return nil, nil, nil, err
 	}
 	var p1Pieces []game.Piece
 	var p2Pieces []game.Piece
@@ -163,33 +181,61 @@ func mapToState(m pack.AnyMap) (
 	), p1, p2, nil
 }
 
-// playerToMap converts the player.Described to a pack.AnyMap.
-func playerToMap(p player.Described) pack.AnyMap {
-	return pack.AnyMap{"name": p.Name(), "description": p.Description()}
+type jsonPlayer struct {
+	Name        string            `json:"name"`
+	Description string            `json:"description,omitempty"`
+	Arguments   map[string]string `json:"arguments,omitempty"`
 }
 
-// rulesToMap converts the game.Rules to a pack.AnyMap.
-func rulesToMap(r game.Rules) pack.AnyMap {
-	return pack.AnyMap{
-		"timerDuration":  r.TimerDuration() / time.Second,
-		"pieceCount":     r.PieceCount(),
-		"boardSize":      r.BoardSize(),
-		"damage":         r.Damage(),
-		"life":           r.Life(),
-		"damageIncrease": r.DamageIncrease(),
-		"lifeIncrease":   r.LifeIncrease(),
+func playerToJSON(p player.Described) jsonPlayer {
+	return jsonPlayer{Name: p.Name(), Description: p.Description()}
+}
+
+func jsonToPlayer(bs []byte) (player.Described, error) {
+	raw := jsonPlayer{}
+	err := json.Unmarshal(bs, &raw)
+	for _, p := range player.All() {
+		if p.Name() == raw.Name {
+			return p, err
+		}
+	}
+	return nil, errors.New("bad \"game.Player\"")
+}
+
+type jsonRules struct {
+	TimerDuration  int `json:"timerDuration"`
+	PieceCount     int `json:"pieceCount"`
+	BoardSize      int `json:"boardSize"`
+	Life           int `json:"life"`
+	Damage         int `json:"damage"`
+	LifeIncrease   int `json:"lifeIncrease"`
+	DamageIncrease int `json:"damageIncrease"`
+}
+
+func rulesToJSON(r game.Rules) jsonRules {
+	return jsonRules{
+		TimerDuration:  int(r.TimerDuration() / time.Second),
+		PieceCount:     r.PieceCount(),
+		BoardSize:      r.BoardSize(),
+		Life:           r.Life(),
+		Damage:         r.Damage(),
+		LifeIncrease:   r.LifeIncrease(),
+		DamageIncrease: r.DamageIncrease(),
 	}
 }
 
 // mapToRules converts the pack.AnyMap to a game.Rules.
-func mapToRules(m pack.AnyMap) game.Rules {
-	td := time.Duration(m["timerDuration"].(float64)) * time.Second
-	pc := int(m["pieceCount"].(float64))
-	l := int(m["life"].(float64))
-	d := int(m["damage"].(float64))
-	li := int(m["lifeIncrease"].(float64))
-	di := int(m["damageIncrease"].(float64))
-	return game.NewRules(td, pc, d, l, di, li)
+func jsonToRules(bs []byte) (game.Rules, error) {
+	r := jsonRules{}
+	err := json.Unmarshal(bs, &r)
+	return game.NewRules(
+		time.Duration(r.TimerDuration)*time.Second,
+		r.PieceCount,
+		r.Life,
+		r.Damage,
+		r.LifeIncrease,
+		r.DamageIncrease,
+	), err
 }
 
 // base trim.Trimming.
@@ -209,15 +255,4 @@ func badType(t string) trim.Response {
 		pack.AnyMap{"message": fmt.Sprintf("must pass a %s", t)},
 		trim.CodeBadRequest,
 	)
-}
-
-// TODO: Rename mapToPlayer.
-// choosePlayer with the name from player.Describeds in player.All.
-func choosePlayer(name string) player.Described {
-	for _, p := range player.All() {
-		if p.Name() == name {
-			return p
-		}
-	}
-	return nil
 }

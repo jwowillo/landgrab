@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:angular2/core.dart';
 
@@ -14,15 +13,16 @@ import 'package:landgrab/model/state.dart';
 class StateService {
   /// initial State for a game with the given Players.
   Future<State> initial(Player p1, Player p2) async {
+    String s1 = encode(playerToMap(p1));
+    String s2 = encode(playerToMap(p2));
     Map<String, dynamic> json =
-        await api('/new', query: {'player1': p1.name, 'player2': p2.name});
+        await api('/new', query: {'player1': s1, 'player2': s2});
     return mapToState(json['data']);
   }
 
   /// Next State for the given State.
   Future<State> next(State s) async {
-    String serialized =
-        Uri.encodeQueryComponent(new JsonEncoder().convert(stateToMap(s)));
+    String serialized = encode(stateToMap(s));
     Map<String, dynamic> json =
         await api('/next', query: {'state': serialized});
     return mapToState(json['data']);

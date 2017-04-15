@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 
-	"github.com/jwowillo/landgrab/app/web"
+	"github.com/jwowillo/landgrab/web"
 	"github.com/jwowillo/trim/server"
 )
 
@@ -15,7 +15,7 @@ func main() {
 	if port != 80 {
 		host += fmt.Sprintf(":%d", port)
 	}
-	s.Serve(web.New("", host, filepath.Join("app", "build", "web")))
+	s.Serve(web.New("", host, filepath.Join("build", "web")))
 }
 
 var (

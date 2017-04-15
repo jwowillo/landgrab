@@ -35,8 +35,7 @@ func (c rulesController) Description() *application.ControllerDescription {
 
 // Handle the trim.Request by returning the standard game.Rules.
 func (c rulesController) Handle(r trim.Request) trim.Response {
-	return response.NewJSON(
-		pack.AnyMap{"rules": rulesToMap(game.StandardRules)},
-		trim.CodeOK,
-	)
+	return response.NewJSON(pack.AnyMap{
+		"rules": rulesToJSON(game.StandardRules),
+	}, trim.CodeOK)
 }

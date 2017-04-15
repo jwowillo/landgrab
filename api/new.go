@@ -1,6 +1,8 @@
 package api
 
 import (
+	"net/url"
+
 	"github.com/jwowillo/landgrab/game"
 	"github.com/jwowillo/landgrab/player"
 	"github.com/jwowillo/trim"
@@ -75,9 +77,14 @@ func (v validateNew) Handle(r trim.Request) trim.Response {
 	if len(p1Args) != 1 || len(p2Args) != 1 {
 		return errBadPlayer
 	}
-	p1 := choosePlayer(p1Args[0])
-	p2 := choosePlayer(p2Args[0])
-	if p1 == nil || p2 == nil {
+	up1, err := url.QueryUnescape(p1Args[0])
+	up2, err := url.QueryUnescape(p1Args[0])
+	if err != nil {
+		return errBadPlayer
+	}
+	p1, err := jsonToPlayer([]byte(up1))
+	p2, err := jsonToPlayer([]byte(up2))
+	if p1 == nil || p2 == nil || err != nil {
 		return errBadPlayer
 	}
 	r.SetContext(newPlayer1Key, p1)

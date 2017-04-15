@@ -8,6 +8,10 @@ import 'dart:html';
 /// mechanism of pattern substitution.
 final String _API_URL = '{{ api }}';
 
+String encode(Map<String, dynamic> map) {
+  return Uri.encodeQueryComponent(new JsonEncoder().convert(map));
+}
+
 /// _api makes a request to the path at the API server with the given query
 /// string.
 Future<Map<String, dynamic>> api(String path,

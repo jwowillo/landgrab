@@ -35,9 +35,9 @@ func (c playersController) Description() *application.ControllerDescription {
 
 // Handle the trim.Request by returning all the implemented game.Players.
 func (c playersController) Handle(r trim.Request) trim.Response {
-	var ps []pack.AnyMap
+	var ps []jsonPlayer
 	for _, p := range player.All() {
-		ps = append(ps, playerToMap(p))
+		ps = append(ps, playerToJSON(p))
 	}
 	return response.NewJSON(pack.AnyMap{"players": ps}, trim.CodeOK)
 }

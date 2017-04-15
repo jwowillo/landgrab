@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jwowillo/landgrab/app/cli"
+	"github.com/jwowillo/landgrab/cli"
 	"github.com/jwowillo/landgrab/game"
 	"github.com/jwowillo/landgrab/player"
 )
@@ -37,23 +37,8 @@ var (
 
 // init parses command-line flags.
 func init() {
-	flag.BoolVar(
-		&shouldWait,
-		"wait",
-		true,
-		"waits for enter if true",
-	)
-	flag.StringVar(
-		&player1,
-		"player1",
-		"",
-		"choice for player1",
-	)
-	flag.StringVar(
-		&player2,
-		"player2",
-		"",
-		"choice for player2",
-	)
+	flag.BoolVar(&shouldWait, "wait", true, "waits for enter if true")
+	flag.StringVar(&player1, "player1", "", "choice for player 1")
+	flag.StringVar(&player2, "player2", "", "choice for player 2")
 	flag.Parse()
 }

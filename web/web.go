@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jwowillo/landgrab/app/api"
+	"github.com/jwowillo/landgrab/api"
 	"github.com/jwowillo/trim/application"
 	"github.com/jwowillo/trim/controller"
 )

@@ -1,0 +1,3 @@
+Move things out of app that don't run
+Don't ignore errors in api, fix after json is properly used.
+dont use pack.AnyMap in interfaces in trim

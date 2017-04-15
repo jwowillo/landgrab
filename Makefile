@@ -4,7 +4,7 @@
 # placed in $GOPATH/bin.
 
 # all target makes all targets in the Makefile.
-all: run_cli run_web
+all: run_cli run_web run_arena
 
 # run_cli target makes the cli app.
 run_cli:
@@ -16,19 +16,25 @@ run_web: pub
 	$(call log,$@)
 	$(call make,$@)
 
+#run_arena target makes the run-arena app.
+run_arena:
+	$(call log,$@)
+	$(call make,$@)
+
 # pub installs pub dependencies if necessary.
 pub:
 	$(call log,$@)
-	cd app; pub get; pub build
+	pub get
+	pub build
 	@echo
 
 # clean built files.
 clean:
 	$(call log, $@)
-	rm -rf app/pubspeck.lock
-	rm -rf app/build
-	rm -rf app/.pub
-	rm -rf app/.packages
+	rm -rf pubspeck.lock
+	rm -rf build
+	rm -rf .pub
+	rm -rf .packages
 
 # make a go target in the app directory with the passed name.
 #
