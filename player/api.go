@@ -15,39 +15,32 @@ import (
 
 // API ...
 type API struct {
-	url              string
-	player1, player2 game.DescribedPlayer
+	url string
 }
 
 // NewAPI ...
-func NewAPI() API {
-	return API{}
+func NewAPI() *API {
+	return &API{}
 }
 
 // SetURL ...
-func (p API) SetURL(url string) {
+func (p *API) SetURL(url string) {
 	p.url = url
 }
 
-// SetPlayers ...
-func (p API) SetPlayers(p1, p2 game.DescribedPlayer) {
-	p.player1 = p1
-	p.player2 = p2
-}
-
 // Name ...
-func (p API) Name() string {
+func (p *API) Name() string {
 	return strings.ToLower(reflect.TypeOf(p).Name())
 }
 
 // Description ...
-func (p API) Description() string {
+func (p *API) Description() string {
 	return "asks API at the set URL for the play to make"
 }
 
 // Play ...
-func (p API) Play(s *game.State) game.Play {
-	js := convert.StateToJSONState(s, p.player1, p.player2)
+func (p *API) Play(s *game.State) game.Play {
+	js := convert.StateToJSONState(s)
 	bs, err := json.Marshal(js)
 	if err != nil {
 		log.Println(err)

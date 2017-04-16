@@ -13,26 +13,26 @@ type Human struct {
 }
 
 // NewHuman ...
-func NewHuman() Human {
-	return Human{}
+func NewHuman() *Human {
+	return &Human{}
 }
 
 // SetPlay ...
-func (p Human) SetPlay(play game.Play) {
+func (p *Human) SetPlay(play game.Play) {
 	p.play = play
 }
 
 // Name ...
-func (p Human) Name() string {
+func (p *Human) Name() string {
 	return strings.ToLower(reflect.TypeOf(p).Name())
 }
 
 // Description ...
-func (p Human) Description() string {
+func (p *Human) Description() string {
 	return "makes the play it was told to make"
 }
 
 // Play ...
-func (p Human) Play(s *game.State) game.Play {
+func (p *Human) Play(s *game.State) game.Play {
 	return p.play
 }

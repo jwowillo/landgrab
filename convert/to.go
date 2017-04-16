@@ -2,7 +2,6 @@ package convert
 
 import (
 	"encoding/json"
-	"errors"
 	"time"
 
 	"github.com/jwowillo/landgrab/game"
@@ -99,12 +98,18 @@ func JSONToPiece(bs []byte) (game.Piece, error) {
 }
 
 // StateToJSONState ...
-func StateToJSONState(s *game.State, p1, p2 game.DescribedPlayer) JSONState {
+func StateToJSONState(s *game.State) JSONState {
 	raw := JSONState{}
 	if s.Winner() != game.NoPlayer {
 		raw.Winner = s.Winner()
 	}
 	raw.CurrentPlayer = s.CurrentPlayer()
+	p1, ok := s.Player1().(game.DescribedPlayer)
+	p2, ok := s.Player1().(game.DescribedPlayer)
+	if !ok {
+		p1 = nil
+		p2 = nil
+	}
 	raw.Player1 = PlayerToJSONPlayer(p1)
 	raw.Player2 = PlayerToJSONPlayer(p2)
 	raw.Rules = RulesToJSONRules(s.Rules())
@@ -122,11 +127,7 @@ func JSONToJSONState(bs []byte) (JSONState, error) {
 }
 
 // JSONStateToState ...
-func JSONStateToState(s JSONState, ps []game.DescribedPlayer) (
-	*game.State,
-	game.DescribedPlayer,
-	game.DescribedPlayer,
-) {
+func JSONStateToState(s JSONState, ps []game.DescribedPlayer) *game.State {
 	p1 := JSONPlayerToPlayer(s.Player1, ps)
 	p2 := JSONPlayerToPlayer(s.Player2, ps)
 	var p1Pieces []game.Piece
@@ -148,22 +149,14 @@ func JSONStateToState(s JSONState, ps []game.DescribedPlayer) (
 		p1, p2,
 		p1Pieces, p2Pieces,
 		Pieces,
-	), p1, p2
+	)
 }
 
 // JSONToState ...
-func JSONToState(bs []byte, ps []game.DescribedPlayer) (
-	*game.State,
-	game.DescribedPlayer,
-	game.DescribedPlayer,
-	error,
-) {
+func JSONToState(bs []byte, ps []game.DescribedPlayer) (*game.State, error) {
 	rs, err := JSONToJSONState(bs)
-	s, p1, p2 := JSONStateToState(rs, ps)
-	if p1 == nil || p2 == nil {
-		err = errors.New("bad \"game.Player\"")
-	}
-	return s, p1, p2, err
+	s := JSONStateToState(rs, ps)
+	return s, err
 }
 
 // PlayerToJSONPlayer ...

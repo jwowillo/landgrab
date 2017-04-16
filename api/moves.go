@@ -79,7 +79,7 @@ func (v validateMoves) Handle(r trim.Request) trim.Response {
 	if err != nil {
 		return errBadState
 	}
-	s, _, _, err := convert.JSONToState([]byte(unquoted), player.All())
+	s, err := convert.JSONToState([]byte(unquoted), player.All())
 	if s.Rules() != game.StandardRules || err != nil {
 		return errBadState
 	}

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"encoding/json"
 	"net/url"
 
 	"github.com/jwowillo/landgrab/convert"
@@ -25,12 +26,6 @@ const (
 	// trim.Context.
 	nextStateKey = "state"
 	nextPlayKey  = "play"
-	// nextPlayer1Key is the key for the game.Player 1 passed in the
-	// trim.Context.
-	nextPlayer1Key = "player1"
-	// nextPlayer2Key is the key for the game.Player 2 passed in the
-	// trim.Context.
-	nextPlayer2Key = "player2"
 )
 
 // nextController is a trim.Controller used to get the next game.State from a
@@ -71,12 +66,7 @@ func (c nextController) Handle(r trim.Request) trim.Response {
 	} else {
 		s = game.NextState(s)
 	}
-	p1 := r.Context()[nextPlayer1Key].(game.DescribedPlayer)
-	p2 := r.Context()[nextPlayer2Key].(game.DescribedPlayer)
-	return response.NewJSON(
-		convert.StateToJSONState(s, p1, p2),
-		trim.CodeOK,
-	)
+	return response.NewJSON(convert.StateToJSONState(s), trim.CodeOK)
 }
 
 // validateNext is a validating trim.Trimming that validates input to the
@@ -103,13 +93,17 @@ func (v validateNext) Handle(r trim.Request) trim.Response {
 	if err != nil {
 		return errBadState
 	}
-	s, p1, p2, err := convert.JSONToState([]byte(unquoted), player.All())
+	jsonS, err := convert.JSONToJSONState([]byte(unquoted))
+	if err != nil {
+		return errBadState
+	}
+	s := convert.JSONStateToState(jsonS, player.All())
 	if s.Rules() != game.StandardRules || err != nil {
 		return errBadState
 	}
+	handleSpecial(s.Player1().(game.DescribedPlayer), jsonS.Player1)
+	handleSpecial(s.Player2().(game.DescribedPlayer), jsonS.Player2)
 	r.SetContext(nextStateKey, s)
-	r.SetContext(nextPlayer1Key, p1)
-	r.SetContext(nextPlayer2Key, p2)
 	pArgs, ok := r.FormArgs()[nextPlayKey]
 	if ok {
 		if len(pArgs) != 1 {
@@ -126,4 +120,33 @@ func (v validateNext) Handle(r trim.Request) trim.Response {
 		r.SetContext(nextPlayKey, p)
 	}
 	return v.handler.Handle(r)
+}
+
+func handleSpecial(p game.DescribedPlayer, raw convert.JSONPlayer) {
+	switch real := p.(type) {
+	case *player.Human:
+		val, ok := raw.Arguments["play"]
+		if !ok {
+			return
+		}
+		bs, err := json.Marshal(val)
+		if err != nil {
+			return
+		}
+		play, err := convert.JSONToPlay(bs)
+		if err != nil {
+			return
+		}
+		real.SetPlay(play)
+	case *player.API:
+		val, ok := raw.Arguments["url"]
+		if !ok {
+			return
+		}
+		url, ok := val.(string)
+		if !ok {
+			return
+		}
+		real.SetURL(url)
+	}
 }

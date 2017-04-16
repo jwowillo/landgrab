@@ -61,7 +61,7 @@ func (c newController) Handle(r trim.Request) trim.Response {
 	p2 := r.Context()[newPlayer2Key].(game.DescribedPlayer)
 	s := game.NewState(game.StandardRules, p1, p2)
 	return response.NewJSON(
-		convert.StateToJSONState(s, p1, p2),
+		convert.StateToJSONState(s),
 		trim.CodeOK,
 	)
 }
@@ -88,7 +88,7 @@ func (v validateNew) Handle(r trim.Request) trim.Response {
 		return errBadPlayer
 	}
 	up1, err := url.QueryUnescape(p1Args[0])
-	up2, err := url.QueryUnescape(p1Args[0])
+	up2, err := url.QueryUnescape(p2Args[0])
 	if err != nil {
 		return errBadPlayer
 	}
