@@ -18,8 +18,6 @@ var errBadPlayer = badType("game.Player")
 const (
 	// newPath is the newController's path.
 	newPath = "/new"
-	// newDescriptionPath is the path to the newController's description.
-	newDescriptionPath = descriptionBase + "new.json"
 	// newPlayer1Key is the key for the game.Player 1 passed in the
 	// trim.Context.
 	newPlayer1Key = "player1"
@@ -39,7 +37,15 @@ func (c newController) Path() string {
 
 // Description of the newController located at newDescriptionPath.
 func (c newController) Description() *application.ControllerDescription {
-	return must(read(newDescriptionPath))
+	return &application.ControllerDescription{
+		Get: &application.MethodDescription{
+			FormArguments: map[string]string{
+				newPlayer1Key: "Player for player 1",
+				newPlayer2Key: "Player for player 2",
+			},
+			Response: "initial State",
+		},
+	}
 }
 
 // Trimmings returns a single trim.Trimming which validates that the
@@ -51,8 +57,8 @@ func (c newController) Trimmings() []trim.Trimming {
 // Handle the trim.Request by converting the trim.Request's context to a new
 // game.State and returning a JSON representation of it.
 func (c newController) Handle(r trim.Request) trim.Response {
-	p1 := r.Context()[newPlayer1Key].(player.Described)
-	p2 := r.Context()[newPlayer2Key].(player.Described)
+	p1 := r.Context()[newPlayer1Key].(game.DescribedPlayer)
+	p2 := r.Context()[newPlayer2Key].(game.DescribedPlayer)
 	s := game.NewState(game.StandardRules, p1, p2)
 	return response.NewJSON(
 		convert.StateToJSONState(s, p1, p2),
@@ -86,8 +92,8 @@ func (v validateNew) Handle(r trim.Request) trim.Response {
 	if err != nil {
 		return errBadPlayer
 	}
-	p1, err := convert.JSONToPlayer([]byte(up1))
-	p2, err := convert.JSONToPlayer([]byte(up2))
+	p1, err := convert.JSONToPlayer([]byte(up1), player.All())
+	p2, err := convert.JSONToPlayer([]byte(up2), player.All())
 	if p1 == nil || p2 == nil || err != nil {
 		return errBadPlayer
 	}

@@ -2,6 +2,27 @@ package convert
 
 import "github.com/jwowillo/landgrab/game"
 
+// JSONPlay ...
+type JSONPlay struct {
+	Moves []JSONMove `json:"moves"`
+}
+
+// Description ...
+func (p JSONPlay) Description() string {
+	return "play of Moves"
+}
+
+// JSONMove ...
+type JSONMove struct {
+	Direction game.Direction `json:"direction"`
+	Piece     JSONPiece      `json:"piece"`
+}
+
+// Description ...
+func (p JSONMove) Description() string {
+	return "move made by a Piece"
+}
+
 // JSONPlayer ...
 type JSONPlayer struct {
 	Name      string                 `json:"name"`

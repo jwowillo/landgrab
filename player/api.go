@@ -1,15 +1,22 @@
 package player
 
 import (
+	"encoding/json"
+	"io/ioutil"
+	"log"
+	"net/http"
+	"net/url"
 	"reflect"
 	"strings"
 
+	"github.com/jwowillo/landgrab/convert"
 	"github.com/jwowillo/landgrab/game"
 )
 
 // API ...
 type API struct {
-	url string
+	url              string
+	player1, player2 game.DescribedPlayer
 }
 
 // NewAPI ...
@@ -20,6 +27,12 @@ func NewAPI() API {
 // SetURL ...
 func (p API) SetURL(url string) {
 	p.url = url
+}
+
+// SetPlayers ...
+func (p API) SetPlayers(p1, p2 game.DescribedPlayer) {
+	p.player1 = p1
+	p.player2 = p2
 }
 
 // Name ...
@@ -34,5 +47,32 @@ func (p API) Description() string {
 
 // Play ...
 func (p API) Play(s *game.State) game.Play {
-	return nil
+	js := convert.StateToJSONState(s, p.player1, p.player2)
+	bs, err := json.Marshal(js)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	query := "?" + url.QueryEscape(string(bs))
+	resp, err := http.Get(p.url + query)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	err = resp.Body.Close()
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	play, err := convert.JSONToPlay(body)
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	return play
 }

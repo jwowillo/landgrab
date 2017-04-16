@@ -3,20 +3,14 @@ package api
 import (
 	"github.com/jwowillo/landgrab/convert"
 	"github.com/jwowillo/landgrab/game"
-	"github.com/jwowillo/pack"
 	"github.com/jwowillo/trim"
 	"github.com/jwowillo/trim/application"
 	"github.com/jwowillo/trim/controller"
 	"github.com/jwowillo/trim/response"
 )
 
-const (
-	// rulesPath is the rulesController's path.
-	rulesPath = "/rules"
-	// rulesDescriptionPath is the path to the rulesController's
-	// description.
-	rulesDescriptionPath = descriptionBase + "rules.json"
-)
+// rulesPath is the rulesController's path.
+const rulesPath = "/rules"
 
 // rulesController is a trim.Controller used to retrieve the standard
 // game.Rules.
@@ -31,12 +25,16 @@ func (c rulesController) Path() string {
 
 // Description of the rulesController located at rulesDescriptionPath.
 func (c rulesController) Description() *application.ControllerDescription {
-	return must(read(rulesDescriptionPath))
+	return &application.ControllerDescription{
+		Get: &application.MethodDescription{
+			Response: "Rules which are used",
+		},
+	}
 }
 
 // Handle the trim.Request by returning the standard game.Rules.
 func (c rulesController) Handle(r trim.Request) trim.Response {
-	return response.NewJSON(pack.AnyMap{
+	return response.NewJSON(map[string]convert.JSONRules{
 		"rules": convert.RulesToJSONRules(game.StandardRules),
 	}, trim.CodeOK)
 }

@@ -8,6 +8,13 @@ type Player interface {
 	Play(*State) Play
 }
 
+// DescribedPlayer ...
+type DescribedPlayer interface {
+	Player
+	Name() string
+	Description() string
+}
+
 // PlayerID identifies a Player in a game.
 type PlayerID int
 

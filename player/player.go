@@ -9,16 +9,9 @@ import (
 	"github.com/jwowillo/landgrab/game"
 )
 
-// Described ...
-type Described interface {
-	game.Player
-	Name() string
-	Description() string
-}
-
 // All ...
-func All() []Described {
-	return []Described{
+func All() []game.DescribedPlayer {
+	return []game.DescribedPlayer{
 		NewRandom(),
 		NewGreedy(),
 		NewSearch(),

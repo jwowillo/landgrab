@@ -3,20 +3,14 @@ package api
 import (
 	"github.com/jwowillo/landgrab/convert"
 	"github.com/jwowillo/landgrab/player"
-	"github.com/jwowillo/pack"
 	"github.com/jwowillo/trim"
 	"github.com/jwowillo/trim/application"
 	"github.com/jwowillo/trim/controller"
 	"github.com/jwowillo/trim/response"
 )
 
-const (
-	// playersPath is the playersController's path.
-	playersPath = "/players"
-	// playersDescriptionPath is the path to the playersController's
-	// description.
-	playersDescriptionPath = descriptionBase + "players.json"
-)
+// playersPath is the playersController's path.
+const playersPath = "/players"
 
 // playersController is a trim.Controller used to retrieve all implemented
 // game.Players.
@@ -31,7 +25,11 @@ func (c playersController) Path() string {
 
 // Description of the playersController located at playersDescriptionPath.
 func (c playersController) Description() *application.ControllerDescription {
-	return must(read(playersDescriptionPath))
+	return &application.ControllerDescription{
+		Get: &application.MethodDescription{
+			Response: "list of Players which can be used",
+		},
+	}
 }
 
 // Handle the trim.Request by returning all the implemented game.Players.
@@ -40,5 +38,7 @@ func (c playersController) Handle(r trim.Request) trim.Response {
 	for _, p := range player.All() {
 		ps = append(ps, convert.PlayerToJSONPlayer(p))
 	}
-	return response.NewJSON(pack.AnyMap{"players": ps}, trim.CodeOK)
+	return response.NewJSON(map[string][]convert.JSONPlayer{
+		"players": ps,
+	}, trim.CodeOK)
 }

@@ -6,8 +6,67 @@ import (
 	"time"
 
 	"github.com/jwowillo/landgrab/game"
-	"github.com/jwowillo/landgrab/player"
 )
+
+// PlayToJSONPlay ...
+func PlayToJSONPlay(p game.Play, s *game.State) JSONPlay {
+	ms := make([]JSONMove, len(p))
+	for i, m := range p {
+		ms[i] = MoveToJSONMove(m, s)
+	}
+	return JSONPlay{Moves: ms}
+}
+
+// JSONToJSONPlay ...
+func JSONToJSONPlay(bs []byte) (JSONPlay, error) {
+	p := JSONPlay{}
+	err := json.Unmarshal(bs, &p)
+	return p, err
+}
+
+// JSONPlayToPlay ...
+func JSONPlayToPlay(p JSONPlay) game.Play {
+	play := make(game.Play, len(p.Moves))
+	for i, move := range p.Moves {
+		play[i] = JSONMoveToMove(move)
+	}
+	return play
+}
+
+// JSONToPlay ...
+func JSONToPlay(bs []byte) (game.Play, error) {
+	play, err := JSONToJSONPlay(bs)
+	return JSONPlayToPlay(play), err
+}
+
+// MoveToJSONMove ...
+func MoveToJSONMove(m game.Move, s *game.State) JSONMove {
+	return JSONMove{
+		Direction: m.Direction(),
+		Piece:     PieceToJSONPiece(s, m.Piece()),
+	}
+}
+
+// JSONToJSONMove ...
+func JSONToJSONMove(bs []byte) (JSONMove, error) {
+	m := JSONMove{}
+	err := json.Unmarshal(bs, &m)
+	return m, err
+}
+
+// JSONMoveToMove ...
+func JSONMoveToMove(m JSONMove) game.Move {
+	return game.NewMove(
+		JSONPieceToPiece(m.Piece),
+		m.Direction,
+	)
+}
+
+// JSONToMove ...
+func JSONToMove(bs []byte) (game.Move, error) {
+	move, err := JSONToJSONMove(bs)
+	return JSONMoveToMove(move), err
+}
 
 // PieceToJSONPiece ...
 func PieceToJSONPiece(s *game.State, p game.Piece) JSONPiece {
@@ -40,7 +99,7 @@ func JSONToPiece(bs []byte) (game.Piece, error) {
 }
 
 // StateToJSONState ...
-func StateToJSONState(s *game.State, p1, p2 player.Described) JSONState {
+func StateToJSONState(s *game.State, p1, p2 game.DescribedPlayer) JSONState {
 	raw := JSONState{}
 	if s.Winner() != game.NoPlayer {
 		raw.Winner = s.Winner()
@@ -63,13 +122,13 @@ func JSONToJSONState(bs []byte) (JSONState, error) {
 }
 
 // JSONStateToState ...
-func JSONStateToState(s JSONState) (
+func JSONStateToState(s JSONState, ps []game.DescribedPlayer) (
 	*game.State,
-	player.Described,
-	player.Described,
+	game.DescribedPlayer,
+	game.DescribedPlayer,
 ) {
-	p1 := JSONPlayerToPlayer(s.Player1)
-	p2 := JSONPlayerToPlayer(s.Player2)
+	p1 := JSONPlayerToPlayer(s.Player1, ps)
+	p2 := JSONPlayerToPlayer(s.Player2, ps)
 	var p1Pieces []game.Piece
 	var p2Pieces []game.Piece
 	Pieces := make(map[game.Cell]game.Piece)
@@ -93,14 +152,14 @@ func JSONStateToState(s JSONState) (
 }
 
 // JSONToState ...
-func JSONToState(bs []byte) (
+func JSONToState(bs []byte, ps []game.DescribedPlayer) (
 	*game.State,
-	player.Described,
-	player.Described,
+	game.DescribedPlayer,
+	game.DescribedPlayer,
 	error,
 ) {
 	rs, err := JSONToJSONState(bs)
-	s, p1, p2 := JSONStateToState(rs)
+	s, p1, p2 := JSONStateToState(rs, ps)
 	if p1 == nil || p2 == nil {
 		err = errors.New("bad \"game.Player\"")
 	}
@@ -108,7 +167,7 @@ func JSONToState(bs []byte) (
 }
 
 // PlayerToJSONPlayer ...
-func PlayerToJSONPlayer(p player.Described) JSONPlayer {
+func PlayerToJSONPlayer(p game.DescribedPlayer) JSONPlayer {
 	return JSONPlayer{Name: p.Name(), Desc: p.Description()}
 }
 
@@ -120,8 +179,11 @@ func JSONToJSONPlayer(bs []byte) (JSONPlayer, error) {
 }
 
 // JSONPlayerToPlayer ...
-func JSONPlayerToPlayer(raw JSONPlayer) player.Described {
-	for _, p := range player.All() {
+func JSONPlayerToPlayer(
+	raw JSONPlayer,
+	ps []game.DescribedPlayer,
+) game.DescribedPlayer {
+	for _, p := range ps {
 		if p.Name() == raw.Name {
 			return p
 		}
@@ -130,9 +192,12 @@ func JSONPlayerToPlayer(raw JSONPlayer) player.Described {
 }
 
 // JSONToPlayer ...
-func JSONToPlayer(bs []byte) (player.Described, error) {
+func JSONToPlayer(
+	bs []byte,
+	ps []game.DescribedPlayer,
+) (game.DescribedPlayer, error) {
 	p, err := JSONToJSONPlayer(bs)
-	return JSONPlayerToPlayer(p), err
+	return JSONPlayerToPlayer(p, ps), err
 }
 
 // RulesToJSONRules ...
