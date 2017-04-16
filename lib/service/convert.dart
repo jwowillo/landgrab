@@ -20,10 +20,9 @@ State mapToState(Map<String, dynamic> map) {
   Set<Piece> player1Pieces = new Set();
   Set<Piece> player2Pieces = new Set();
   Map<Cell, Piece> cells = new Map();
-  for (String id in map['pieces'].keys) {
-    Map<String, dynamic> piece = map['pieces'][id];
+  for (Map<String, dynamic> piece in map['pieces']) {
     Cell cell = new Cell(piece['cell'][0], piece['cell'][1]);
-    Piece built = new Piece(int.parse(id), piece['life'], piece['damage']);
+    Piece built = new Piece(piece['id'], piece['life'], piece['damage']);
     if (piece['player'] == 1) {
       player1Pieces.add(built);
     }
@@ -66,7 +65,7 @@ Map<String, dynamic> stateToMap(State s) {
     }
   }
   map['rules'] = rulesToMap(s.rules);
-  Map<String, dynamic> pieces = {};
+  List<Map<String, dynamic>> pieces = [];
   Set<Piece> allPieces = new Set();
   allPieces.addAll(s.player1Pieces);
   allPieces.addAll(s.player2Pieces);
@@ -75,6 +74,7 @@ Map<String, dynamic> stateToMap(State s) {
       continue;
     }
     Map<String, dynamic> piece = {};
+    piece['id'] = p.id;
     piece['damage'] = p.damage;
     piece['life'] = p.life;
     if (s.playerForPiece(p) == PlayerID.player1) {
@@ -85,7 +85,7 @@ Map<String, dynamic> stateToMap(State s) {
     }
     Cell c = s.cellForPiece(p);
     piece['cell'] = [c.row, c.column];
-    pieces[p.id.toString()] = piece;
+    pieces.add(piece);
   }
   map['pieces'] = pieces;
   return map;

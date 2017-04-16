@@ -3,6 +3,7 @@ package api
 import (
 	"net/url"
 
+	"github.com/jwowillo/landgrab/convert"
 	"github.com/jwowillo/landgrab/game"
 	"github.com/jwowillo/landgrab/player"
 	"github.com/jwowillo/trim"
@@ -53,7 +54,10 @@ func (c newController) Handle(r trim.Request) trim.Response {
 	p1 := r.Context()[newPlayer1Key].(player.Described)
 	p2 := r.Context()[newPlayer2Key].(player.Described)
 	s := game.NewState(game.StandardRules, p1, p2)
-	return response.NewJSON(stateToMap(s, p1, p2), trim.CodeOK)
+	return response.NewJSON(
+		convert.StateToJSONState(s, p1, p2),
+		trim.CodeOK,
+	)
 }
 
 // validateNew is a validating trim.Trimming that validates input to the
@@ -82,8 +86,8 @@ func (v validateNew) Handle(r trim.Request) trim.Response {
 	if err != nil {
 		return errBadPlayer
 	}
-	p1, err := jsonToPlayer([]byte(up1))
-	p2, err := jsonToPlayer([]byte(up2))
+	p1, err := convert.JSONToPlayer([]byte(up1))
+	p2, err := convert.JSONToPlayer([]byte(up2))
 	if p1 == nil || p2 == nil || err != nil {
 		return errBadPlayer
 	}

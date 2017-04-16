@@ -22,7 +22,7 @@ func (p Random) Name() string {
 
 // Description ...
 func (p Random) Description() string {
-	return "chooses a random move"
+	return "chooses a random play"
 }
 
 // Play the turn by returning a random game.Play in the set of legal game.Plays

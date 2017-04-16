@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/jwowillo/landgrab/convert"
 	"github.com/jwowillo/landgrab/player"
 	"github.com/jwowillo/pack"
 	"github.com/jwowillo/trim"
@@ -35,9 +36,9 @@ func (c playersController) Description() *application.ControllerDescription {
 
 // Handle the trim.Request by returning all the implemented game.Players.
 func (c playersController) Handle(r trim.Request) trim.Response {
-	var ps []jsonPlayer
+	var ps []convert.JSONPlayer
 	for _, p := range player.All() {
-		ps = append(ps, playerToJSON(p))
+		ps = append(ps, convert.PlayerToJSONPlayer(p))
 	}
 	return response.NewJSON(pack.AnyMap{"players": ps}, trim.CodeOK)
 }

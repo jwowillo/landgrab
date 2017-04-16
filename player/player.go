@@ -22,6 +22,8 @@ func All() []Described {
 		NewRandom(),
 		NewGreedy(),
 		NewSearch(),
+		NewAPI(),
+		NewHuman(),
 	}
 }
 

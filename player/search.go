@@ -23,7 +23,7 @@ func (p Search) Name() string {
 
 // Description ...
 func (p Search) Description() string {
-	return "chooses the move leading to the best move within a radius"
+	return "chooses the play leading to the best play within a radius"
 }
 
 // Play the turn by returning a random game.Play in the set of the highest-value

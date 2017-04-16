@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/jwowillo/landgrab/convert"
 	"github.com/jwowillo/landgrab/game"
 	"github.com/jwowillo/pack"
 	"github.com/jwowillo/trim"
@@ -36,6 +37,6 @@ func (c rulesController) Description() *application.ControllerDescription {
 // Handle the trim.Request by returning the standard game.Rules.
 func (c rulesController) Handle(r trim.Request) trim.Response {
 	return response.NewJSON(pack.AnyMap{
-		"rules": rulesToJSON(game.StandardRules),
+		"rules": convert.RulesToJSONRules(game.StandardRules),
 	}, trim.CodeOK)
 }

@@ -1,3 +1,8 @@
-Move things out of app that don't run
-Don't ignore errors in api, fix after json is properly used.
-dont use pack.AnyMap in interfaces in trim
+* Move things out of app that don't run
+* Don't ignore errors in api, fix after json is properly used.
+* Dont use pack.AnyMap in interfaces in trim
+* Put descriptions in code
+* Add human and API to backend
+* Make DescribedResource interface that json objects satisfy that includes
+  descriptions
+* Add API endpoint called moves that returns moves for each piece at a state

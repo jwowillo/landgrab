@@ -23,8 +23,11 @@ class StateService {
   /// Next State for the given State.
   Future<State> next(State s) async {
     String serialized = encode(stateToMap(s));
+    print(s);
+    print(stateToMap(s));
     Map<String, dynamic> json =
         await api('/next', query: {'state': serialized});
+    print(json);
     return mapToState(json['data']);
   }
 }

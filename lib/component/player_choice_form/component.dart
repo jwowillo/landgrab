@@ -26,4 +26,10 @@ class PlayerChoiceFormComponent {
   /// chosen emits Players whenever a new Player is chosen.
   @Output()
   final EventEmitter<Player> chosen = new EventEmitter();
+
+  List<Player> get sortedPlayers {
+    List<Player> ps = players.toList();
+    ps.sort((Player a, Player b) => a.name.compareTo(b.name));
+    return ps;
+  }
 }

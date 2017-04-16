@@ -1,12 +1,11 @@
 package api
 
 import (
-	"encoding/json"
 	"net/url"
 
+	"github.com/jwowillo/landgrab/convert"
 	"github.com/jwowillo/landgrab/game"
 	"github.com/jwowillo/landgrab/player"
-	"github.com/jwowillo/pack"
 	"github.com/jwowillo/trim"
 	"github.com/jwowillo/trim/application"
 	"github.com/jwowillo/trim/response"
@@ -58,7 +57,10 @@ func (c nextController) Handle(r trim.Request) trim.Response {
 	s := game.NextState(r.Context()[nextStateKey].(*game.State))
 	p1 := r.Context()[nextPlayer1Key].(player.Described)
 	p2 := r.Context()[nextPlayer2Key].(player.Described)
-	return response.NewJSON(stateToMap(s, p1, p2), trim.CodeOK)
+	return response.NewJSON(
+		convert.StateToJSONState(s, p1, p2),
+		trim.CodeOK,
+	)
 }
 
 // validateNext is a validating trim.Trimming that validates input to the
@@ -85,11 +87,7 @@ func (v validateNext) Handle(r trim.Request) trim.Response {
 	if err != nil {
 		return errBadState
 	}
-	m := make(pack.AnyMap)
-	if err := json.Unmarshal([]byte(unquoted), &m); err != nil {
-		return errBadState
-	}
-	s, p1, p2, err := mapToState(m)
+	s, p1, p2, err := convert.JSONToState([]byte(unquoted))
 	if s.Rules() != game.StandardRules {
 		return errBadState
 	}

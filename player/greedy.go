@@ -23,7 +23,7 @@ func (p Greedy) Name() string {
 
 // Description ...
 func (p Greedy) Description() string {
-	return "chooses the best move directly available"
+	return "chooses the best play directly available"
 }
 
 // Play the turn by returning a random game.Play in the set of the highest-value
