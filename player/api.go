@@ -6,8 +6,6 @@ import (
 	"log"
 	"net/http"
 	"net/url"
-	"reflect"
-	"strings"
 
 	"github.com/jwowillo/landgrab/convert"
 	"github.com/jwowillo/landgrab/game"
@@ -30,7 +28,7 @@ func (p *API) SetURL(url string) {
 
 // Name ...
 func (p *API) Name() string {
-	return strings.ToLower(reflect.TypeOf(p).Name())
+	return "api"
 }
 
 // Description ...

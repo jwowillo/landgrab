@@ -31,7 +31,7 @@ class GameComponent implements OnInit {
 
   Rules rules;
 
-  final Set<Player> players = new Set();
+  final List<Player> players = [];
 
   Player player1;
 
@@ -46,6 +46,7 @@ class GameComponent implements OnInit {
     try {
       rules = await _rulesService.rules();
       players.addAll(await _playersService.players());
+      players.sort((Player a, Player b) => a.name.compareTo(b.name));
       player1 = players.first;
       player2 = players.first;
     } catch (error) {

@@ -1,12 +1,18 @@
 <h3 class='{{ id | playerIDToString | toLowerNoSpace }}'>{{ id | playerIDToString }}:</h3>
-<p *ngFor='let player of sortedPlayers; let i = index'>
-  <input
-    type='radio'
-    name='{{ id | playerIDToString | toLowerNoSpace }}'
-    [value]='player.name'
-    [checked]='i == 0'
-    (change)='chosen.emit(player)'
-    />
-  <span style='text-transform: capitalize'><b>{{ player.name }}</b></span>:
-  {{ player.description }}
-</p>
+<div *ngFor='let player of players; let i = index'>
+  <p>
+    <input
+      type='radio'
+      name='{{ id | playerIDToString | toLowerNoSpace }}'
+      [value]='player.name'
+      [checked]='i == 0'
+      (change)='emit(player)' />
+    <b style='text-transform: capitalize'>{{ player.name }}</b>:
+    {{ player.description }}
+    <br />
+    <span *ngIf="player.name == 'api'">
+      <b>URL:</b>
+      <input type='url' [(ngModel)]='url' (ngModelChange)='emit(player)' />
+    </span>
+  </p>
+</div>

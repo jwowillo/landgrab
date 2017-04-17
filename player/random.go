@@ -1,11 +1,6 @@
 package player
 
-import (
-	"reflect"
-	"strings"
-
-	"github.com/jwowillo/landgrab/game"
-)
+import "github.com/jwowillo/landgrab/game"
 
 // Random game.Player chooses a random game.Play from all legal game.Plays.
 type Random struct{}
@@ -17,7 +12,7 @@ func NewRandom() Random {
 
 // Name ...
 func (p Random) Name() string {
-	return strings.ToLower(reflect.TypeOf(p).Name())
+	return "random"
 }
 
 // Description ...

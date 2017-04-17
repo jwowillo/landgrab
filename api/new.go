@@ -23,7 +23,9 @@ const (
 	newPlayer1Key = "player1"
 	// newPlayer2Key is the key for the game.Player 2 passed in the
 	// trim.Context.
-	newPlayer2Key = "player2"
+	newPlayer2Key     = "player2"
+	newJSONPlayer1Key = "json-player1"
+	newJSONPlayer2Key = "json-player2"
 )
 
 // newController is a trim.Controller used to create new game.States to play
@@ -59,11 +61,13 @@ func (c newController) Trimmings() []trim.Trimming {
 func (c newController) Handle(r trim.Request) trim.Response {
 	p1 := r.Context()[newPlayer1Key].(game.DescribedPlayer)
 	p2 := r.Context()[newPlayer2Key].(game.DescribedPlayer)
+	jp1 := r.Context()[newJSONPlayer1Key].(convert.JSONPlayer)
+	jp2 := r.Context()[newJSONPlayer2Key].(convert.JSONPlayer)
 	s := game.NewState(game.StandardRules, p1, p2)
-	return response.NewJSON(
-		convert.StateToJSONState(s),
-		trim.CodeOK,
-	)
+	js := convert.StateToJSONState(s)
+	js.Player1 = jp1
+	js.Player2 = jp2
+	return response.NewJSON(js, trim.CodeOK)
 }
 
 // validateNew is a validating trim.Trimming that validates input to the
@@ -92,8 +96,20 @@ func (v validateNew) Handle(r trim.Request) trim.Response {
 	if err != nil {
 		return errBadPlayer
 	}
-	p1, err := convert.JSONToPlayer([]byte(up1), player.All())
-	p2, err := convert.JSONToPlayer([]byte(up2), player.All())
+	jp1, err := convert.JSONToJSONPlayer([]byte(up1))
+	if err != nil {
+		return errBadPlayer
+	}
+	jp2, err := convert.JSONToJSONPlayer([]byte(up2))
+	if err != nil {
+		return errBadPlayer
+	}
+	p1 := convert.JSONPlayerToPlayer(jp1, player.All())
+	p2 := convert.JSONPlayerToPlayer(jp2, player.All())
+	handleSpecial(p1, jp1)
+	handleSpecial(p2, jp2)
+	r.SetContext(newJSONPlayer1Key, jp1)
+	r.SetContext(newJSONPlayer2Key, jp2)
 	if p1 == nil || p2 == nil || err != nil {
 		return errBadPlayer
 	}

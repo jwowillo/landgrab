@@ -54,8 +54,6 @@ Map<String, dynamic> stateToMap(State s) {
   if (s.currentPlayer == PlayerID.player2) {
     map['currentPlayer'] = 2;
   }
-  map['player1'] = playerToMap(s.player1);
-  map['player2'] = playerToMap(s.player2);
   if (s.winner != PlayerID.noPlayer) {
     if (s.winner == PlayerID.player1) {
       map['winner'] = 1;
@@ -88,6 +86,8 @@ Map<String, dynamic> stateToMap(State s) {
     pieces.add(piece);
   }
   map['pieces'] = pieces;
+  map['player1'] = playerToMap(s.player1);
+  map['player2'] = playerToMap(s.player2);
   return map;
 }
 
@@ -118,7 +118,11 @@ Map<String, dynamic> rulesToMap(Rules r) {
 }
 
 Map<String, dynamic> playerToMap(Player p) {
-  return {'name': p.name, 'description': p.description};
+  Map<String, dynamic> map = {'name': p.name, 'description': p.description};
+  if (p.arguments != null) {
+    map['arguments'] = p.arguments;
+  }
+  return map;
 }
 
 Player mapToPlayer(Map<String, dynamic> m) {

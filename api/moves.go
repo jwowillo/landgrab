@@ -1,11 +1,8 @@
 package api
 
 import (
-	"net/url"
-
 	"github.com/jwowillo/landgrab/convert"
 	"github.com/jwowillo/landgrab/game"
-	"github.com/jwowillo/landgrab/player"
 	"github.com/jwowillo/trim"
 	"github.com/jwowillo/trim/application"
 	"github.com/jwowillo/trim/response"
@@ -71,18 +68,8 @@ func newValidateMoves() validateMoves {
 }
 
 func (v validateMoves) Handle(r trim.Request) trim.Response {
-	sArgs := r.FormArgs()[movesStateKey]
-	if len(sArgs) != 1 {
-		return errBadState
+	if err := parseState(r, movesStateKey, ""); err != nil {
+		return err
 	}
-	unquoted, err := url.QueryUnescape(sArgs[0])
-	if err != nil {
-		return errBadState
-	}
-	s, err := convert.JSONToState([]byte(unquoted), player.All())
-	if s.Rules() != game.StandardRules || err != nil {
-		return errBadState
-	}
-	r.SetContext(movesStateKey, s)
 	return v.handler.Handle(r)
 }

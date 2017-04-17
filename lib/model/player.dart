@@ -9,8 +9,12 @@ class Player {
   /// description of the Player.
   final String description;
 
-  final Map<String, dynamic> arguments;
+  Map<String, dynamic> arguments = {};
 
   /// Player constructor initializes the Player's name and description.
-  const Player(this.name, {this.description: '', this.arguments});
+  Player(this.name, {this.description: '', this.arguments}) {
+    if (arguments == null) {
+      arguments = {};
+    }
+  }
 }

@@ -1,11 +1,6 @@
 package player
 
-import (
-	"reflect"
-	"strings"
-
-	"github.com/jwowillo/landgrab/game"
-)
+import "github.com/jwowillo/landgrab/game"
 
 // Human ...
 type Human struct {
@@ -24,7 +19,7 @@ func (p *Human) SetPlay(play game.Play) {
 
 // Name ...
 func (p *Human) Name() string {
-	return strings.ToLower(reflect.TypeOf(p).Name())
+	return "human"
 }
 
 // Description ...

@@ -24,8 +24,9 @@ const (
 	nextPath = "/next"
 	// nextStateKey is the key for the game.State passed in the
 	// trim.Context.
-	nextStateKey = "state"
-	nextPlayKey  = "play"
+	nextStateKey     = "state"
+	nextJSONStateKey = "json-state"
+	nextPlayKey      = "play"
 )
 
 // nextController is a trim.Controller used to get the next game.State from a
@@ -60,13 +61,17 @@ func (c nextController) Trimmings() []trim.Trimming {
 // passed in the trim.Requests context.
 func (c nextController) Handle(r trim.Request) trim.Response {
 	s := r.Context()[nextStateKey].(*game.State)
+	ojs := r.Context()[nextJSONStateKey].(convert.JSONState)
 	p, ok := r.Context()[nextPlayKey]
 	if ok {
 		s = game.NextStateWithPlay(s, p.(game.Play))
 	} else {
 		s = game.NextState(s)
 	}
-	return response.NewJSON(convert.StateToJSONState(s), trim.CodeOK)
+	js := convert.StateToJSONState(s)
+	js.Player1 = ojs.Player1
+	js.Player2 = ojs.Player2
+	return response.NewJSON(js, trim.CodeOK)
 }
 
 // validateNext is a validating trim.Trimming that validates input to the
@@ -85,25 +90,9 @@ func newValidateNext() validateNext {
 //
 // If the query arguments aren't a game.State, errBadState is returned.
 func (v validateNext) Handle(r trim.Request) trim.Response {
-	sArgs := r.FormArgs()[nextStateKey]
-	if len(sArgs) != 1 {
-		return errBadState
+	if err := parseState(r, nextStateKey, nextJSONStateKey); err != nil {
+		return err
 	}
-	unquoted, err := url.QueryUnescape(sArgs[0])
-	if err != nil {
-		return errBadState
-	}
-	jsonS, err := convert.JSONToJSONState([]byte(unquoted))
-	if err != nil {
-		return errBadState
-	}
-	s := convert.JSONStateToState(jsonS, player.All())
-	if s.Rules() != game.StandardRules || err != nil {
-		return errBadState
-	}
-	handleSpecial(s.Player1().(game.DescribedPlayer), jsonS.Player1)
-	handleSpecial(s.Player2().(game.DescribedPlayer), jsonS.Player2)
-	r.SetContext(nextStateKey, s)
 	pArgs, ok := r.FormArgs()[nextPlayKey]
 	if ok {
 		if len(pArgs) != 1 {
@@ -120,6 +109,30 @@ func (v validateNext) Handle(r trim.Request) trim.Response {
 		r.SetContext(nextPlayKey, p)
 	}
 	return v.handler.Handle(r)
+}
+
+func parseState(r trim.Request, skey, jskey string) trim.Response {
+	sArgs := r.FormArgs()[skey]
+	if len(sArgs) != 1 {
+		return errBadState
+	}
+	unquoted, err := url.QueryUnescape(sArgs[0])
+	if err != nil {
+		return errBadState
+	}
+	js, err := convert.JSONToJSONState([]byte(unquoted))
+	if err != nil {
+		return errBadState
+	}
+	s := convert.JSONStateToState(js, player.All())
+	if s.Rules() != game.StandardRules {
+		return errBadState
+	}
+	handleSpecial(s.Player1().(game.DescribedPlayer), js.Player1)
+	handleSpecial(s.Player2().(game.DescribedPlayer), js.Player2)
+	r.SetContext(jskey, js)
+	r.SetContext(skey, s)
+	return nil
 }
 
 func handleSpecial(p game.DescribedPlayer, raw convert.JSONPlayer) {

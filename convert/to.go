@@ -105,7 +105,7 @@ func StateToJSONState(s *game.State) JSONState {
 	}
 	raw.CurrentPlayer = s.CurrentPlayer()
 	p1, ok := s.Player1().(game.DescribedPlayer)
-	p2, ok := s.Player1().(game.DescribedPlayer)
+	p2, ok := s.Player2().(game.DescribedPlayer)
 	if !ok {
 		p1 = nil
 		p2 = nil

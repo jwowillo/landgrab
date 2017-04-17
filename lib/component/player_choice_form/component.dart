@@ -27,9 +27,12 @@ class PlayerChoiceFormComponent {
   @Output()
   final EventEmitter<Player> chosen = new EventEmitter();
 
-  List<Player> get sortedPlayers {
-    List<Player> ps = players.toList();
-    ps.sort((Player a, Player b) => a.name.compareTo(b.name));
-    return ps;
+  String url = '';
+
+  emit(Player p) {
+    if (p.name == 'api') {
+      p.arguments['url'] = url;
+    }
+    chosen.emit(p);
   }
 }

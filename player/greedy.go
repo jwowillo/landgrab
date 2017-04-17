@@ -1,11 +1,6 @@
 package player
 
-import (
-	"reflect"
-	"strings"
-
-	"github.com/jwowillo/landgrab/game"
-)
+import "github.com/jwowillo/landgrab/game"
 
 // Greedy game.Player chooses the game.Play with the greatest value from all
 // legal game.Plays.
@@ -18,7 +13,7 @@ func NewGreedy() Greedy {
 
 // Name ...
 func (p Greedy) Name() string {
-	return strings.ToLower(reflect.TypeOf(p).Name())
+	return "greedy"
 }
 
 // Description ...
