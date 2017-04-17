@@ -33,7 +33,8 @@ func (p *API) Name() string {
 
 // Description ...
 func (p *API) Description() string {
-	return "asks API at the set URL for the play to make"
+	return `passes API at URL a State at key "state" and makes the returned
+	Play embedded in an object under key "data"`
 }
 
 // Play ...
@@ -44,7 +45,7 @@ func (p *API) Play(s *game.State) game.Play {
 		log.Println(err)
 		return nil
 	}
-	query := "?" + url.QueryEscape(string(bs))
+	query := "?state=" + url.QueryEscape(string(bs))
 	resp, err := http.Get(p.url + query)
 	if err != nil {
 		log.Println(err)
@@ -60,7 +61,17 @@ func (p *API) Play(s *game.State) game.Play {
 		log.Println(err)
 		return nil
 	}
-	play, err := convert.JSONToPlay(body)
+	raw := make(map[string]interface{})
+	if err = json.Unmarshal(body, &raw); err != nil {
+		log.Println(err)
+		return nil
+	}
+	bs, err = json.Marshal(raw["data"])
+	if err != nil {
+		log.Println(err)
+		return nil
+	}
+	play, err := convert.JSONToPlay(bs)
 	if err != nil {
 		log.Println(err)
 		return nil
