@@ -33,7 +33,7 @@ func New(r io.Reader, w io.Writer, wf func(), sw bool) *CLI {
 // Run ...
 //
 // If player 1 or player 2 are nil, ask for them.
-func (cli *CLI) Run(ps []player.Described, p1, p2 game.Player) {
+func (cli *CLI) Run(ps []game.DescribedPlayer, p1, p2 game.DescribedPlayer) {
 	fmt.Fprintf(cli.rw, clear)
 	fmt.Fprintf(cli.rw, title)
 	fmt.Fprintln(cli.rw)
@@ -60,11 +60,11 @@ func (cli *CLI) Run(ps []player.Described, p1, p2 game.Player) {
 // choosePlayer prompts for a single game.Player for the game.PlayerID and
 // returns the choice.
 func (cli *CLI) choosePlayer(
-	ps []player.Described,
+	ps []game.DescribedPlayer,
 	id game.PlayerID,
-) game.Player {
-	players := make(map[string]game.Player)
-	var p game.Player
+) game.DescribedPlayer {
+	players := make(map[string]game.DescribedPlayer)
+	var p game.DescribedPlayer
 	var playerNames []string
 	for _, p := range ps {
 		playerNames = append(
@@ -87,6 +87,13 @@ func (cli *CLI) choosePlayer(
 		var choice string
 		fmt.Fscanf(cli.rw, "%s", &choice)
 		p = players[choice]
+		if choice == "api" {
+			fmt.Fprintf(cli.rw, "Enter URL: ")
+			cli.writeFunc()
+			var url string
+			fmt.Fscanf(cli.rw, "%s", &url)
+			p.(*player.API).SetURL(url)
+		}
 	}
 	return p
 }

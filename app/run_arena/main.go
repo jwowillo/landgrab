@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/jwowillo/landgrab/arena"
 	"github.com/jwowillo/landgrab/game"
@@ -11,10 +12,6 @@ import (
 )
 
 func main() {
-	if player1 == "human" || player2 == "human" {
-		fmt.Println("human isn't a valid player")
-		os.Exit(1)
-	}
 	players := make(map[string]game.Player)
 	for _, p := range player.All() {
 		if p.Name() == "human" {
@@ -22,11 +19,37 @@ func main() {
 		}
 		players[p.Name()] = p
 	}
-	p1, p1Ok := players[player1]
-	p2, p2Ok := players[player2]
+	trimmed1 := player1
+	if strings.Contains(player1, ":") {
+		trimmed1 = strings.Split(player1, ":")[0]
+	}
+	trimmed2 := player2
+	if strings.Contains(player2, ":") {
+		trimmed2 = strings.Split(player2, ":")[0]
+	}
+	p1, p1Ok := players[trimmed1]
+	p2, p2Ok := players[trimmed2]
 	if !p1Ok || !p2Ok {
 		fmt.Println("invalid players chosen")
 		os.Exit(1)
+	}
+	if strings.HasPrefix(player1, "api") {
+		parts := strings.Split(player1, "api:")
+		if len(parts) != 2 {
+			fmt.Println("invalid api format")
+			os.Exit(1)
+		}
+		url := parts[1]
+		p1.(*player.API).SetURL(url)
+	}
+	if strings.HasPrefix(player2, "api") {
+		parts := strings.Split(player2, "api:")
+		if len(parts) != 2 {
+			fmt.Println("invalid api format")
+			os.Exit(1)
+		}
+		url := parts[1]
+		p2.(*player.API).SetURL(url)
 	}
 	if n < 0 {
 		fmt.Println("n must be non-negative")
