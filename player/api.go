@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/jwowillo/landgrab/convert"
 	"github.com/jwowillo/landgrab/game"
@@ -13,7 +15,8 @@ import (
 
 // API ...
 type API struct {
-	url string
+	url    string
+	client *http.Client
 }
 
 // NewAPI ...
@@ -39,6 +42,11 @@ func (p *API) Description() string {
 
 // Play ...
 func (p *API) Play(s *game.State) game.Play {
+	if p.client == nil {
+		p.client = &http.Client{Transport: &http.Transport{
+			Dial: makeTimeout(s.Rules().TimerDuration()),
+		}}
+	}
 	js := convert.StateToJSONState(s)
 	bs, err := json.Marshal(js)
 	if err != nil {
@@ -46,7 +54,7 @@ func (p *API) Play(s *game.State) game.Play {
 		return nil
 	}
 	query := "?state=" + url.QueryEscape(string(bs))
-	resp, err := http.Get(p.url + query)
+	resp, err := p.client.Get(p.url + query)
 	if err != nil {
 		log.Println(err)
 		return nil
@@ -77,4 +85,10 @@ func (p *API) Play(s *game.State) game.Play {
 		return nil
 	}
 	return play
+}
+
+func makeTimeout(d time.Duration) func(string, string) (net.Conn, error) {
+	return func(network, addr string) (net.Conn, error) {
+		return net.DialTimeout(network, addr, d)
+	}
 }

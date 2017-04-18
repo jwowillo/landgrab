@@ -1,3 +1,14 @@
 <h2>API</h2>
 <h3>Resources</h3>
+<ul *ngFor='let resource of resources'>
+  <li><resource [resource]='resource'></resource></li>
+</ul>
 <h3>Actions</h3>
+<ul *ngFor='let action of actions'>
+  <li>
+    <p><b>{{ action.path }}</b></p>
+    <controller-description [description]='action.description'>
+    </controller-description>
+  </li>
+</ul>
+

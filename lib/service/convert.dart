@@ -1,9 +1,92 @@
 import 'package:angular2/core.dart';
 
+import 'package:landgrab/model/api.dart';
 import 'package:landgrab/model/board.dart';
 import 'package:landgrab/model/player.dart';
 import 'package:landgrab/model/rules.dart';
 import 'package:landgrab/model/state.dart';
+
+/// mapToResource
+Resource mapToResource(Map<String, dynamic> map) {
+  return new Resource(map['name'], map['description'], map['structure']);
+}
+
+/// mapToAction
+Action mapToAction(Map<String, dynamic> map) {
+  return new Action(
+      map['path'], mapToControllerDescription(map['description']));
+}
+
+/// mapToControllerDescription
+ControllerDescription mapToControllerDescription(Map<String, dynamic> map) {
+  MethodDescription getMethod;
+  if (map.containsKey('get')) {
+    getMethod = mapToMethodDescription('get', map['get']);
+  }
+  MethodDescription postMethod;
+  if (map.containsKey('post')) {
+    postMethod = mapToMethodDescription('post', map['post']);
+  }
+  MethodDescription putMethod;
+  if (map.containsKey('put')) {
+    putMethod = mapToMethodDescription('put', map['put']);
+  }
+  MethodDescription deleteMethod;
+  if (map.containsKey('delete')) {
+    deleteMethod = mapToMethodDescription('delete', map['delete']);
+  }
+  MethodDescription optionsMethod;
+  if (map.containsKey('options')) {
+    optionsMethod = mapToMethodDescription('options', map['options']);
+  }
+  MethodDescription headMethod;
+  if (map.containsKey('head')) {
+    headMethod = mapToMethodDescription('head', map['head']);
+  }
+  MethodDescription connectMethod;
+  if (map.containsKey('connect')) {
+    connectMethod = mapToMethodDescription('connect', map['connect']);
+  }
+  return new ControllerDescription(
+      getMethod: getMethod,
+      postMethod: postMethod,
+      putMethod: putMethod,
+      deleteMethod: deleteMethod,
+      optionsMethod: optionsMethod,
+      headMethod: headMethod,
+      connectMethod: connectMethod);
+}
+
+/// mapToMethodDescription
+MethodDescription mapToMethodDescription(
+    String method, Map<String, dynamic> map) {
+  Map<String, String> urlArguments;
+  if (map.containsKey('urlArguments')) {
+    urlArguments = map['urlArguments'];
+  }
+  Map<String, String> formArguments;
+  if (map.containsKey('formArguments')) {
+    formArguments = map['formArguments'];
+  }
+  String response;
+  if (map.containsKey('response')) {
+    response = map['response'];
+  }
+  String authentication;
+  if (map.containsKey('authentication')) {
+    authentication = map['authentication'];
+  }
+  String limiting;
+  if (map.containsKey('limiting')) {
+    limiting = map['limiting'];
+  }
+  return new MethodDescription(method,
+      urlArguments: urlArguments,
+      formArguments: formArguments,
+      response: response,
+      authentication: authentication,
+      limiting: limiting);
+}
 
 /// mapToState converts a map of the form the API server returns for States
 /// to a State.

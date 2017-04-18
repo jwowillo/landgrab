@@ -17,7 +17,7 @@
   <p>
     <b>Current Player:</b>
     <span
-      class='{{ state.currentPlayer | playerIDToString | toLowerNoSpace }}'
+      class='{{ state.currentPlayer | playerIDToString | lowercase | noSpace }}'
     >
       {{ state.currentPlayer  | playerIDToString }}
     </span>
@@ -26,7 +26,7 @@
   <p *ngIf='isWinner(state.winner)'>
     <b>Winner:</b>
     <span
-      class='{{ state.winner | playerIDToString | toLowerNoSpace}}'
+      class='{{ state.winner | playerIDToString | lowercase | noSpace }}'
     >
       {{ state.winner | playerIDToString }}
     </span>

@@ -5,7 +5,7 @@ import 'package:landgrab/model/player.dart';
 import 'package:landgrab/model/state.dart';
 import 'package:landgrab/model/rules.dart';
 import 'package:landgrab/pipe/player_id_to_string.dart';
-import 'package:landgrab/pipe/to_lower_no_space.dart';
+import 'package:landgrab/pipe/no_space.dart';
 
 /// BoardComponent contains a landgrab board with Players already chosen.
 /// /// Another parameter, named wait, can be passed. If true, the board will prompt
@@ -17,7 +17,7 @@ import 'package:landgrab/pipe/to_lower_no_space.dart';
   selector: 'board',
   templateUrl: 'template.html',
   styleUrls: const ['styles.css'],
-  pipes: const [PlayerIDToStringPipe, ToLowerNoSpacePipe],
+  pipes: const [PlayerIDToStringPipe, NoSpacePipe],
 )
 class BoardComponent {
   @Input()

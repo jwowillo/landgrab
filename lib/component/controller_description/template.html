@@ -1,0 +1,30 @@
+<ul>
+  <li *ngIf='description.getMethod != null'>
+    <method-description [description]='description.getMethod'>
+    </method-description>
+  </li>
+  <li *ngIf='description.postMethod != null'>
+    <method-description [description]='description.postMethod'>
+    </method-description>
+  </li>
+  <li *ngIf='description.putMethod != null'>
+    <method-description [description]='description.putMethod'>
+    </method-description>
+  </li>
+  <li *ngIf='description.deleteMethod != null'>
+    <method-description [description]='description.deleteMethod'>
+    </method-description>
+  </li>
+  <li *ngIf='description.optionsMethod != null'>
+    <method-description [description]='description.optionsMethod'>
+    </method-description>
+  </li>
+  <li *ngIf='description.headMethod != null'>
+    <method-description [description]='description.headMethod'>
+    </method-description>
+  </li>
+  <li *ngIf='description.connectMethod != null'>
+    <method-description [description]='description.connectMethod'>
+    </method-description>
+  </li>
+</ul>

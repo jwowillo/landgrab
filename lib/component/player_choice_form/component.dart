@@ -2,7 +2,7 @@ import 'package:angular2/core.dart';
 
 import 'package:landgrab/model/player.dart';
 import 'package:landgrab/pipe/player_id_to_string.dart';
-import 'package:landgrab/pipe/to_lower_no_space.dart';
+import 'package:landgrab/pipe/no_space.dart';
 
 /// PlayerChoiceFormComponent allows a Player to be chosen from a set of
 /// possible Players.
@@ -13,7 +13,7 @@ import 'package:landgrab/pipe/to_lower_no_space.dart';
 @Component(
   selector: 'player-choice-form',
   templateUrl: 'template.html',
-  pipes: const [PlayerIDToStringPipe, ToLowerNoSpacePipe],
+  pipes: const [PlayerIDToStringPipe, NoSpacePipe],
 )
 class PlayerChoiceFormComponent {
   /// id the chosen Player will have.

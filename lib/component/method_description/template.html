@@ -1,0 +1,23 @@
+<p><b>{{ description.name | uppercase }}:</b></p>
+<ul>
+  <li *ngIf='description.urlArguments != null'>
+    <b>URL Arguments:</b>
+    <pre><code>{{ description.urlArguments | prettyJSON }}</code></pre>
+  </li>
+  <li *ngIf='description.formArguments != null'>
+    <b>Form Arguments:</b>
+    <pre><code>{{ description.formArguments | prettyJSON }}</code></pre>
+  </li>
+  <li *ngIf='description.authentication != null'>
+    <b>Authentication:</b>
+    {{ description.authentication }}
+  </li>
+  <li *ngIf='description.limiting != null'>
+    <b>Limiting:</b>
+    {{ description.limiting }}
+  </li>
+  <li *ngIf='description.response != null'>
+    <b>Response:</b>
+    {{ description.response }}
+  </li>
+</ul>
