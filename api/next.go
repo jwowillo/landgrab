@@ -46,7 +46,9 @@ func (c nextController) Description() *application.ControllerDescription {
 				nextStateKey:      "State to find the next State of",
 				"?" + nextPlayKey: "optional Play to use for the next State",
 			},
-			Response: "next State",
+			Response:       "next State",
+			Authentication: "must provide Token",
+			Limiting:       "limit of the Token",
 		},
 	}
 }
@@ -54,7 +56,7 @@ func (c nextController) Description() *application.ControllerDescription {
 // Trimmings returns a single trim.Trimming which validates that the
 // trim.Request has a valid game.State and game.Player 1 and 2s passed.
 func (c nextController) Trimmings() []trim.Trimming {
-	return []trim.Trimming{newValidateNext()}
+	return []trim.Trimming{newValidateNext(), newValidateToken()}
 }
 
 // Handle the trim.Request by returning the next game.State to the game.State

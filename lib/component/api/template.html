@@ -1,3 +1,6 @@
+<div *ngIf='status != null' class='error'>
+  {{ status }}
+</div>
 <h2>API</h2>
 <h3>Resources</h3>
 <ul *ngFor='let resource of resources'>

@@ -12,12 +12,13 @@ import 'package:landgrab/service/schema.dart';
   selector: 'api',
   templateUrl: 'template.html',
   directives: const [ResourceComponent, ControllerDescriptionComponent],
-  providers: const [SchemaService],
   pipes: const [PrettyJSONPipe],
 )
 class APIComponent implements OnInit {
   final List<Resource> resources = [];
   final List<Action> actions = [];
+
+  String status;
 
   SchemaService _service;
 
@@ -29,6 +30,7 @@ class APIComponent implements OnInit {
       resources.addAll(await _service.resources());
       actions.addAll(await _service.actions());
     } catch (error) {
+      status = error.toString();
       print(error);
     }
   }

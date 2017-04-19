@@ -25,13 +25,15 @@ func (c movesController) Description() *application.ControllerDescription {
 			FormArguments: map[string]string{
 				movesStateKey: "State to find moves for",
 			},
-			Response: "Moves for each Piece",
+			Response:       "Moves for each Piece",
+			Authentication: "must provide Token",
+			Limiting:       "limit of the Token",
 		},
 	}
 }
 
 func (c movesController) Trimmings() []trim.Trimming {
-	return []trim.Trimming{newValidateMoves()}
+	return []trim.Trimming{newValidateMoves(), newValidateToken()}
 }
 
 func (c movesController) Handle(r trim.Request) trim.Response {

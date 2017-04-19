@@ -13,12 +13,30 @@ import (
 	"github.com/jwowillo/trim/trimming"
 )
 
+// TODO: Reverse the order of trim.Trimming application.
+// TODO: Standardize handlePreflight.
+
+type handlePreflight struct {
+	*base
+}
+
+func newHandlePreflight() *handlePreflight {
+	return &handlePreflight{base: &base{}}
+}
+
+func (p *handlePreflight) Handle(r trim.Request) trim.Response {
+	if r.Method() == trim.MethodOptions {
+		return response.NewEmpty()
+	}
+	return p.handler.Handle(r)
+}
+
 // New landgrab API.
 func New() *application.Application {
 	app := application.NewAPI()
 	for _, t := range []trim.Trimming{
 		trimming.NewAllow(trim.MethodGet),
-		trimming.NewCache(-1, 10000),
+		newHandlePreflight(),
 	} {
 		app.AddTrimming(t)
 	}
@@ -28,9 +46,11 @@ func New() *application.Application {
 		playersController{},
 		rulesController{},
 		movesController{},
+		newTokenController(),
 	} {
 		app.AddDescribedController(c)
 	}
+	app.AddResource("Token", &token{})
 	app.AddResource("Rules", convert.JSONRules{})
 	app.AddResource("Player", convert.JSONPlayer{
 		Desc: "?description",

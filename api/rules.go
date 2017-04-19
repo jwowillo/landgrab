@@ -5,7 +5,6 @@ import (
 	"github.com/jwowillo/landgrab/game"
 	"github.com/jwowillo/trim"
 	"github.com/jwowillo/trim/application"
-	"github.com/jwowillo/trim/controller"
 	"github.com/jwowillo/trim/response"
 )
 
@@ -14,8 +13,10 @@ const rulesPath = "/rules"
 
 // rulesController is a trim.Controller used to retrieve the standard
 // game.Rules.
-type rulesController struct {
-	controller.Bare
+type rulesController struct{}
+
+func (c rulesController) Trimmings() []trim.Trimming {
+	return []trim.Trimming{newValidateToken()}
 }
 
 // Path returns rulesPath.
@@ -27,7 +28,9 @@ func (c rulesController) Path() string {
 func (c rulesController) Description() *application.ControllerDescription {
 	return &application.ControllerDescription{
 		Get: &application.MethodDescription{
-			Response: "Rules which are used",
+			Response:       "Rules which are used",
+			Authentication: "must provide Token",
+			Limiting:       "limit of the Token",
 		},
 	}
 }

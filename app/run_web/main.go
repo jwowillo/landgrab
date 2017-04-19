@@ -12,6 +12,7 @@ import (
 func main() {
 	s := server.New(host, port)
 	s.AddHeader("Access-Control-Allow-Origin", "*")
+	s.AddHeader("Access-Control-Allow-Headers", "Authorization")
 	if port != 80 {
 		host += fmt.Sprintf(":%d", port)
 	}

@@ -5,7 +5,6 @@ import (
 	"github.com/jwowillo/landgrab/player"
 	"github.com/jwowillo/trim"
 	"github.com/jwowillo/trim/application"
-	"github.com/jwowillo/trim/controller"
 	"github.com/jwowillo/trim/response"
 )
 
@@ -14,8 +13,10 @@ const playersPath = "/players"
 
 // playersController is a trim.Controller used to retrieve all implemented
 // game.Players.
-type playersController struct {
-	controller.Bare
+type playersController struct{}
+
+func (c playersController) Trimmings() []trim.Trimming {
+	return []trim.Trimming{newValidateToken()}
 }
 
 // Path returns playersPath.
@@ -27,7 +28,9 @@ func (c playersController) Path() string {
 func (c playersController) Description() *application.ControllerDescription {
 	return &application.ControllerDescription{
 		Get: &application.MethodDescription{
-			Response: "list of Players which can be used",
+			Response:       "list of Players which can be used",
+			Authentication: "must provide Token",
+			Limiting:       "limit of the Token",
 		},
 	}
 }

@@ -82,6 +82,7 @@ class State {
   }
 
   stopTimer() {
+    if (_timer == null) return;
     _timer.cancel();
   }
 

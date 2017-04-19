@@ -96,3 +96,13 @@ code {
 .center {
   text-align: center;
 }
+
+.error {
+  font-weight: bold;
+  color: red;
+  text-align: center;
+}
+
+input[type='url'] {
+  margin: 5px;
+}

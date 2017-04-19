@@ -1,3 +1,6 @@
+<div *ngIf='status != null' class='error'>
+  {{ status }}
+</div>
 <rules [rules]='rules'></rules>
 <board [rules]='rules' [state]='state'></board>
 <div *ngIf='state != null' class='column button-row'>

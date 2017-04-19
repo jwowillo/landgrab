@@ -8,21 +8,29 @@ import 'package:landgrab/model/api.dart';
 
 @Injectable()
 class SchemaService {
+  List<Resource> _resources = [];
+
+  List<Action> _actions = [];
+
   Future<List<Resource>> resources() async {
-    Map<String, dynamic> json = await api('/schema');
-    List<Resource> resources = [];
-    for (Map<String, dynamic> resource in json['data']['resources']) {
-      resources.add(mapToResource(resource));
+    if (!_resources.isEmpty) {
+      return _resources;
     }
-    return resources;
+    Map<String, dynamic> json = await api('/schema');
+    for (Map<String, dynamic> resource in json['data']['resources']) {
+      _resources.add(mapToResource(resource));
+    }
+    return _resources;
   }
 
   Future<List<Action>> actions() async {
-    Map<String, dynamic> json = await api('/schema');
-    List<Action> actions = [];
-    for (Map<String, dynamic> action in json['data']['actions']) {
-      actions.add(mapToAction(action));
+    if (!_actions.isEmpty) {
+      return _actions;
     }
-    return actions;
+    Map<String, dynamic> json = await api('/schema');
+    for (Map<String, dynamic> action in json['data']['actions']) {
+      _actions.add(mapToAction(action));
+    }
+    return _actions;
   }
 }

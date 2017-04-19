@@ -12,11 +12,34 @@ String encode(Map<String, dynamic> map) {
   return Uri.encodeQueryComponent(new JsonEncoder().convert(map));
 }
 
+String _token = '';
+
+Future _fetchToken() async {
+  HttpRequest r =
+      await HttpRequest.request(_API_URL + '/token').catchError((Error e) {
+    throw new StateError('bad token');
+  });
+  Map<String, dynamic> json = JSON.decode(r.responseText);
+  _token = json['data']['token'];
+}
+
 /// _api makes a request to the path at the API server with the given query
 /// string.
 Future<Map<String, dynamic>> api(String path,
     {Map<String, String> query}) async {
+  if (_token == '') {
+    await _fetchToken();
+  }
   String queryStr = new Uri(queryParameters: query).toString();
-  String raw = await HttpRequest.getString(_API_URL + path + queryStr);
-  return JSON.decode(raw);
+  HttpRequest result;
+  result = await HttpRequest
+      .request(_API_URL + path + queryStr, method: 'GET', requestHeaders: {
+    'Authorization': _token,
+  }).catchError((Error e) async {
+    _token = '';
+    await _fetchToken();
+    result = await HttpRequest.request(_API_URL + path + queryStr,
+        method: 'GET', requestHeaders: {'Authorization': _token});
+  });
+  return JSON.decode(result.responseText);
 }

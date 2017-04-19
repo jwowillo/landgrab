@@ -8,8 +8,8 @@ import 'package:landgrab/component/rules/component.dart';
 import 'package:landgrab/model/state.dart';
 import 'package:landgrab/model/rules.dart';
 import 'package:landgrab/model/player.dart';
-import 'package:landgrab/service/players.dart';
 import 'package:landgrab/service/rules.dart';
+import 'package:landgrab/service/players.dart';
 import 'package:landgrab/service/state.dart';
 
 @Component(
@@ -20,9 +20,11 @@ import 'package:landgrab/service/state.dart';
     PlayersChoiceFormComponent,
     BoardComponent
   ],
-  providers: const [RulesService, PlayersService, StateService],
+  providers: const [StateService],
 )
 class GameComponent implements OnInit {
+  String status;
+
   RulesService _rulesService;
 
   PlayersService _playersService;
@@ -44,19 +46,27 @@ class GameComponent implements OnInit {
   @override
   Future ngOnInit() async {
     try {
+      status = '';
       rules = await _rulesService.rules();
       players.addAll(await _playersService.players());
       players.sort((Player a, Player b) => a.name.compareTo(b.name));
       player1 = players.first;
       player2 = players.first;
     } catch (error) {
+      status = 'Too many requests';
       print(error);
     }
   }
 
   Future start() async {
     if (player1 == null || player2 == null) return;
-    state = await _stateService.initial(player1, player2);
+    try {
+      status = '';
+      state = await _stateService.initial(player1, player2);
+    } catch (e) {
+      status = 'Too many requests';
+      print(e);
+    }
   }
 
   reset() {
@@ -68,11 +78,14 @@ class GameComponent implements OnInit {
   Future next() async {
     if (state == null) return;
     try {
+      status = '';
       state.startTimer();
       State newState = await _stateService.next(state);
       state.stopTimer();
       state = newState;
     } catch (error) {
+      state.stopTimer();
+      status = 'Too many requests';
       print(error);
     }
   }
