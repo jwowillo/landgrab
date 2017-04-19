@@ -25,7 +25,7 @@ run_arena:
 pub:
 	$(call log,$@)
 	pub get
-	pub build --mode=debug
+	pub build
 	@echo
 
 # clean built files.
