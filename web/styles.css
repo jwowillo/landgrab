@@ -104,5 +104,10 @@ code {
 }
 
 input[type='url'] {
-  margin: 5px;
+  box-sizing: border-box;
+  border: 1px solid black;
+}
+
+input[type='url']:focus {
+  outline: none;
 }
