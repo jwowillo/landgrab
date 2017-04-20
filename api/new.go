@@ -55,7 +55,10 @@ func (c newController) Description() *application.ControllerDescription {
 // Trimmings returns a single trim.Trimming which validates that the
 // trim.Request has valid game.Player 1 and 2s passed.
 func (c newController) Trimmings() []trim.Trimming {
-	return []trim.Trimming{newValidateNew(), newValidateToken()}
+	return []trim.Trimming{
+		newValidateToken(),
+		newValidateNew(),
+	}
 }
 
 // Handle the trim.Request by converting the trim.Request's context to a new

@@ -33,7 +33,10 @@ func (c movesController) Description() *application.ControllerDescription {
 }
 
 func (c movesController) Trimmings() []trim.Trimming {
-	return []trim.Trimming{newValidateMoves(), newValidateToken()}
+	return []trim.Trimming{
+		newValidateToken(),
+		newValidateMoves(),
+	}
 }
 
 func (c movesController) Handle(r trim.Request) trim.Response {

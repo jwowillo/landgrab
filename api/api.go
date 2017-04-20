@@ -13,30 +13,12 @@ import (
 	"github.com/jwowillo/trim/trimming"
 )
 
-// TODO: Reverse the order of trim.Trimming application.
-// TODO: Standardize handlePreflight.
-
-type handlePreflight struct {
-	*base
-}
-
-func newHandlePreflight() *handlePreflight {
-	return &handlePreflight{base: &base{}}
-}
-
-func (p *handlePreflight) Handle(r trim.Request) trim.Response {
-	if r.Method() == trim.MethodOptions {
-		return response.NewEmpty()
-	}
-	return p.handler.Handle(r)
-}
-
 // New landgrab API.
 func New() *application.Application {
 	app := application.NewAPI()
 	for _, t := range []trim.Trimming{
+		trimming.NewPreflight(),
 		trimming.NewAllow(trim.MethodGet),
-		newHandlePreflight(),
 	} {
 		app.AddTrimming(t)
 	}
