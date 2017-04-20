@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:html';
 
+import 'package:angular2/core.dart';
+
 /// API_URL is a pattern string that gets replaced by the API URL by the server.
 ///
 /// The pattern is contained here so that the Services aren't exposed to the
@@ -32,14 +34,18 @@ Future<Map<String, dynamic>> api(String path,
   }
   String queryStr = new Uri(queryParameters: query).toString();
   HttpRequest result;
+  HttpRequest backup;
   result = await HttpRequest
       .request(_API_URL + path + queryStr, method: 'GET', requestHeaders: {
     'Authorization': _token,
   }).catchError((Error e) async {
     _token = '';
     await _fetchToken();
-    result = await HttpRequest.request(_API_URL + path + queryStr,
+    backup = await HttpRequest.request(_API_URL + path + queryStr,
         method: 'GET', requestHeaders: {'Authorization': _token});
   });
+  if (result == null) {
+    result = backup;
+  }
   return JSON.decode(result.responseText);
 }
