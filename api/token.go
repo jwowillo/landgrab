@@ -18,6 +18,7 @@ const (
 	tokenLimitAmount   = 1
 	tokenLimitDuration = time.Minute
 	tokenSize          = 16
+	tokenPath          = "/token"
 )
 
 type validateToken struct {
@@ -28,6 +29,7 @@ type validateToken struct {
 func newValidateToken() validateToken {
 	return validateToken{base: &base{}}
 }
+
 func (v validateToken) Handle(r trim.Request) trim.Response {
 	vals := r.Header()["Authorization"]
 	if len(vals) != 1 {
@@ -87,7 +89,7 @@ func (c *tokenController) Trimmings() []trim.Trimming {
 }
 
 func (c *tokenController) Path() string {
-	return "/token"
+	return tokenPath
 }
 
 func (c *tokenController) Description() *application.ControllerDescription {

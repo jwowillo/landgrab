@@ -17,8 +17,8 @@ import (
 func New() *application.Application {
 	app := application.NewAPI()
 	for _, t := range []trim.Trimming{
-		trimming.NewPreflight(),
 		trimming.NewAllow(trim.MethodGet),
+		trimming.NewPreflight(),
 	} {
 		app.AddTrimming(t)
 	}

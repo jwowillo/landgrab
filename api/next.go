@@ -57,8 +57,8 @@ func (c nextController) Description() *application.ControllerDescription {
 // trim.Request has a valid game.State and game.Player 1 and 2s passed.
 func (c nextController) Trimmings() []trim.Trimming {
 	return []trim.Trimming{
-		newValidateToken(),
 		newValidateNext(),
+		newValidateToken(),
 	}
 }
 
