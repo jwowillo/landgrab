@@ -102,12 +102,3 @@ code {
   color: red;
   text-align: center;
 }
-
-input[type='url'] {
-  box-sizing: border-box;
-  border: 1px solid black;
-}
-
-input[type='url']:focus {
-  outline: none;
-}
