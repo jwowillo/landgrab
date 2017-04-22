@@ -9,7 +9,12 @@ import 'package:landgrab/model/player.dart';
 /// PlayersService fetches all available Players from the API server.
 @Injectable()
 class PlayersService {
-  Set<Player> _players = new Set();
+
+  final APIService _service;
+
+  static Set<Player> _players = new Set();
+
+  PlayersService(this._service);
 
   /// players from the API server.
   ///
@@ -19,7 +24,7 @@ class PlayersService {
     if (!_players.isEmpty) {
       return _players;
     }
-    Map<String, dynamic> json = await api('/players');
+    Map<String, dynamic> json = await _service.request('/players');
     for (Map<String, String> player in json['data']['players']) {
       _players.add(mapToPlayer(player));
     }

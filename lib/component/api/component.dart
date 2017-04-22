@@ -13,6 +13,7 @@ import 'package:landgrab/service/schema.dart';
   templateUrl: 'template.html',
   directives: const [ResourceComponent, ControllerDescriptionComponent],
   pipes: const [PrettyJSONPipe],
+  providers: const [SchemaService],
 )
 class APIComponent implements OnInit {
   final List<Resource> resources = [];

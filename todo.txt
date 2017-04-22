@@ -1,1 +1,0 @@
-* store token in cookie

@@ -8,13 +8,17 @@ import 'package:landgrab/service/convert.dart';
 
 @Injectable()
 class RulesService {
-  Rules _rules;
+  final APIService _service;
+
+  static Rules _rules;
+
+  RulesService(this._service);
 
   Future<Rules> rules() async {
     if (_rules != null) {
       return _rules;
     }
-    Map<String, dynamic> json = await api('/rules');
+    Map<String, dynamic> json = await _service.request('/rules');
     _rules = mapToRules(json['data']['rules']);
     return _rules;
   }

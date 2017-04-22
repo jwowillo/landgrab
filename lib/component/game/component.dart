@@ -20,7 +20,7 @@ import 'package:landgrab/service/state.dart';
     PlayersChoiceFormComponent,
     BoardComponent
   ],
-  providers: const [StateService],
+  providers: const [StateService, PlayersService, RulesService],
 )
 class GameComponent implements OnInit {
   String status;
