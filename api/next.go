@@ -1,7 +1,6 @@
 package api
 
 import (
-	"encoding/json"
 	"net/url"
 
 	"github.com/jwowillo/landgrab/convert"
@@ -129,42 +128,11 @@ func parseState(r trim.Request, skey, jskey string) trim.Response {
 	if err != nil {
 		return errBadState
 	}
-	s := convert.JSONStateToState(js, player.All())
+	s := convert.JSONStateToState(js, player.Factory)
 	if s.Rules() != game.StandardRules {
 		return errBadState
 	}
-	handleSpecial(s.Player1().(game.DescribedPlayer), js.Player1)
-	handleSpecial(s.Player2().(game.DescribedPlayer), js.Player2)
 	r.SetContext(jskey, js)
 	r.SetContext(skey, s)
 	return nil
-}
-
-func handleSpecial(p game.DescribedPlayer, raw convert.JSONPlayer) {
-	switch real := p.(type) {
-	case *player.Human:
-		val, ok := raw.Arguments["play"]
-		if !ok {
-			return
-		}
-		bs, err := json.Marshal(val)
-		if err != nil {
-			return
-		}
-		play, err := convert.JSONToPlay(bs)
-		if err != nil {
-			return
-		}
-		real.SetPlay(play)
-	case *player.API:
-		val, ok := raw.Arguments["url"]
-		if !ok {
-			return
-		}
-		url, ok := val.(string)
-		if !ok {
-			return
-		}
-		real.SetURL(url)
-	}
 }

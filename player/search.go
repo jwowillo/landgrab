@@ -6,8 +6,8 @@ import "github.com/jwowillo/landgrab/game"
 // legal game.Plays.
 type Search struct{}
 
-// NewSearch game.Player.
-func NewSearch() Search {
+// newSearch game.Player.
+func newSearch() game.DescribedPlayer {
 	return Search{}
 }
 

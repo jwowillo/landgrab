@@ -38,8 +38,11 @@ func (c playersController) Description() *application.ControllerDescription {
 // Handle the trim.Request by returning all the implemented game.Players.
 func (c playersController) Handle(r trim.Request) trim.Response {
 	var ps []convert.JSONPlayer
-	for _, p := range player.All() {
-		ps = append(ps, convert.PlayerToJSONPlayer(p))
+	for _, name := range player.Factory.All() {
+		ps = append(
+			ps,
+			convert.PlayerToJSONPlayer(player.Factory.Player(name)),
+		)
 	}
 	return response.NewJSON(map[string][]convert.JSONPlayer{
 		"players": ps,

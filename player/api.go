@@ -19,8 +19,7 @@ type API struct {
 	client *http.Client
 }
 
-// NewAPI ...
-func NewAPI() *API {
+func newAPI() game.DescribedPlayer {
 	return &API{}
 }
 

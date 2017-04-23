@@ -15,44 +15,24 @@ import (
 func main() {
 	w := bufio.NewWriter(os.Stdout)
 	app := cli.New(os.Stdin, w, func() { w.Flush() }, shouldWait)
-	players := make(map[string]game.DescribedPlayer)
-	for _, p := range player.All() {
-		players[p.Name()] = p
-	}
-	trimmed1 := player1
-	if strings.Contains(player1, ":") {
-		trimmed1 = strings.Split(player1, ":")[0]
-	}
-	trimmed2 := player2
-	if strings.Contains(player1, ":") {
-		trimmed2 = strings.Split(player2, ":")[0]
-	}
-	p1, p1Ok := players[trimmed1]
-	p2, p2Ok := players[trimmed2]
-	if !p1Ok || !p2Ok {
-		fmt.Fprintln(w, "invalid players chosen")
-		w.Flush()
-		os.Exit(1)
-	}
-	if strings.HasPrefix(player1, "api") {
-		parts := strings.Split(player1, "api:")
+	p1 := buildPlayer(w, player1, player.Factory)
+	p2 := buildPlayer(w, player2, player.Factory)
+	app.Run(player.Factory, p1, p2)
+}
+
+func buildPlayer(w *bufio.Writer, name string, factory *game.PlayerFactory) game.DescribedPlayer {
+	data := make(map[string]interface{})
+	if strings.HasPrefix(name, "api") {
+		parts := strings.Split(name, "api:")
 		if len(parts) != 2 {
-			fmt.Println("invalid api format")
+			fmt.Fprintln(w, "invalid api format")
+			w.Flush()
 			os.Exit(1)
 		}
-		url := parts[1]
-		p1.(*player.API).SetURL(url)
+		name = parts[0]
+		data["url"] = parts[1]
 	}
-	if strings.HasPrefix(player2, "api") {
-		parts := strings.Split(player2, "api:")
-		if len(parts) != 2 {
-			fmt.Println("invalid api format")
-			os.Exit(1)
-		}
-		url := parts[1]
-		p2.(*player.API).SetURL(url)
-	}
-	app.Run(player.All(), p1, p2)
+	return factory.SpecialPlayer(name, data)
 }
 
 var (

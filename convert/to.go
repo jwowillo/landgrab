@@ -104,9 +104,9 @@ func StateToJSONState(s *game.State) JSONState {
 		raw.Winner = s.Winner()
 	}
 	raw.CurrentPlayer = s.CurrentPlayer()
-	p1, ok := s.Player1().(game.DescribedPlayer)
-	p2, ok := s.Player2().(game.DescribedPlayer)
-	if !ok {
+	p1, p1Ok := s.Player1().(game.DescribedPlayer)
+	p2, p2Ok := s.Player2().(game.DescribedPlayer)
+	if !p1Ok || !p2Ok {
 		p1 = nil
 		p2 = nil
 	}
@@ -127,9 +127,9 @@ func JSONToJSONState(bs []byte) (JSONState, error) {
 }
 
 // JSONStateToState ...
-func JSONStateToState(s JSONState, ps []game.DescribedPlayer) *game.State {
-	p1 := JSONPlayerToPlayer(s.Player1, ps)
-	p2 := JSONPlayerToPlayer(s.Player2, ps)
+func JSONStateToState(s JSONState, factory *game.PlayerFactory) *game.State {
+	p1 := JSONPlayerToPlayer(s.Player1, factory)
+	p2 := JSONPlayerToPlayer(s.Player2, factory)
 	var p1Pieces []game.Piece
 	var p2Pieces []game.Piece
 	Pieces := make(map[game.Cell]game.Piece)
@@ -153,9 +153,9 @@ func JSONStateToState(s JSONState, ps []game.DescribedPlayer) *game.State {
 }
 
 // JSONToState ...
-func JSONToState(bs []byte, ps []game.DescribedPlayer) (*game.State, error) {
+func JSONToState(bs []byte, factory *game.PlayerFactory) (*game.State, error) {
 	rs, err := JSONToJSONState(bs)
-	s := JSONStateToState(rs, ps)
+	s := JSONStateToState(rs, factory)
 	return s, err
 }
 
@@ -174,11 +174,11 @@ func JSONToJSONPlayer(bs []byte) (JSONPlayer, error) {
 // JSONPlayerToPlayer ...
 func JSONPlayerToPlayer(
 	raw JSONPlayer,
-	ps []game.DescribedPlayer,
+	factory *game.PlayerFactory,
 ) game.DescribedPlayer {
-	for _, p := range ps {
-		if p.Name() == raw.Name {
-			return p
+	for _, name := range factory.All() {
+		if name == raw.Name {
+			return factory.SpecialPlayer(name, raw.Arguments)
 		}
 	}
 	return nil
@@ -187,10 +187,10 @@ func JSONPlayerToPlayer(
 // JSONToPlayer ...
 func JSONToPlayer(
 	bs []byte,
-	ps []game.DescribedPlayer,
+	factory *game.PlayerFactory,
 ) (game.DescribedPlayer, error) {
 	p, err := JSONToJSONPlayer(bs)
-	return JSONPlayerToPlayer(p, ps), err
+	return JSONPlayerToPlayer(p, factory), err
 }
 
 // RulesToJSONRules ...

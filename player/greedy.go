@@ -6,8 +6,7 @@ import "github.com/jwowillo/landgrab/game"
 // legal game.Plays.
 type Greedy struct{}
 
-// NewGreedy game.Player.
-func NewGreedy() Greedy {
+func newGreedy() game.DescribedPlayer {
 	return Greedy{}
 }
 

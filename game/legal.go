@@ -1,5 +1,7 @@
 package game
 
+type movePredicate func(*State, Move) bool
+
 // LegalPlays returns all the legal Plays for the State's current Player.
 func LegalPlays(s *State) []Play {
 	bs := bucketByPiece(s)
@@ -21,9 +23,9 @@ func LegalPlays(s *State) []Play {
 //
 // A Play is legal iff all Moves in the play are legal after performing the
 // Moves preceding them.
-func IsLegalPlay(s *State, ms Play) bool {
+func IsLegalPlay(s *State, p Play) bool {
 	s = clone(s)
-	for _, m := range ms {
+	for _, m := range p {
 		if !IsLegalMove(s, m) {
 			return false
 		}

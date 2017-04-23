@@ -109,10 +109,8 @@ func (v validateNew) Handle(r trim.Request) trim.Response {
 	if err != nil {
 		return errBadPlayer
 	}
-	p1 := convert.JSONPlayerToPlayer(jp1, player.All())
-	p2 := convert.JSONPlayerToPlayer(jp2, player.All())
-	handleSpecial(p1, jp1)
-	handleSpecial(p2, jp2)
+	p1 := convert.JSONPlayerToPlayer(jp1, player.Factory)
+	p2 := convert.JSONPlayerToPlayer(jp2, player.Factory)
 	r.SetContext(newJSONPlayer1Key, jp1)
 	r.SetContext(newJSONPlayer2Key, jp2)
 	if p1 == nil || p2 == nil || err != nil {

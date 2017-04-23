@@ -3,21 +3,61 @@
 package player
 
 import (
+	"encoding/json"
 	"math/rand"
 	"time"
 
+	"github.com/jwowillo/landgrab/convert"
 	"github.com/jwowillo/landgrab/game"
 )
 
-// All ...
-func All() []game.DescribedPlayer {
-	return []game.DescribedPlayer{
-		NewRandom(),
-		NewGreedy(),
-		NewSearch(),
-		NewAPI(),
-		NewHuman(),
-	}
+// Factory ...
+var Factory = game.NewPlayerFactory()
+
+func init() {
+	Factory.Register(newGreedy)
+	Factory.Register(newRandom)
+	Factory.Register(newSearch)
+	Factory.RegisterSpecial(
+		newHuman,
+		func(x game.DescribedPlayer, data map[string]interface{}) {
+			p, ok := x.(*Human)
+			if !ok {
+				return
+			}
+			val, ok := data["play"]
+			if !ok {
+				return
+			}
+			bs, err := json.Marshal(val)
+			if err != nil {
+				return
+			}
+			play, err := convert.JSONToPlay(bs)
+			if err != nil {
+				return
+			}
+			p.SetPlay(play)
+		},
+	)
+	Factory.RegisterSpecial(
+		newAPI,
+		func(x game.DescribedPlayer, data map[string]interface{}) {
+			p, ok := x.(*API)
+			if !ok {
+				return
+			}
+			val, ok := data["url"]
+			if !ok {
+				return
+			}
+			url, ok := val.(string)
+			if !ok {
+				return
+			}
+			p.SetURL(url)
+		},
+	)
 }
 
 // gen random values.

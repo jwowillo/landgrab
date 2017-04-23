@@ -7,8 +7,7 @@ type Human struct {
 	play game.Play
 }
 
-// NewHuman ...
-func NewHuman() *Human {
+func newHuman() game.DescribedPlayer {
 	return &Human{}
 }
 

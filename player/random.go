@@ -5,8 +5,7 @@ import "github.com/jwowillo/landgrab/game"
 // Random game.Player chooses a random game.Play from all legal game.Plays.
 type Random struct{}
 
-// NewRandom game.Player.
-func NewRandom() Random {
+func newRandom() game.DescribedPlayer {
 	return Random{}
 }
 

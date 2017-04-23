@@ -4,11 +4,9 @@ package cli
 import (
 	"fmt"
 	"io"
-	"sort"
 	"strings"
 
 	"github.com/jwowillo/landgrab/game"
-	"github.com/jwowillo/landgrab/player"
 )
 
 // CLI ...
@@ -33,16 +31,16 @@ func New(r io.Reader, w io.Writer, wf func(), sw bool) *CLI {
 // Run ...
 //
 // If player 1 or player 2 are nil, ask for them.
-func (cli *CLI) Run(ps []game.DescribedPlayer, p1, p2 game.DescribedPlayer) {
+func (cli *CLI) Run(factory *game.PlayerFactory, p1, p2 game.DescribedPlayer) {
 	fmt.Fprintf(cli.rw, clear)
 	fmt.Fprintf(cli.rw, title)
 	fmt.Fprintln(cli.rw)
 	cli.writeFunc()
 	if p1 == nil {
-		p1 = cli.choosePlayer(ps, game.Player1)
+		p1 = cli.choosePlayer(factory, game.Player1)
 	}
 	if p2 == nil {
-		p2 = cli.choosePlayer(ps, game.Player2)
+		p2 = cli.choosePlayer(factory, game.Player2)
 	}
 	s := game.NewState(game.StandardRules, p1, p2)
 	for s.Winner() == game.NoPlayer {
@@ -60,40 +58,33 @@ func (cli *CLI) Run(ps []game.DescribedPlayer, p1, p2 game.DescribedPlayer) {
 // choosePlayer prompts for a single game.Player for the game.PlayerID and
 // returns the choice.
 func (cli *CLI) choosePlayer(
-	ps []game.DescribedPlayer,
+	factory *game.PlayerFactory,
 	id game.PlayerID,
 ) game.DescribedPlayer {
-	players := make(map[string]game.DescribedPlayer)
 	var p game.DescribedPlayer
-	var playerNames []string
-	for _, p := range ps {
-		playerNames = append(
-			playerNames,
-			fmt.Sprintf("%s: %s", p.Name(), p.Description()),
-		)
-		players[p.Name()] = p
-	}
-	sort.Strings(playerNames)
 	for p == nil {
 		fmt.Fprintf(
 			cli.rw,
 			"Choose a player %s.\n",
 			colorForPlayer(id)("%s", id),
 		)
-		for _, option := range playerNames {
+		for _, option := range factory.All() {
 			fmt.Fprintf(cli.rw, "* %s\n", option)
 		}
 		cli.writeFunc()
 		var choice string
 		fmt.Fscanf(cli.rw, "%s", &choice)
-		p = players[choice]
-		if choice == "api" {
+		data := make(map[string]interface{})
+		switch choice {
+		case "api":
 			fmt.Fprintf(cli.rw, "Enter URL: ")
 			cli.writeFunc()
 			var url string
 			fmt.Fscanf(cli.rw, "%s", &url)
-			p.(*player.API).SetURL(url)
+			data["url"] = url
 		}
+		p = factory.SpecialPlayer(choice, data)
+
 	}
 	return p
 }
