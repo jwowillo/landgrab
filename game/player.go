@@ -1,18 +1,20 @@
 package game
 
-// PlayerConstructor ...
+// PlayerConstructor constructs a DescribedPlayer without any parameters.
 type PlayerConstructor func() DescribedPlayer
 
-// PlayerInitializer ...
+// PlayerInitializer initializes values of an already built special
+// DescribedPlayer..
 type PlayerInitializer func(DescribedPlayer, map[string]interface{})
 
-// PlayerFactory ...
+// PlayerFactory manages construction of DescribedPlayers.
 type PlayerFactory struct {
 	players      map[string]PlayerConstructor
 	initializers map[string]PlayerInitializer
 }
 
-// NewPlayerFactory ...
+// NewPlayerFactory creates a PlayerFactory that initially can't construct an
+// DescribedPlayers.
 func NewPlayerFactory() *PlayerFactory {
 	return &PlayerFactory{
 		players:      make(map[string]PlayerConstructor),
@@ -20,7 +22,7 @@ func NewPlayerFactory() *PlayerFactory {
 	}
 }
 
-// All ...
+// All names of DescribedPlayers the factory can construct.
 func (f *PlayerFactory) All() []string {
 	all := make([]string, len(f.players))
 	i := 0
@@ -31,7 +33,8 @@ func (f *PlayerFactory) All() []string {
 	return all
 }
 
-// Player ...
+// Player constructed by calling the PlayerConstructor associated with the name
+// of the given DescribedPlayer.
 func (f *PlayerFactory) Player(name string) DescribedPlayer {
 	if _, ok := f.players[name]; !ok {
 		return nil
@@ -39,7 +42,8 @@ func (f *PlayerFactory) Player(name string) DescribedPlayer {
 	return f.players[name]()
 }
 
-// SpecialPlayer ...
+// SpecialPlayer constructed by getting the normal Player from the PlayerFactory
+// and calling its PlayerInitializer with the provided data.
 func (f *PlayerFactory) SpecialPlayer(
 	name string,
 	data map[string]interface{},
@@ -55,12 +59,15 @@ func (f *PlayerFactory) SpecialPlayer(
 	return p
 }
 
-// Register ...
+// Register PlayerConstructor to the PlayerFactory so the factory can construct
+// DescribedPlayers of the given type.
 func (f *PlayerFactory) Register(ctor PlayerConstructor) {
 	f.players[ctor().Name()] = ctor
 }
 
-// RegisterSpecial ...
+// RegisterSpecial PlayerConstructor whith Registers the PlayerConstructor and
+// pairs it with the PlayerInitializer so that DescribedPlayers returned will be
+// initialized with data.
 func (f *PlayerFactory) RegisterSpecial(
 	ctor PlayerConstructor,
 	init PlayerInitializer,

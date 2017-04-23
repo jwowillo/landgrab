@@ -1,5 +1,15 @@
-// Package player has game.Player implementations which take different
-// approaches to playing landgrab.
+// Package player has game.DescribedPlayer implementations which take different
+// approaches to playing landgrab and an exported game.PlayerFactory instance
+// used to construct the game.DescribedPlayers correctly.
+//
+// Anywhere random choices can be made, a time-seeded pseudo-random number
+// generator is used.
+//
+// Values of game.States are defined as the sum of the current
+// game.DescribedPlayer's game.Piece's life and damage with ties broken by the
+// lower manhattan distance between all pieces. This has the effect of the
+// game.DescribedPlayers tending to move their game.Pieces closer together but
+// only when advantageous.
 package player
 
 import (
@@ -11,9 +21,18 @@ import (
 	"github.com/jwowillo/landgrab/game"
 )
 
-// Factory ...
+// Factory is a game.PlayerFactory instance which has all of the
+// game.DescribedPlayers in this package registered properly.
+//
+// Possible names for game.DescribedPlayers along with any required data are
+//   - "api" ({"url": <String URL for API>})
+//   - "human" ({"play": <Play to execute in convert.JSONPlay form>})
+//   - "random"
+//   - "greedy"
+//   - "search"
 var Factory = game.NewPlayerFactory()
 
+// init registers the implemented game.DescribedPlayers to the Factory instance.
 func init() {
 	Factory.Register(newGreedy)
 	Factory.Register(newRandom)
@@ -63,6 +82,7 @@ func init() {
 // gen random values.
 var gen = rand.New(rand.NewSource(time.Now().Unix()))
 
+// Commonly used numeric constants.
 const (
 	// max int.
 	max = int(^uint(0) >> 1)

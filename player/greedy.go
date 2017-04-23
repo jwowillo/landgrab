@@ -6,16 +6,17 @@ import "github.com/jwowillo/landgrab/game"
 // legal game.Plays.
 type Greedy struct{}
 
+// newGreedy game.DescribedPlayer.
 func newGreedy() game.DescribedPlayer {
 	return Greedy{}
 }
 
-// Name ...
+// Name returns "greedy".
 func (p Greedy) Name() string {
 	return "greedy"
 }
 
-// Description ...
+// Description of the game.DescribedPlayer.
 func (p Greedy) Description() string {
 	return "chooses the best play directly available"
 }
