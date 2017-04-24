@@ -2,9 +2,10 @@
 #
 # All executables will have the form run_landgrab_<executable> and will be
 # placed in $GOPATH/bin.
-
+#
 # all target makes all targets in the Makefile.
-all: run_cli run_web run_arena
+
+all: run_cli run_web run_arena doc
 
 # run_cli target makes the cli app.
 run_cli:

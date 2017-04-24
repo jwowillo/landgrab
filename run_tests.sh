@@ -29,11 +29,9 @@ if [ $# -eq 1 ]; then
 fi
 
 log Linting
-cd app
 dartanalyzer --options analysis_options.yaml .
-cd ..
 echo
 
 log Testing
-go test $BENCH ./... -v
+go test ./... -v $BENCH
 echo

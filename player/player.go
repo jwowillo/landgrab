@@ -25,8 +25,8 @@ import (
 // game.DescribedPlayers in this package registered properly.
 //
 // Possible names for game.DescribedPlayers along with any required data are
-//   - "api" ({"url": <String URL for API>})
-//   - "human" ({"play": <Play to execute in convert.JSONPlay form>})
+//   - "api" {"url": <String URL for API>}
+//   - "human" {"play": <Play to execute in convert.JSONPlay form>}
 //   - "random"
 //   - "greedy"
 //   - "search"

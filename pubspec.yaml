@@ -1,8 +1,9 @@
 name: landgrab
-description: A simple AngularDart app
+description: Landgrab is an AI platform.
 version: 0.0.1
-#homepage: https://www.example.com
-#author: jwowillo <email@example.com>
+author: jwowillo
+homepage: http://landgrab.jwowillo.com
+documentation: https://www.dartdocs.org/documentation/landgrab/0.0.1/
 
 environment:
   sdk: '>=1.20.1 <2.0.0'

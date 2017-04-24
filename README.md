@@ -1,5 +1,6 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/jwowillo/trim)](https://goreportcard.com/report/github.com/jwowillo/landgrab)
 <!--- TODO: Add test coverage badge. -->
+<!--- TODO: Work on this. -->
 
 # landgrab
 
@@ -36,9 +37,11 @@ Run `make` to build all interfaces. More specifically:
 ## Documentation
 
 * Site: http://www.jwowillo.com/landgrab/
-* API Documentation: https://godoc.org/github.com/jwowillo/landgrab
+* Backend Documentation: https://godoc.org/github.com/jwowillo/landgrab
+* Frontend Documentation: https://www.dartdocs.org/documentation/landgrab/0.0.1/ 
 * Requirements: doc/requirements.pdf
 * Design: doc/design.pdf
+* Pub: https://pub.dartlang.org/packages/landgrab
 
 ## Tests
 
