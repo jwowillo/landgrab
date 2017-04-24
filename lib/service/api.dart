@@ -17,9 +17,15 @@ class APIService {
   /// mechanism of pattern substitution.
   static final String _URL = '{{ api }}';
 
+  static final String _KEY = 'landgrab_token';
+
+  String get _token => cookie.get(_KEY);
+
+  set _token(String x) => cookie.set(_KEY, x, path: '/');
+
   Future<Map<String, dynamic>> request(String path,
       {Map<String, String> query}) async {
-    if (cookie.get('landgrab_token') == null) {
+    if (_token == null) {
       await _fetchToken();
     }
     HttpRequest result;
@@ -40,14 +46,13 @@ class APIService {
       throw new StateError('bad token');
     });
     Map<String, dynamic> json = JSON.decode(request.responseText);
-    cookie.set('landgrab_token', json['data']['token'], path: '/');
+    _token = json['data']['token'];
   }
 
   Future<HttpRequest> _rawRequest(String path,
       {Map<String, String> query}) async {
     String queryStr = new Uri(queryParameters: query).toString();
     return await HttpRequest.request(_URL + path + queryStr,
-        method: 'GET',
-        requestHeaders: {'Authorization': cookie.get('landgrab_token')});
+        method: 'GET', requestHeaders: {'Authorization': _token});
   }
 }

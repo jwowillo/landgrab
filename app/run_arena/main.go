@@ -35,6 +35,9 @@ func main() {
 }
 
 func buildPlayer(name string, factory *game.PlayerFactory) game.DescribedPlayer {
+	if name == "human" {
+		return nil
+	}
 	data := make(map[string]interface{})
 	if strings.HasPrefix(name, "api") {
 		parts := strings.Split(name, "api:")

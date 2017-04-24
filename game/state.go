@@ -227,13 +227,13 @@ func handleMoves(s *State, ms Play) {
 }
 
 var nextCells = []Cell{
-	NewCell(0, -1),
-	NewCell(1, -1),
-	NewCell(1, 0),
-	NewCell(1, 1),
-	NewCell(0, 1),
-	NewCell(-1, 1),
 	NewCell(-1, 0),
+	NewCell(-1, 1),
+	NewCell(0, 1),
+	NewCell(1, 1),
+	NewCell(1, 0),
+	NewCell(1, -1),
+	NewCell(0, -1),
 	NewCell(-1, -1),
 }
 

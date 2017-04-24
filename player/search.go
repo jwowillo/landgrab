@@ -16,7 +16,7 @@ func (p Search) Name() string {
 	return "search"
 }
 
-// Description ...
+// Description of the game.DescribedPlayer.
 func (p Search) Description() string {
 	return "chooses the play leading to the best play within a radius"
 }

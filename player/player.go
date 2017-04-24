@@ -2,12 +2,12 @@
 // approaches to playing landgrab and an exported game.PlayerFactory instance
 // used to construct the game.DescribedPlayers correctly.
 //
-// Anywhere random choices can be made, a time-seeded pseudo-random number
-// generator is used.
+// Anywhere random choices can be made, a time-seeded pseudo-random
+// number-generator is used.
 //
 // Values of game.States are defined as the sum of the current
 // game.DescribedPlayer's game.Piece's life and damage with ties broken by the
-// lower manhattan distance between all pieces. This has the effect of the
+// lower manhattan-distance between all pieces. This has the effect of the
 // game.DescribedPlayers tending to move their game.Pieces closer together but
 // only when advantageous.
 package player
@@ -44,11 +44,7 @@ func init() {
 			if !ok {
 				return
 			}
-			val, ok := data["play"]
-			if !ok {
-				return
-			}
-			bs, err := json.Marshal(val)
+			bs, err := json.Marshal(data)
 			if err != nil {
 				return
 			}

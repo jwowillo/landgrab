@@ -4,8 +4,10 @@ package cli
 import (
 	"fmt"
 	"io"
+	"strconv"
 	"strings"
 
+	"github.com/jwowillo/landgrab/convert"
 	"github.com/jwowillo/landgrab/game"
 )
 
@@ -46,7 +48,25 @@ func (cli *CLI) Run(factory *game.PlayerFactory, p1, p2 game.DescribedPlayer) {
 	for s.Winner() == game.NoPlayer {
 		printStateAndPrompt(cli.rw, s)
 		cli.writeFunc()
-		if cli.shouldWait {
+		isHuman := false
+		if s.CurrentPlayer() == game.Player1 && p1.Name() == "human" {
+			play := cli.promptPlay(s)
+			p1 = factory.SpecialPlayer("human", play)
+			isHuman = true
+		}
+		if s.CurrentPlayer() == game.Player2 && p2.Name() == "human" {
+			play := cli.promptPlay(s)
+			p2 = factory.SpecialPlayer("human", play)
+			isHuman = true
+		}
+		s = game.NewStateFromInfo(
+			s.Rules(),
+			s.CurrentPlayer(),
+			p1, p2,
+			s.Player1Pieces(), s.Player2Pieces(),
+			pieces(s),
+		)
+		if cli.shouldWait && !isHuman {
 			cli.waitForEnter()
 		}
 		s = game.NextState(s)
@@ -55,17 +75,114 @@ func (cli *CLI) Run(factory *game.PlayerFactory, p1, p2 game.DescribedPlayer) {
 	cli.writeFunc()
 }
 
+func pieces(s *game.State) map[game.Cell]game.Piece {
+	ps := make(map[game.Cell]game.Piece)
+	for i := 0; i < s.Rules().BoardSize(); i++ {
+		for j := 0; j < s.Rules().BoardSize(); j++ {
+			c := game.NewCell(i, j)
+			p := s.PieceForCell(c)
+			if p == game.NoPiece {
+				continue
+			}
+			ps[c] = p
+		}
+	}
+	return ps
+}
+
+func (cli *CLI) promptPlay(s *game.State) map[string]interface{} {
+	ms := make([][]game.Direction, s.Rules().PieceCount()*2)
+	for _, m := range game.LegalMoves(s) {
+		ms[m.Piece().ID()] = append(ms[m.Piece().ID()], m.Direction())
+	}
+	fmt.Fprintf(cli.rw, "\nLegal moves for play:\n")
+	for i, p := range ms {
+		if len(p) == 0 {
+			continue
+		}
+		fmt.Fprintf(cli.rw, "* Piece %d: %v\n", i, p)
+	}
+	fmt.Fprintf(cli.rw, "\nEnter play as semi-colon separated pairs of piece ID and\n")
+	fmt.Fprintf(cli.rw, "direction [(<id>,<direction>),(<id>,<direction>)...]:\n")
+	cli.writeFunc()
+	playString := ""
+	fmt.Fscanf(cli.rw, "%s", &playString)
+	pairs := strings.Split(playString, ";")
+	play := make([]convert.JSONMove, len(pairs))
+	for i, pair := range pairs {
+		pair = strings.TrimSpace(pair)
+		if !strings.HasPrefix(pair, "(") || !strings.HasSuffix(pair, ")") {
+			fmt.Fprintf(cli.rw, "\nInvalid play format.\n")
+			cli.waitForEnter()
+			return nil
+		}
+		pair = pair[1 : len(pair)-1]
+		move := strings.Split(pair, ",")
+		if len(move) != 2 {
+			fmt.Fprintf(cli.rw, "\nInvalid play format.\n")
+			cli.waitForEnter()
+			return nil
+		}
+		move[0] = strings.TrimSpace(move[0])
+		move[1] = strings.TrimSpace(move[1])
+		id, err := strconv.Atoi(move[0])
+		if err != nil {
+			fmt.Fprintf(cli.rw, "\nInvalid play format.\n")
+			cli.waitForEnter()
+			return nil
+		}
+		var direction game.Direction
+		switch move[1] {
+		case "north":
+			direction = game.North
+		case "north-east":
+			direction = game.NorthEast
+		case "east":
+			direction = game.East
+		case "south-east":
+			direction = game.SouthEast
+		case "south":
+			direction = game.South
+		case "south-west":
+			direction = game.SouthWest
+		case "west":
+			direction = game.West
+		case "north-west":
+			direction = game.NorthWest
+		default:
+			fmt.Fprintf(cli.rw, "\nInvalid play format.\n")
+			cli.waitForEnter()
+			return nil
+		}
+		piece := game.NoPiece
+		for _, p := range s.CurrentPlayerPieces() {
+			if int(p.ID()) == id {
+				piece = p
+			}
+		}
+		if piece == game.NoPiece {
+			fmt.Fprintf(cli.rw, "\nInvalid play format.\n")
+			cli.waitForEnter()
+			return nil
+		}
+		play[i] = convert.MoveToJSONMove(
+			game.NewMove(piece, direction),
+			s,
+		)
+	}
+	return map[string]interface{}{"moves": play}
+}
+
 // choosePlayer prompts for a single game.Player for the game.PlayerID and
 // returns the choice.
 func (cli *CLI) choosePlayer(
-	factory *game.PlayerFactory,
-	id game.PlayerID,
+	factory *game.PlayerFactory, id game.PlayerID,
 ) game.DescribedPlayer {
 	var p game.DescribedPlayer
 	for p == nil {
 		fmt.Fprintf(
 			cli.rw,
-			"Choose a player %s.\n",
+			"\nChoose a player %s:\n",
 			colorForPlayer(id)("%s", id),
 		)
 		for _, option := range factory.All() {
@@ -121,7 +238,7 @@ func board(s *game.State) string {
 			} else {
 				out += colorForPlayer(s.PlayerForPiece(p))(
 					"%d%d%d",
-					p.ID(), p.Damage(), p.Life(),
+					p.ID(), p.Life(), p.Damage(),
 				)
 			}
 		}
