@@ -2,6 +2,10 @@
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+player-choice-form {
+	max-width: 400px;
+}
+
 .wrapper {
   max-width: 840px;
   margin: 0 auto;
@@ -65,6 +69,7 @@ code {
 
 .column {
   display: flex;
+  flex-wrap: wrap;
   flex-direction: row;
   justify-content: center;
   align-items: center;
