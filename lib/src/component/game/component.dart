@@ -12,7 +12,7 @@ import 'package:landgrab/landgrab.dart';
     PlayersChoiceFormComponent,
     BoardComponent
   ],
-  providers: const [StateService, PlayersService, RulesService],
+  providers: const [StateService, PlayersService, RulesService, MovesService],
 )
 class GameComponent implements OnInit {
   String status;
@@ -22,6 +22,8 @@ class GameComponent implements OnInit {
   PlayersService _playersService;
 
   StateService _stateService;
+
+  MovesService _movesService;
 
   Rules rules;
 
@@ -33,7 +35,10 @@ class GameComponent implements OnInit {
 
   State state;
 
-  GameComponent(this._rulesService, this._playersService, this._stateService);
+  List<Move> moves = [];
+
+  GameComponent(this._rulesService, this._playersService, this._stateService,
+      this._movesService);
 
   @override
   Future ngOnInit() async {
@@ -55,6 +60,7 @@ class GameComponent implements OnInit {
     try {
       status = '';
       state = await _stateService.initial(player1, player2);
+      moves = await _movesService.moves(state);
     } catch (e) {
       status = 'Too many requests';
       print(e);
@@ -65,6 +71,7 @@ class GameComponent implements OnInit {
     state = null;
     player1 = players.first;
     player2 = players.first;
+    moves = [];
   }
 
   Future next() async {
@@ -75,6 +82,11 @@ class GameComponent implements OnInit {
       State newState = await _stateService.next(state);
       state.stopTimer();
       state = newState;
+      player1.arguments = null;
+      player2.arguments = null;
+      state.player1.arguments = null;
+      state.player2.arguments = null;
+      moves = await _movesService.moves(state);
     } catch (error) {
       state.stopTimer();
       status = 'Too many requests';
@@ -83,4 +95,18 @@ class GameComponent implements OnInit {
   }
 
   isWinner(PlayerID id) => id != PlayerID.noPlayer;
+
+  changed(Map<String, dynamic> arguments) {
+    if (state == null) {
+      return;
+    }
+    if (state.currentPlayer == PlayerID.player1) {
+      player1.arguments = arguments;
+      state.player1.arguments = arguments;
+    }
+    if (state.currentPlayer == PlayerID.player2) {
+      player2.arguments = arguments;
+      state.player2.arguments = arguments;
+    }
+  }
 }

@@ -52,16 +52,13 @@ func (c movesController) Handle(r trim.Request) trim.Response {
 		}
 		setMoves[id][m] = struct{}{}
 	}
-	moves := make(map[game.PieceID][]convert.JSONMove)
-	for id, ms := range setMoves {
+	var moves []convert.JSONMove
+	for _, ms := range setMoves {
 		for m := range ms {
-			moves[id] = append(
-				moves[id],
-				convert.MoveToJSONMove(m, s),
-			)
+			moves = append(moves, convert.MoveToJSONMove(m, s))
 		}
 	}
-	return response.NewJSON(moves, trim.CodeOK)
+	return response.NewJSON(map[string][]convert.JSONMove{"moves": moves}, trim.CodeOK)
 }
 
 type validateMoves struct {

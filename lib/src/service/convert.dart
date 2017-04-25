@@ -215,3 +215,41 @@ Player mapToPlayer(Map<String, dynamic> m) {
   }
   return new Player(m['name'], description: description, arguments: args);
 }
+
+List<Move> mapToMoves(Map<String, dynamic> m) {
+  List<Move> moves = [];
+  for (Map<String, dynamic> move in m['moves']) {
+    Direction d;
+    int direction = move['direction'];
+    switch (direction) {
+      case 0:
+        d = Direction.north;
+        break;
+      case 1:
+        d = Direction.northEast;
+        break;
+      case 2:
+        d = Direction.east;
+        break;
+      case 3:
+        d = Direction.southEast;
+        break;
+      case 4:
+        d = Direction.south;
+        break;
+      case 5:
+        d = Direction.southWest;
+        break;
+      case 6:
+        d = Direction.west;
+        break;
+      case 7:
+        d = Direction.northWest;
+        break;
+    }
+    Piece piece = new Piece(
+        move['piece']['id'], move['piece']['life'], move['piece']['damage']);
+    moves.add(new Move(d, piece));
+  }
+  return moves;
+}

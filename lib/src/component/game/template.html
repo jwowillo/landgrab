@@ -2,7 +2,13 @@
   {{ status }}
 </div>
 <rules [rules]='rules'></rules>
-<board [rules]='rules' [state]='state'></board>
+<board
+  [rules]='rules'
+  [state]='state'
+  [moves]='moves'
+  (changed)='changed($event)'
+>
+</board>
 <div *ngIf='state != null' class='column button-row'>
   <button class='player1-background' (click)='reset()'>Reset</button>
   <button
