@@ -1,0 +1,13 @@
+<p><b> Piece {{ id }}:</b></p>
+<div>
+  <div class='left' *ngFor='let move of moves'>
+    <input
+      type='radio'
+      [name]='id'
+      [value]='move.direction | directionToString'
+      [checked]='isChecked(move)'
+      (change)='changed.emit(move)'
+    />
+    {{ move.direction | directionToString }}
+  </div>
+</div>

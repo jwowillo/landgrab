@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:angular2/core.dart';
 
 import 'package:landgrab/landgrab.dart';
@@ -12,6 +14,7 @@ import 'package:landgrab/landgrab.dart';
   selector: 'board',
   templateUrl: 'template.html',
   styleUrls: const ['styles.css'],
+  directives: const [MoveChoiceFormComponent],
   pipes: const [PlayerIDToStringPipe, NoSpacePipe],
 )
 class BoardComponent {
@@ -45,52 +48,20 @@ class BoardComponent {
     return g;
   }
 
-  // Need something that returns a list of lists of moves by player id.
-  List<Map<String, dynamic>> get movesByPiece {
-    Map<int, List<String>> byPiece = {};
+  Map<int, List<Move>> get bucketedMoves {
+    Map<int, List<Move>> buckets =
+        new SplayTreeMap((int a, int b) => a.compareTo(b));
     for (Move move in moves) {
-      if (!byPiece.containsKey(move.piece.id)) {
-        byPiece[move.piece.id] = [];
+      if (!buckets.containsKey(move.piece.id)) {
+        buckets[move.piece.id] = [];
       }
-      String str = '';
-      switch (move.direction) {
-        case Direction.north:
-          str = 'north';
-          break;
-        case Direction.northEast:
-          str = 'north-east';
-          break;
-        case Direction.east:
-          str = 'east';
-          break;
-        case Direction.southEast:
-          str = 'south-east';
-          break;
-        case Direction.south:
-          str = 'south';
-          break;
-        case Direction.southWest:
-          str = 'south-west';
-          break;
-        case Direction.west:
-          str = 'west';
-          break;
-        case Direction.northWest:
-          str = 'north-west';
-          break;
-      }
-      byPiece[move.piece.id].add(str);
+      buckets[move.piece.id].add(move);
     }
-    for (List<String> list in byPiece.values) {
-      list.sort((String a, String b) => a.compareTo(b));
+    for (List<Move> list in buckets.values) {
+      list.sort(
+          (Move a, Move b) => a.direction.index.compareTo(b.direction.index));
     }
-    List<Map<String, dynamic>> out = [];
-    for (int id in byPiece.keys) {
-      out.add({'id': id, 'directions': byPiece[id]});
-    }
-    out.sort((Map<String, dynamic> a, Map<String, dynamic> b) =>
-        a['id'].compareTo(b['id']));
-    return out;
+    return buckets;
   }
 
   playerName(PlayerID id) {
@@ -125,64 +96,49 @@ class BoardComponent {
 
   State _decidingState;
 
-  Map<int, dynamic> _moves = {};
+  Map<int, dynamic> _chosenMoves = {};
 
-  emit(int id, String rawD) {
+  emit(Move chosenMove) {
     if (_decidingState == null || _decidingState != state) {
       _decidingState = state;
-      _moves = {};
+      _chosenMoves = {};
     }
-    Direction d;
     int dInt;
-    switch (rawD) {
-      case 'north':
+    switch (chosenMove.direction) {
+      case Direction.north:
         dInt = 0;
-        d = Direction.north;
         break;
-      case 'north-east':
+      case Direction.northEast:
         dInt = 1;
-        d = Direction.northEast;
         break;
-      case 'east':
+      case Direction.east:
         dInt = 2;
-        d = Direction.east;
         break;
-      case 'south-east':
+      case Direction.southEast:
         dInt = 3;
-        d = Direction.southEast;
         break;
-      case 'south':
+      case Direction.south:
         dInt = 4;
-        d = Direction.south;
         break;
-      case 'south-west':
+      case Direction.southWest:
         dInt = 5;
-        d = Direction.southWest;
         break;
-      case 'west':
+      case Direction.west:
         dInt = 6;
-        d = Direction.west;
         break;
-      case 'north-west':
+      case Direction.northWest:
         dInt = 7;
-        d = Direction.northWest;
         break;
     }
     for (Move move in moves) {
-      if (id == move.piece.id && d == move.direction) {
-        int player = 0;
-        if (state.playerForPiece(move.piece) == PlayerID.player1) {
-          player = 0;
-        }
-        if (state.playerForPiece(move.piece) == PlayerID.player2) {
-          player = 1;
-        }
+      if (chosenMove.piece.id == move.piece.id &&
+          chosenMove.direction == move.direction) {
         Cell c = state.cellForPiece(move.piece);
-        _moves[id] = {
+        _chosenMoves[move.piece.id] = {
           'direction': dInt,
           'piece': {
             'id': move.piece.id,
-            'player': player,
+            'player': state.playerForPiece(move.piece).index,
             'life': move.piece.life,
             'damage': move.piece.damage,
             'cell': [c.row, c.column]
@@ -190,44 +146,6 @@ class BoardComponent {
         };
       }
     }
-    changed.emit({'moves': new List.from(_moves.values)});
-  }
-
-  bool isChecked(int id, String direction) {
-    if (_decidingState == null || _decidingState != state) {
-      _decidingState = state;
-      _moves = {};
-    }
-    int dInt;
-    switch (direction) {
-      case 'north':
-        dInt = 0;
-        break;
-      case 'north-east':
-        dInt = 1;
-        break;
-      case 'east':
-        dInt = 2;
-        break;
-      case 'south-east':
-        dInt = 3;
-        break;
-      case 'south':
-        dInt = 4;
-        break;
-      case 'south-west':
-        dInt = 5;
-        break;
-      case 'west':
-        dInt = 6;
-        break;
-      case 'north-west':
-        dInt = 7;
-        break;
-    }
-    if (!_moves.containsKey(id)) {
-      return false;
-    }
-    return _moves[id]['direction'] == dInt;
+    changed.emit({'moves': new List.from(_chosenMoves.values)});
   }
 }

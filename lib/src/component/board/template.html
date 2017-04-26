@@ -25,19 +25,13 @@
   <p><b>Time Remaining:</b> {{ timeRemaining.toStringAsFixed(1) }} seconds</p>
   <div *ngIf="playerName(state.currentPlayer) == 'human'">
     <form class='column'>
-      <div *ngFor='let move of movesByPiece' class='column' style='margin-bottom: 10px'>
-        <p><b>Piece {{ move['id'] }}:</b></p>
-          <div style='text-align: left;'>
-            <div *ngFor="let direction of move['directions']">
-              <input
-                type='radio'
-                name="{{ move['id'] }}"
-                [value]='direction'
-                [checked]="isChecked(move['id'], direction)"
-                (change)="emit(move['id'], direction)" />
-              {{ direction }}
-            </div>
-          </div>
+      <div *ngFor='let bucket of bucketedMoves.keys' class='column'>
+        <move-choice-form
+          [id]='bucket'
+          [moves]='bucketedMoves[bucket]'
+          (changed)='emit($event)'
+        >
+        </move-choice-form>
       </div>
     </form>
   </div>
