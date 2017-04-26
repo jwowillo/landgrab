@@ -48,18 +48,12 @@ class BoardComponent {
     return g;
   }
 
-  Map<int, List<Move>> get bucketedMoves {
-    Map<int, List<Move>> buckets =
-        new SplayTreeMap((int a, int b) => a.compareTo(b));
+  Map<int, Set<Move>> get bucketedMoves {
+    sortedSet() => new SplayTreeSet(
+        (Move a, Move b) => a.direction.index.compareTo(b.direction.index));
+    Map<int, Set<Move>> buckets = new SplayTreeMap();
     for (Move move in moves) {
-      if (!buckets.containsKey(move.piece.id)) {
-        buckets[move.piece.id] = [];
-      }
-      buckets[move.piece.id].add(move);
-    }
-    for (List<Move> list in buckets.values) {
-      list.sort(
-          (Move a, Move b) => a.direction.index.compareTo(b.direction.index));
+      buckets.putIfAbsent(move.piece.id, sortedSet).add(move);
     }
     return buckets;
   }

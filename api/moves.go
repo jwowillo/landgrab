@@ -52,7 +52,7 @@ func (c movesController) Handle(r trim.Request) trim.Response {
 		}
 		setMoves[id][m] = struct{}{}
 	}
-	var moves []convert.JSONMove
+	moves := make([]convert.JSONMove, 0, len(setMoves))
 	for _, ms := range setMoves {
 		for m := range ms {
 			moves = append(moves, convert.MoveToJSONMove(m, s))

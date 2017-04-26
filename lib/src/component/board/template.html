@@ -23,7 +23,7 @@
     </span>
   </p>
   <p><b>Time Remaining:</b> {{ timeRemaining.toStringAsFixed(1) }} seconds</p>
-  <div *ngIf="playerName(state.currentPlayer) == 'human'">
+  <div *ngIf="playerName(state.currentPlayer) == 'human'" style='padding-bottom: 50px'>
     <form class='column'>
       <div *ngFor='let bucket of bucketedMoves.keys' class='column'>
         <move-choice-form
