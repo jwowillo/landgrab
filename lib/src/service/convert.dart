@@ -87,13 +87,7 @@ MethodDescription mapToMethodDescription(
 /// mapToState converts a map of the form the API server returns for States
 /// to a State.
 State mapToState(Map<String, dynamic> map) {
-  PlayerID current = PlayerID.noPlayer;
-  if (map['currentPlayer'] == 1) {
-    current = PlayerID.player1;
-  }
-  if (map['currentPlayer'] == 2) {
-    current = PlayerID.player2;
-  }
+  PlayerID current = stringToPlayerID(map['currentPlayer']);
   Player p1 = mapToPlayer(map['player1']);
   Player p2 = mapToPlayer(map['player2']);
   Set<Piece> player1Pieces = new Set();
@@ -102,10 +96,10 @@ State mapToState(Map<String, dynamic> map) {
   for (Map<String, dynamic> piece in map['pieces']) {
     Cell cell = new Cell(piece['cell'][0], piece['cell'][1]);
     Piece built = new Piece(piece['id'], piece['life'], piece['damage']);
-    if (piece['player'] == 1) {
+    if (stringToPlayerID(piece['player']) == PlayerID.player1) {
       player1Pieces.add(built);
     }
-    if (piece['player'] == 2) {
+    if (stringToPlayerID(piece['player']) == PlayerID.player2) {
       player2Pieces.add(built);
     }
     cells[cell] = built;
@@ -113,12 +107,7 @@ State mapToState(Map<String, dynamic> map) {
   Rules rules = mapToRules(map['rules']);
   PlayerID winner = PlayerID.noPlayer;
   if (map.containsKey('winner')) {
-    if (map['winner'] == 1) {
-      winner = PlayerID.player1;
-    }
-    if (map['winner'] == 2) {
-      winner = PlayerID.player2;
-    }
+    winner = stringToPlayerID(map['winner']);
   }
   return new State(rules, current, p1, p2, player1Pieces, player2Pieces, cells,
       winner: winner);
@@ -127,19 +116,9 @@ State mapToState(Map<String, dynamic> map) {
 /// stateToMap converts a State to a Map of the form the API server expects.
 Map<String, dynamic> stateToMap(State s) {
   Map<String, dynamic> map = {};
-  if (s.currentPlayer == PlayerID.player1) {
-    map['currentPlayer'] = 1;
-  }
-  if (s.currentPlayer == PlayerID.player2) {
-    map['currentPlayer'] = 2;
-  }
+  map['currentPlayer'] = playerIDToString(s.currentPlayer);
   if (s.winner != PlayerID.noPlayer) {
-    if (s.winner == PlayerID.player1) {
-      map['winner'] = 1;
-    }
-    if (s.winner == PlayerID.player2) {
-      map['winner'] = 2;
-    }
+    map['winner'] = playerIDToString(s.winner);
   }
   map['rules'] = rulesToMap(s.rules);
   List<Map<String, dynamic>> pieces = [];
@@ -154,12 +133,7 @@ Map<String, dynamic> stateToMap(State s) {
     piece['id'] = p.id;
     piece['damage'] = p.damage;
     piece['life'] = p.life;
-    if (s.playerForPiece(p) == PlayerID.player1) {
-      piece['player'] = 1;
-    }
-    if (s.playerForPiece(p) == PlayerID.player2) {
-      piece['player'] = 2;
-    }
+    piece['player'] = playerIDToString(s.playerForPiece(p));
     Cell c = s.cellForPiece(p);
     piece['cell'] = [c.row, c.column];
     pieces.add(piece);
@@ -219,37 +193,9 @@ Player mapToPlayer(Map<String, dynamic> m) {
 List<Move> mapToMoves(Map<String, dynamic> m) {
   List<Move> moves = [];
   for (Map<String, dynamic> move in m['moves']) {
-    Direction d;
-    int direction = move['direction'];
-    switch (direction) {
-      case 0:
-        d = Direction.north;
-        break;
-      case 1:
-        d = Direction.northEast;
-        break;
-      case 2:
-        d = Direction.east;
-        break;
-      case 3:
-        d = Direction.southEast;
-        break;
-      case 4:
-        d = Direction.south;
-        break;
-      case 5:
-        d = Direction.southWest;
-        break;
-      case 6:
-        d = Direction.west;
-        break;
-      case 7:
-        d = Direction.northWest;
-        break;
-    }
     Piece piece = new Piece(
         move['piece']['id'], move['piece']['life'], move['piece']['damage']);
-    moves.add(new Move(d, piece));
+    moves.add(new Move(stringToDirection(move['direction']), piece));
   }
   return moves;
 }

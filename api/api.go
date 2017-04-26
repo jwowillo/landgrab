@@ -40,7 +40,7 @@ func New() *application.Application {
 			"?arguments": "",
 		},
 	})
-	app.AddResource("State", convert.JSONState{Winner: game.Player1})
+	app.AddResource("State", convert.JSONState{Winner: game.Player1.String()})
 	app.AddResource("Piece", convert.JSONPiece{})
 	app.AddResource("Play", convert.JSONPlay{})
 	app.AddResource("Move", convert.JSONMove{})

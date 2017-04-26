@@ -8,12 +8,7 @@ import 'package:landgrab/landgrab.dart';
 class PlayerIDToStringPipe extends PipeTransform {
   /// transform the PlayerID into a String representation of the PlayerID.
   String transform(PlayerID id) {
-    if (id == PlayerID.player1) {
-      return 'Player 1';
-    }
-    if (id == PlayerID.player2) {
-      return 'Player 2';
-    }
-    return '';
+    String x = playerIDToString(id);
+    return x[0].toUpperCase() + x.substring(1);
   }
 }

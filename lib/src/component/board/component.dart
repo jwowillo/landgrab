@@ -97,42 +97,15 @@ class BoardComponent {
       _decidingState = state;
       _chosenMoves = {};
     }
-    int dInt;
-    switch (chosenMove.direction) {
-      case Direction.north:
-        dInt = 0;
-        break;
-      case Direction.northEast:
-        dInt = 1;
-        break;
-      case Direction.east:
-        dInt = 2;
-        break;
-      case Direction.southEast:
-        dInt = 3;
-        break;
-      case Direction.south:
-        dInt = 4;
-        break;
-      case Direction.southWest:
-        dInt = 5;
-        break;
-      case Direction.west:
-        dInt = 6;
-        break;
-      case Direction.northWest:
-        dInt = 7;
-        break;
-    }
     for (Move move in moves) {
       if (chosenMove.piece.id == move.piece.id &&
           chosenMove.direction == move.direction) {
         Cell c = state.cellForPiece(move.piece);
         _chosenMoves[move.piece.id] = {
-          'direction': dInt,
+          'direction': directionToString(move.direction),
           'piece': {
             'id': move.piece.id,
-            'player': state.playerForPiece(move.piece).index,
+            'player': playerIDToString(state.playerForPiece(move.piece)),
             'life': move.piece.life,
             'damage': move.piece.damage,
             'cell': [c.row, c.column]

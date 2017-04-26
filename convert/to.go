@@ -41,7 +41,7 @@ func JSONToPlay(bs []byte) (game.Play, error) {
 // MoveToJSONMove ...
 func MoveToJSONMove(m game.Move, s *game.State) JSONMove {
 	return JSONMove{
-		Direction: m.Direction(),
+		Direction: m.Direction().String(),
 		Piece:     PieceToJSONPiece(s, m.Piece()),
 	}
 }
@@ -55,10 +55,26 @@ func JSONToJSONMove(bs []byte) (JSONMove, error) {
 
 // JSONMoveToMove ...
 func JSONMoveToMove(m JSONMove) game.Move {
-	return game.NewMove(
-		JSONPieceToPiece(m.Piece),
-		m.Direction,
-	)
+	var d game.Direction
+	switch m.Direction {
+	case "north":
+		d = game.North
+	case "north-east":
+		d = game.NorthEast
+	case "east":
+		d = game.East
+	case "south-east":
+		d = game.SouthEast
+	case "south":
+		d = game.South
+	case "south-west":
+		d = game.SouthWest
+	case "west":
+		d = game.West
+	case "north-west":
+		d = game.NorthWest
+	}
+	return game.NewMove(JSONPieceToPiece(m.Piece), d)
 }
 
 // JSONToMove ...
@@ -75,7 +91,7 @@ func PieceToJSONPiece(s *game.State, p game.Piece) JSONPiece {
 	raw.Damage = p.Damage()
 	c := s.CellForPiece(p)
 	raw.Cell = [2]int{c.Row(), c.Column()}
-	raw.Player = s.PlayerForPiece(p)
+	raw.Player = s.PlayerForPiece(p).String()
 	return raw
 }
 
@@ -97,13 +113,25 @@ func JSONToPiece(bs []byte) (game.Piece, error) {
 	return JSONPieceToPiece(p), err
 }
 
+func stringToPlayerID(x string) game.PlayerID {
+	switch x {
+	case "no player":
+		return game.NoPlayer
+	case "player 1":
+		return game.Player1
+	case "player 2":
+		return game.Player2
+	}
+	return game.NoPlayer
+}
+
 // StateToJSONState ...
 func StateToJSONState(s *game.State) JSONState {
 	raw := JSONState{}
 	if s.Winner() != game.NoPlayer {
-		raw.Winner = s.Winner()
+		raw.Winner = s.Winner().String()
 	}
-	raw.CurrentPlayer = s.CurrentPlayer()
+	raw.CurrentPlayer = s.CurrentPlayer().String()
 	p1, p1Ok := s.Player1().(game.DescribedPlayer)
 	p2, p2Ok := s.Player2().(game.DescribedPlayer)
 	if !p1Ok || !p2Ok {
@@ -135,17 +163,17 @@ func JSONStateToState(s JSONState, factory *game.PlayerFactory) *game.State {
 	Pieces := make(map[game.Cell]game.Piece)
 	for _, rawPiece := range s.Pieces {
 		Piece := JSONPieceToPiece(rawPiece)
-		if rawPiece.Player == game.Player1 {
+		if stringToPlayerID(rawPiece.Player) == game.Player1 {
 			p1Pieces = append(p1Pieces, Piece)
 		}
-		if rawPiece.Player == game.Player2 {
+		if stringToPlayerID(rawPiece.Player) == game.Player2 {
 			p2Pieces = append(p2Pieces, Piece)
 		}
 		Pieces[game.NewCell(rawPiece.Cell[0], rawPiece.Cell[1])] = Piece
 	}
 	return game.NewStateFromInfo(
 		JSONRulesToRules(s.Rules),
-		s.CurrentPlayer,
+		stringToPlayerID(s.CurrentPlayer),
 		p1, p2,
 		p1Pieces, p2Pieces,
 		Pieces,

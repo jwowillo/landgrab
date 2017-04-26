@@ -1,4 +1,6 @@
-<h3 class='{{ id | playerIDToString | lowercase | noSpace }}'>{{ id | playerIDToString }}:</h3>
+<h3 class='{{ id | playerIDToString | lowercase | noSpace }}'>
+  {{ id | playerIDToString }}:
+</h3>
 <div *ngFor='let player of players; let i = index'>
   <p>
     <input

@@ -14,8 +14,8 @@ func (p JSONPlay) Description() string {
 
 // JSONMove ...
 type JSONMove struct {
-	Direction game.Direction `json:"direction"`
-	Piece     JSONPiece      `json:"piece"`
+	Direction string    `json:"direction"`
+	Piece     JSONPiece `json:"piece"`
 }
 
 // Description ...
@@ -37,11 +37,11 @@ func (p JSONPlayer) Description() string {
 
 // JSONPiece ...
 type JSONPiece struct {
-	ID     game.PieceID  `json:"id"`
-	Player game.PlayerID `json:"player"`
-	Life   int           `json:"life"`
-	Damage int           `json:"damage"`
-	Cell   [2]int        `json:"cell"`
+	ID     game.PieceID `json:"id"`
+	Player string       `json:"player"`
+	Life   int          `json:"life"`
+	Damage int          `json:"damage"`
+	Cell   [2]int       `json:"cell"`
 }
 
 // Description ...
@@ -67,12 +67,12 @@ func (r JSONRules) Description() string {
 
 // JSONState ...
 type JSONState struct {
-	CurrentPlayer game.PlayerID `json:"currentPlayer"`
-	Winner        game.PlayerID `json:"winner,omitempty"`
-	Rules         JSONRules     `json:"rules"`
-	Player1       JSONPlayer    `json:"player1"`
-	Player2       JSONPlayer    `json:"player2"`
-	Pieces        []JSONPiece   `json:"pieces"`
+	CurrentPlayer string      `json:"currentPlayer"`
+	Winner        string      `json:"winner,omitempty"`
+	Rules         JSONRules   `json:"rules"`
+	Player1       JSONPlayer  `json:"player1"`
+	Player2       JSONPlayer  `json:"player2"`
+	Pieces        []JSONPiece `json:"pieces"`
 }
 
 // Description ...
