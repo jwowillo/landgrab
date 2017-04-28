@@ -8,8 +8,8 @@ type Move struct {
 
 // NewMove with a valid Piece and Direction.
 //
-// NoPiece should not be passed as the Piece and -1 shouldn't be passed as the
-// Direction as they're reserved for special uses.
+// NoPiece should not be passed as the Piece and NoDirection shouldn't be passed
+// as the Direction as they're reserved for special uses.
 func NewMove(p Piece, d Direction) Move {
 	return Move{piece: p, direction: d}
 }
@@ -29,4 +29,6 @@ func (m Move) Direction() Direction {
 type Play []Move
 
 // NoMove is the absence of a Move.
-var NoMove = NewMove(NoPiece, Direction(-1))
+//
+// Note that this is the same as the zero-value of a Move.
+var NoMove = NewMove(NoPiece, NoDirection)

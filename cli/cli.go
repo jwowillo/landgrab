@@ -234,10 +234,10 @@ func board(s *game.State) string {
 		for j := 0; j < s.Rules().BoardSize(); j++ {
 			p := s.PieceForCell(game.NewCell(i, j))
 			if p == game.NoPiece {
-				out += "▒▒▒"
+				out += "▒▒▒▒▒▒"
 			} else {
 				out += colorForPlayer(s.PlayerForPiece(p))(
-					"%d%d%d",
+					"%2d|%d|%d",
 					p.ID(), p.Life(), p.Damage(),
 				)
 			}

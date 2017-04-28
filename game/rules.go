@@ -2,9 +2,9 @@ package game
 
 import "time"
 
-// Rules encapsulates the variable parts of the game such as how many Pieces are
-// involved, how much damage each Piece can do, how much life they have, and how
-// much these increase when they destroy enemy Pieces.
+// Rules encapsulates the variable parts of games such as how many Pieces are
+// involved, how much life and damage each Piece has, and how much these
+// increase when they destroy enemy Pieces.
 type Rules struct {
 	timerDuration                                          time.Duration
 	pieceCount, damage, life, damageIncrease, lifeIncrease int
@@ -28,35 +28,38 @@ func (r Rules) TimerDuration() time.Duration {
 	return r.timerDuration
 }
 
-// PieceCount specified by the Rules.
+// PieceCount is the number of Pieces held initially by each Player.
 func (r Rules) PieceCount() int {
 	return r.pieceCount
 }
 
-// BoardSize is 2 times the piece count + 1.
+// BoardSize is 2 times the piece count plus 1 representing the length of 1 side
+// of the board.
 func (r Rules) BoardSize() int {
 	return r.PieceCount()*2 + 1
 }
 
-// Damage specified by the rules.
-func (r Rules) Damage() int {
-	return r.damage
-}
-
-// Life specified by the rules.
+// Life each Piece initially has which defines how much damage it can take
+// before being destroyed.
 func (r Rules) Life() int {
 	return r.life
 }
 
-// DamageIncrease specified by the rules.
-func (r Rules) DamageIncrease() int {
-	return r.damageIncrease
+// Damage each Piece does when colliding with another Piece.
+func (r Rules) Damage() int {
+	return r.damage
 }
 
-// LifeIncrease specified by the rules.
+// LifeIncrease is the amount a Piece's life increases every time it levels up.
 func (r Rules) LifeIncrease() int {
 	return r.lifeIncrease
 }
 
-// StandardRules ...
+// DamageIncrease is the amount a Piece's damage increases every time it levels
+// up.
+func (r Rules) DamageIncrease() int {
+	return r.damageIncrease
+}
+
+// StandardRules a game is meant to be played by.
 var StandardRules = NewRules(30*time.Second, 5, 3, 1, 1, 1)

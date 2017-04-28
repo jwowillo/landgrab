@@ -1,7 +1,5 @@
 package game
 
-type movePredicate func(*State, Move) bool
-
 // LegalPlays returns all the legal Plays for the State's current Player.
 func LegalPlays(s *State) []Play {
 	bs := bucketByPiece(s)
@@ -89,7 +87,7 @@ func bucketByPiece(s *State) [][]Move {
 	buckets := make([][]Move, s.Rules().PieceCount())
 	pc := s.Rules().PieceCount()
 	for _, move := range LegalMoves(s) {
-		id := int(move.Piece().ID()) % pc
+		id := (int(move.Piece().ID()) - 1) % pc
 		buckets[id] = append(buckets[id], move)
 	}
 	var bucketed [][]Move

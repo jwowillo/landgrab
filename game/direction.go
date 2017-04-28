@@ -5,7 +5,8 @@ type Direction int
 
 // Directions of movement possible.
 const (
-	North Direction = iota
+	NoDirection Direction = iota // Direction zero-value.
+	North
 	NorthEast
 	East
 	SouthEast
@@ -31,14 +32,24 @@ func Directions() []Direction {
 
 // String representation of the Direction.
 func (d Direction) String() string {
-	return map[Direction]string{
-		North:     "north",
-		NorthEast: "north-east",
-		East:      "east",
-		SouthEast: "south-east",
-		South:     "south",
-		SouthWest: "south-west",
-		West:      "west",
-		NorthWest: "north-west",
-	}[d]
+	switch d {
+	case North:
+		return "north"
+	case NorthEast:
+		return "north-east"
+	case East:
+		return "east"
+	case SouthEast:
+		return "south-east"
+	case South:
+		return "south"
+	case SouthWest:
+		return "south-west"
+	case West:
+		return "west"
+	case NorthWest:
+		return "north-west"
+	default:
+		return ""
+	}
 }

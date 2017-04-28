@@ -4,7 +4,7 @@ package game
 type PlayerConstructor func() DescribedPlayer
 
 // PlayerInitializer initializes values of an already built special
-// DescribedPlayer..
+// DescribedPlayer.
 type PlayerInitializer func(DescribedPlayer, map[string]interface{})
 
 // PlayerFactory manages construction of DescribedPlayers.
@@ -24,11 +24,9 @@ func NewPlayerFactory() *PlayerFactory {
 
 // All names of DescribedPlayers the factory can construct.
 func (f *PlayerFactory) All() []string {
-	all := make([]string, len(f.players))
-	i := 0
+	all := make([]string, 0, len(f.players))
 	for name := range f.players {
-		all[i] = name
-		i++
+		all = append(all, name)
 	}
 	return all
 }
@@ -76,7 +74,7 @@ func (f *PlayerFactory) RegisterSpecial(
 	f.initializers[ctor().Name()] = init
 }
 
-// DescribedPlayer ...
+// DescribedPlayer is a Player with a name and description attached.
 type DescribedPlayer interface {
 	Player
 	Name() string
@@ -96,16 +94,19 @@ type PlayerID int
 
 // PlayerIDs which can be given to Players.
 const (
-	NoPlayer PlayerID = iota
+	NoPlayer PlayerID = iota // PlayerID zero-value.
 	Player1
 	Player2
 )
 
 // String representation of the PlayerID.
 func (id PlayerID) String() string {
-	return map[PlayerID]string{
-		NoPlayer: "no player",
-		Player1:  "player 1",
-		Player2:  "player 2",
-	}[id]
+	switch id {
+	case Player1:
+		return "player 1"
+	case Player2:
+		return "player 2"
+	default:
+		return "no player"
+	}
 }

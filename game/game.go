@@ -1,4 +1,4 @@
-// Package game implements the landgrab game in a functional fashion.
+// Package game implements the landgrab game in an immutable style.
 //
 // The initial State of a game is created with the Rules for the game and the
 // Players that will be involved in the game. From that point, nothing is
@@ -6,6 +6,6 @@
 // insure it isn't modified and returns a new State representing the game after
 // the current Player has moved.
 //
-// For performance reasons, some internal functions mutate but only for
-// performance reasons. These mutations are never visible outside the package.
+// For performance reasons, some internal functions mutate. These mutations are
+// never visible outside the package.
 package game
