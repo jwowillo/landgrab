@@ -9,9 +9,8 @@ func LegalPlays(s *State) []Play {
 	cs := combinations(bs)
 	ps := make([]Play, 0, len(cs))
 	for _, p := range cs {
-		p = removeMove(NoMove, p)
 		if IsLegalPlay(s, p) {
-			ps = append(ps, p)
+			ps = append(ps, removeMove(NoMove, p))
 		}
 	}
 	return ps
@@ -24,7 +23,7 @@ func LegalPlays(s *State) []Play {
 func IsLegalPlay(s *State, p Play) bool {
 	s = clone(s)
 	for _, m := range p {
-		if !IsLegalMove(s, m) {
+		if m != NoMove && !IsLegalMove(s, m) {
 			return false
 		}
 		applyMove(s, m)
@@ -57,29 +56,22 @@ func LegalMoves(s *State) []Move {
 //   - the Move doesn't overlap with any other Board Piece's belonging to the
 //   current Player.
 func IsLegalMove(s *State, m Move) bool {
-	isLegalPiece := false
-	for _, p := range s.currentPlayerPieces() {
-		isLegalPiece = isLegalPiece || m.Piece() == p
-	}
-	if !isLegalPiece {
-		return false
-	}
 	cell := nextCell(s.CellForPiece(m.Piece()), m.Direction())
 	r := cell.Row()
 	c := cell.Column()
-	size := 2*s.Rules().PieceCount() + 1
+	size := s.Rules().BoardSize()
 	if r < 0 || r >= size || c < 0 || c >= size {
 		return false
 	}
+	isLegalMove := false
 	for _, p := range s.currentPlayerPieces() {
-		if p == NoPiece {
-			continue
-		}
-		if m.Piece() != p && s.CellForPiece(p) == cell {
+		if m.Piece() == p {
+			isLegalMove = true
+		} else if s.CellForPiece(p) == cell {
 			return false
 		}
 	}
-	return true
+	return isLegalMove
 }
 
 // bucketByPiece buckets the list of Moves by the Piece that made the Move.

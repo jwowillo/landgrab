@@ -49,3 +49,109 @@ const NoPieceID = 0
 //
 // Note that this is the same as the zero-value for Piece.
 var NoPiece = NewPiece(NoPieceID, 0, 0)
+
+// pieeMap is an efficient mapping of Pieces to Cells that takes advantage of
+// the sequential PieceIDs to hash Pieces into a slie.
+type pieceMap struct {
+	cells []Cell
+}
+
+// newPieceMap where each Player has the given amount of Pieces.
+func newPieceMap(pc int) pieceMap {
+	return pieceMap{cells: make([]Cell, pc*2)}
+}
+
+// Set the Piece to the Cell.
+//
+// If the Piece's id is NoPieceID, nothing is done.
+func (m pieceMap) Set(p Piece, c Cell) {
+	pid := p.ID()
+	if pid == NoPieceID {
+		return
+	}
+	m.cells[pid-1] = c
+}
+
+// Get the Cell associated with the Piece from the map.
+func (m pieceMap) Get(p Piece) (Cell, bool) {
+	pid := p.ID()
+	if pid == NoPieceID {
+		return NoCell, false
+	}
+	c := m.cells[pid-1]
+	return c, c != NoCell
+}
+
+// Remove the Cell associated with the Piece and the Piece from the map.
+func (m pieceMap) Remove(p Piece) {
+	pid := p.ID()
+	if pid == NoPieceID {
+		return
+	}
+	m.cells[pid-1] = NoCell
+}
+
+// clone the pieceMap.
+func (m pieceMap) clone() pieceMap {
+	return pieceMap{cells: append([]Cell{}, m.cells...)}
+}
+
+// pieceIDMap efficiently maps PieceIDs to Pieces.
+type pieceIDMap struct {
+	pieceCount int
+	pieces     []Piece
+}
+
+// newPieceIDMap where each Player has the given amount of Pieces.
+func newPieceIDMap(pc int) pieceIDMap {
+	return pieceIDMap{pieceCount: pc, pieces: make([]Piece, pc*2)}
+}
+
+// Set the PieceID to the Piece.
+//
+// This introduces the ability for the key PieceID to not match the Piece's
+// PieceID but is necessary for efficient removal of a Piece from the map. An
+// example of this is removing a Piece with PieceID 4. The value at PieceID 4
+// will be set to NoPiece, even though NoPiece has a PieceID of 0. This still
+// constitutes removing the Piece with PieceID 4 from the map.
+func (m pieceIDMap) Set(pid PieceID, p Piece) {
+	if pid == NoPieceID {
+		return
+	}
+	m.pieces[pid-1] = p
+}
+
+// Get the Piece with the PieceID.
+func (m pieceIDMap) Get(pid PieceID) (Piece, bool) {
+	if pid == NoPieceID {
+		return NoPiece, false
+	}
+	p := m.pieces[pid-1]
+	return p, p != NoPiece
+}
+
+// Remove the Piece with the PieceID.
+func (m pieceIDMap) Remove(pid PieceID) {
+	if pid == NoPieceID {
+		return
+	}
+	m.pieces[pid-1] = NoPiece
+}
+
+// Player1Pieces in the map.
+func (m pieceIDMap) Player1Pieces() []Piece {
+	return m.pieces[:m.pieceCount]
+}
+
+// Player2Pieces in the map.
+func (m pieceIDMap) Player2Pieces() []Piece {
+	return m.pieces[m.pieceCount:]
+}
+
+// clone the pieceIDMap.
+func (m pieceIDMap) clone() pieceIDMap {
+	return pieceIDMap{
+		pieceCount: m.pieceCount,
+		pieces:     append([]Piece{}, m.pieces...),
+	}
+}

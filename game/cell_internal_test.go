@@ -2,16 +2,16 @@ package game
 
 import "testing"
 
-// mapSize is the size of cellMap to use.
-const mapSize = 11
+// cellMapSize is the size of cellMap to use.
+const cellMapSize = 11
 
 // BenchmarkCellMapOperations benchmarks the efficiency of setting, getting, and
 // removing from a cellMap.
 func BenchmarkCellMapOperations(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		m := newCellMap(mapSize)
-		for j := 0; j < 11; j++ {
-			for k := 0; k < mapSize; k++ {
+		m := newCellMap(cellMapSize)
+		for j := 0; j < cellMapSize; j++ {
+			for k := 0; k < cellMapSize; k++ {
 				c := NewCell(j, k)
 				m.Set(c, 1)
 				m.Get(c)
@@ -23,7 +23,8 @@ func BenchmarkCellMapOperations(b *testing.B) {
 
 // BenchmarkCellMapClone benchmarks the efficiency of cloning a cellMap.
 func BenchmarkCellMapClone(b *testing.B) {
-	m := newCellMap(mapSize)
+	m := newCellMap(cellMapSize)
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		m.clone()
 	}
@@ -33,7 +34,7 @@ func BenchmarkCellMapClone(b *testing.B) {
 // removed.
 func TestCellMap(t *testing.T) {
 	t.Parallel()
-	m := newCellMap(mapSize)
+	m := newCellMap(cellMapSize)
 	for i := 0; i < 11; i++ {
 		for j := 0; j < 11; j++ {
 			m.Set(NewCell(i, j), 1)
@@ -41,8 +42,7 @@ func TestCellMap(t *testing.T) {
 	}
 	for i := 0; i < 11; i++ {
 		for j := 0; j < 11; j++ {
-			pid, ok := m.Get(NewCell(i, j))
-			if pid != 1 || !ok {
+			if pid, ok := m.Get(NewCell(i, j)); pid != 1 || !ok {
 				t.Errorf(
 					"pid=%d, ok=%v := "+
 						"m.Get(NewCell(%d, %d)), "+
@@ -61,8 +61,7 @@ func TestCellMap(t *testing.T) {
 	}
 	for i := 0; i < 11; i++ {
 		for j := 0; j < 11; j++ {
-			_, ok := m.Get(NewCell(i, j))
-			if ok {
+			if _, ok := m.Get(NewCell(i, j)); ok {
 				t.Errorf(
 					"_, ok=%v := m.Get(NewCell(%d, %d)), "+
 						"want ok=%v",

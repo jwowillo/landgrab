@@ -10,6 +10,7 @@ import (
 // their string forms.
 func BenchmarkDirectionString(b *testing.B) {
 	ds := game.Directions()
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for _, d := range ds {
 			d.String()
@@ -75,6 +76,13 @@ func TestDirections(t *testing.T) {
 			"game.NorthWest.String() = %s, want %s",
 			game.NorthWest.String(),
 			"north-west",
+		)
+	}
+	if game.NoDirection.String() != "" {
+		t.Errorf(
+			"game.NoDirection.String() = %s, want %s",
+			game.NoDirection.String(),
+			"",
 		)
 	}
 }

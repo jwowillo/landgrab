@@ -158,24 +158,15 @@ func JSONToJSONState(bs []byte) (JSONState, error) {
 func JSONStateToState(s JSONState, factory *game.PlayerFactory) *game.State {
 	p1 := JSONPlayerToPlayer(s.Player1, factory)
 	p2 := JSONPlayerToPlayer(s.Player2, factory)
-	var p1Pieces []game.Piece
-	var p2Pieces []game.Piece
 	Pieces := make(map[game.Cell]game.Piece)
 	for _, rawPiece := range s.Pieces {
 		Piece := JSONPieceToPiece(rawPiece)
-		if stringToPlayerID(rawPiece.Player) == game.Player1 {
-			p1Pieces = append(p1Pieces, Piece)
-		}
-		if stringToPlayerID(rawPiece.Player) == game.Player2 {
-			p2Pieces = append(p2Pieces, Piece)
-		}
 		Pieces[game.NewCell(rawPiece.Cell[0], rawPiece.Cell[1])] = Piece
 	}
 	return game.NewStateFromInfo(
 		JSONRulesToRules(s.Rules),
 		stringToPlayerID(s.CurrentPlayer),
 		p1, p2,
-		p1Pieces, p2Pieces,
 		Pieces,
 	)
 }

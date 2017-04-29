@@ -1,16 +1,16 @@
 <table>
-  <tr *ngFor='let row of grid'>
-    <td *ngFor='let piece of row'>
-      <span
-        class='cell'
-        *ngIf='isPiece(piece)'
-        [ngClass]="{'player1': isPlayer1(piece), 'player2': isPlayer2(piece)}"
-      >
-        {{ piece.id }}|{{ piece.life }}|{{piece.damage}}
-      </span>
-      <span class='empty cell' *ngIf='!isPiece(piece)'> 0|0|0</span>
-    </td>
-  </tr>
+  <tbody>
+    <tr *ngFor='let row of grid'>
+      <td *ngFor='let piece of row'>
+        <span
+          *ngIf='isPiece(piece)'
+          [ngClass]="{'player1': isPlayer1(piece), 'player2': isPlayer2(piece)}"
+        >
+          {{ piece.id }}|{{ piece.life }}|{{piece.damage}}
+        </span>
+      </td>
+    </tr>
+  </tbody>
 </table>
 <div class='center' *ngIf='state != null'>
   <p><b>Cell:</b> PIECE_ID|LIFE|DAMAGE</p>

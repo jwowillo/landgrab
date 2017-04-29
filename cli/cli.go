@@ -63,7 +63,6 @@ func (cli *CLI) Run(factory *game.PlayerFactory, p1, p2 game.DescribedPlayer) {
 			s.Rules(),
 			s.CurrentPlayer(),
 			p1, p2,
-			s.Player1Pieces(), s.Player2Pieces(),
 			pieces(s),
 		)
 		if cli.shouldWait && !isHuman {

@@ -10,6 +10,7 @@ import (
 // their string representations.
 func BenchmarkPlayerIDString(b *testing.B) {
 	pids := []game.PlayerID{game.NoPlayer, game.Player1, game.Player2}
+	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for _, pid := range pids {
 			pid.String()
@@ -91,12 +92,10 @@ func TestPlayerFactory(t *testing.T) {
 			t.Errorf("f.All() doesn't contain %s", p)
 		}
 	}
-	_, ok := f.Player("normal1").(normal1)
-	if !ok {
+	if _, ok := f.Player("normal1").(normal1); !ok {
 		t.Errorf("f.Player(\"normal1\") doesn't return normal1")
 	}
-	_, ok = f.Player("normal2").(normal2)
-	if !ok {
+	if _, ok := f.Player("normal2").(normal2); !ok {
 		t.Errorf("f.Player(\"normal2\") doesn't return normal2")
 	}
 	data := map[string]interface{}{"value": "value"}
@@ -115,6 +114,12 @@ func TestPlayerFactory(t *testing.T) {
 		if p2.value != "value" {
 			t.Errorf("p2.value = %s, want %s", p2.value, "value")
 		}
+	}
+	if p := f.SpecialPlayer("", nil); p != nil {
+		t.Errorf("f.SpecialPlayer(\"\") = %v, want %v", p, nil)
+	}
+	if _, ok = f.SpecialPlayer("normal1", nil).(normal1); !ok {
+		t.Errorf("f.SpecialPlayer(\"normal1\") doesnt return normal1")
 	}
 }
 
