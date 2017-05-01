@@ -35,7 +35,7 @@ func BenchmarkPieceMapClone(b *testing.B) {
 // removed.
 func TestPieceMap(t *testing.T) {
 	t.Parallel()
-	m := newPieceMap(pieceMapSize)
+	m := newPieceMap(pieceMapSize).clone()
 	c := NewCell(3, 5)
 	for i := 1; i <= pieceMapSize*2; i++ {
 		m.Set(NewPiece(PieceID(i), 1, 1), c)
@@ -43,6 +43,7 @@ func TestPieceMap(t *testing.T) {
 	if _, ok := m.Get(NoPiece); ok {
 		t.Errorf("_, ok=%v := m.Get(NoPiece), want ok=%v", ok, false)
 	}
+	m.Set(NoPiece, NoCell)
 	m.Remove(NoPiece)
 	for i := 1; i <= 10; i++ {
 		if cc, ok := m.Get(NewPiece(PieceID(i), 1, 1)); cc != c || !ok {
@@ -99,7 +100,7 @@ func BenchmarkPieceIDMapClone(b *testing.B) {
 // removed.
 func TestPieceIDMap(t *testing.T) {
 	t.Parallel()
-	m := newPieceIDMap(pieceMapSize)
+	m := newPieceIDMap(pieceMapSize).clone()
 	for i := 1; i <= pieceMapSize*2; i++ {
 		pid := PieceID(i)
 		m.Set(pid, NewPiece(pid, 1, 1))
@@ -119,6 +120,7 @@ func TestPieceIDMap(t *testing.T) {
 	if _, ok := m.Get(NoPieceID); ok {
 		t.Errorf("_, ok=%v := m.Get(NoPieceID), want ok=%v", ok, false)
 	}
+	m.Set(NoPieceID, NoPiece)
 	m.Remove(NoPieceID)
 	for i, p := range m.Player1Pieces() {
 		pid := PieceID(i + 1)

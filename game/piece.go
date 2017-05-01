@@ -66,7 +66,7 @@ func newPieceMap(pc int) pieceMap {
 // If the Piece's id is NoPieceID, nothing is done.
 func (m pieceMap) Set(p Piece, c Cell) {
 	pid := p.ID()
-	if pid == NoPieceID {
+	if pid == NoPieceID || int(pid) > len(m.cells) {
 		return
 	}
 	m.cells[pid-1] = c
@@ -75,7 +75,7 @@ func (m pieceMap) Set(p Piece, c Cell) {
 // Get the Cell associated with the Piece from the map.
 func (m pieceMap) Get(p Piece) (Cell, bool) {
 	pid := p.ID()
-	if pid == NoPieceID {
+	if pid == NoPieceID || int(pid) > len(m.cells) {
 		return NoCell, false
 	}
 	c := m.cells[pid-1]
@@ -85,7 +85,7 @@ func (m pieceMap) Get(p Piece) (Cell, bool) {
 // Remove the Cell associated with the Piece and the Piece from the map.
 func (m pieceMap) Remove(p Piece) {
 	pid := p.ID()
-	if pid == NoPieceID {
+	if pid == NoPieceID || int(pid) > len(m.cells) {
 		return
 	}
 	m.cells[pid-1] = NoCell

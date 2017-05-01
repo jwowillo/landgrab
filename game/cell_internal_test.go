@@ -34,7 +34,7 @@ func BenchmarkCellMapClone(b *testing.B) {
 // removed.
 func TestCellMap(t *testing.T) {
 	t.Parallel()
-	m := newCellMap(cellMapSize)
+	m := newCellMap(cellMapSize).clone()
 	for i := 0; i < 11; i++ {
 		for j := 0; j < 11; j++ {
 			m.Set(NewCell(i, j), 1)

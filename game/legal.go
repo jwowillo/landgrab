@@ -7,10 +7,10 @@ func LegalPlays(s *State) []Play {
 		b = append(b, NoMove)
 	}
 	cs := combinations(bs)
-	ps := make([]Play, 0, len(cs))
-	for _, p := range cs {
+	ps := make([]Play, len(cs))
+	for i, p := range cs {
 		if IsLegalPlay(s, p) {
-			ps = append(ps, removeMove(NoMove, p))
+			ps[i] = removeMove(NoMove, p)
 		}
 	}
 	return ps
@@ -63,15 +63,10 @@ func IsLegalMove(s *State, m Move) bool {
 	if r < 0 || r >= size || c < 0 || c >= size {
 		return false
 	}
-	isLegalMove := false
-	for _, p := range s.currentPlayerPieces() {
-		if m.Piece() == p {
-			isLegalMove = true
-		} else if s.CellForPiece(p) == cell {
-			return false
-		}
+	if p := s.PieceForCell(cell); playerForPiece(s, p) == s.CurrentPlayer() {
+		return false
 	}
-	return isLegalMove
+	return playerForPiece(s, m.Piece()) == s.CurrentPlayer()
 }
 
 // bucketByPiece buckets the list of Moves by the Piece that made the Move.
