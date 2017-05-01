@@ -103,17 +103,18 @@ func best(s *game.State, ps []game.Play) []game.Play {
 	for _, p := range ps {
 		n := game.NextStateWithPlay(s, p)
 		v := value(n)
+		d := totalDistance(n)
 		if v == best {
-			d := totalDistance(n)
-			if totalDistance(n) < bestDistance {
+			if d < bestDistance {
 				bestDistance = d
 				bestPlays = []game.Play{p}
-			} else {
+			} else if d == bestDistance {
 				bestPlays = append(bestPlays, p)
 			}
 		}
 		if v < best {
 			best = v
+			bestDistance = d
 			bestPlays = []game.Play{p}
 		}
 	}

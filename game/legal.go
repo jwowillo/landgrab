@@ -6,14 +6,7 @@ func LegalPlays(s *State) []Play {
 	for i := range bs {
 		bs[i] = append(bs[i], NoMove)
 	}
-	cs := combinations(bs)
-	ps := make([]Play, 0, len(cs))
-	for _, p := range cs {
-		if IsLegalPlay(s, p) {
-			ps = append(ps, removeMove(NoMove, p))
-		}
-	}
-	return ps
+	return combinations(s, bs)
 }
 
 // IsLegalPlay returns true iff the Play is legal at the current State.
@@ -88,16 +81,19 @@ func bucketByPiece(s *State) [][]Move {
 
 // combinations of the buckets returns all combinations with one Move from each
 // bucket using all buckets.
-func combinations(buckets [][]Move) [][]Move {
+func combinations(s *State, buckets [][]Move) []Play {
 	sizes := make([]int, len(buckets))
 	for i, bucket := range buckets {
 		sizes[i] = len(bucket)
 	}
 	n := combinationCount(sizes)
-	combos := make([][]Move, n)
+	combos := make([]Play, 0, n)
 	indices := make([]int, len(buckets))
 	for i := 0; i < n; i++ {
-		combos[i] = combinationForIndices(buckets, indices)
+		p := combinationForIndices(buckets, indices)
+		if IsLegalPlay(s, p) {
+			combos = append(combos, removeMove(NoMove, p))
+		}
 		increment(indices, sizes)
 	}
 	return combos
