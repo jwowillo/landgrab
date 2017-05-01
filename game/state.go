@@ -120,9 +120,9 @@ func (s *State) CurrentPlayer() PlayerID {
 func (s *State) NextPlayer() PlayerID {
 	switch s.CurrentPlayer() {
 	case Player1:
-		return Player1
-	case Player2:
 		return Player2
+	case Player2:
+		return Player1
 	default:
 		return NoPlayer
 	}
