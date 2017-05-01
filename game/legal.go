@@ -3,14 +3,14 @@ package game
 // LegalPlays returns all the legal Plays for the State's current Player.
 func LegalPlays(s *State) []Play {
 	bs := bucketByPiece(s)
-	for _, b := range bs {
-		b = append(b, NoMove)
+	for i := range bs {
+		bs[i] = append(bs[i], NoMove)
 	}
 	cs := combinations(bs)
-	ps := make([]Play, len(cs))
-	for i, p := range cs {
+	ps := make([]Play, 0, len(cs))
+	for _, p := range cs {
 		if IsLegalPlay(s, p) {
-			ps[i] = removeMove(NoMove, p)
+			ps = append(ps, removeMove(NoMove, p))
 		}
 	}
 	return ps
