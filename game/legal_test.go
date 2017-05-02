@@ -9,7 +9,6 @@ import (
 	"github.com/jwowillo/landgrab/game"
 )
 
-// TODO: Include examples.
 // TODO: TestLegalMoves.
 // TODO: TestIsLegalPlay.
 //   Make sure to test immutability.

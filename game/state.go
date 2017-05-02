@@ -152,7 +152,7 @@ func (s *State) Player2Pieces() []Piece {
 	return removePiece(s.player2Pieces(), NoPiece)
 }
 
-// Pieces ...
+// Pieces returns the Pieces for Player one and Player two.
 func (s *State) Pieces() []Piece {
 	return append(s.Player1Pieces(), s.Player2Pieces()...)
 }
@@ -182,10 +182,12 @@ func (s *State) PieceForCell(c Cell) Piece {
 //
 // NoPlayer is returned if no Player owns the Piece.
 func (s *State) PlayerForPiece(p Piece) PlayerID {
-	if int(p.ID()) <= s.Rules().PieceCount() {
+	pid := int(p.ID())
+	pc := s.Rules().PieceCount()
+	if pid > 0 && pid <= pc {
 		return Player1
 	}
-	if int(p.ID()) > s.Rules().PieceCount() {
+	if pid > pc && pid <= 2*pc {
 		return Player2
 	}
 	return NoPlayer
@@ -235,6 +237,8 @@ func handleMoves(s *State, ms Play) {
 	}
 }
 
+// nextCells is a hardcoded list of direction Cells for use in determining
+// possible next Cells.
 var nextCells = []Cell{
 	NewCell(0, 0),
 	NewCell(-1, 0),
@@ -267,14 +271,17 @@ func clone(s *State) *State {
 	}
 }
 
+// player1Pieces returns a non-copied list of Player one's Pieces.
 func (s *State) player1Pieces() []Piece {
 	return s.pieces.Player1Pieces()
 }
 
+// player2Pieces returns a non-copied list of Player two's Pieces.
 func (s *State) player2Pieces() []Piece {
 	return s.pieces.Player2Pieces()
 }
 
+// currentPlayerPieces returns a non-copied list of the current Player's Pieces.
 func (s *State) currentPlayerPieces() []Piece {
 	switch s.CurrentPlayer() {
 	case Player1:
@@ -286,6 +293,7 @@ func (s *State) currentPlayerPieces() []Piece {
 	}
 }
 
+// nextPlayerPieces returns a non-copied list of the next Player's Pieces.
 func (s *State) nextPlayerPieces() []Piece {
 	switch s.CurrentPlayer() {
 	case Player1:
@@ -329,18 +337,6 @@ func handleDestroyed(s *State, ms Play) {
 	}
 }
 
-func playerForPiece(s *State, p Piece) PlayerID {
-	pid := int(p.ID())
-	pc := s.Rules().PieceCount()
-	if pid > 0 && pid <= pc {
-		return Player1
-	}
-	if pid > pc && pid <= 2*pc {
-		return Player2
-	}
-	return NoPlayer
-}
-
 // applyMove applies the single Move to the State.
 func applyMove(s *State, m Move) {
 	previous := s.CellForPiece(m.Piece())
@@ -351,7 +347,7 @@ func applyMove(s *State, m Move) {
 			return
 		}
 	}
-	if p := s.PieceForCell(next); playerForPiece(s, p) == s.NextPlayer() {
+	if p := s.PieceForCell(next); s.PlayerForPiece(p) == s.NextPlayer() {
 		s.pieces.Set(p.ID(), NewPiece(
 			p.ID(),
 			p.Life()-m.Piece().Damage(),
@@ -364,6 +360,7 @@ func applyMove(s *State, m Move) {
 	s.cellsToPieceIDs.Remove(previous)
 }
 
+// removePiece occurances in list of Pieces.
 func removePiece(ps []Piece, r Piece) []Piece {
 	var out []Piece
 	for _, p := range ps {

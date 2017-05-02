@@ -56,10 +56,10 @@ func IsLegalMove(s *State, m Move) bool {
 	if r < 0 || r >= size || c < 0 || c >= size {
 		return false
 	}
-	if p := s.PieceForCell(cell); playerForPiece(s, p) == s.CurrentPlayer() {
+	if p := s.PieceForCell(cell); s.PlayerForPiece(p) == s.CurrentPlayer() {
 		return false
 	}
-	return playerForPiece(s, m.Piece()) == s.CurrentPlayer()
+	return s.PlayerForPiece(m.Piece()) == s.CurrentPlayer()
 }
 
 // bucketByPiece buckets the list of Moves by the Piece that made the Move.
