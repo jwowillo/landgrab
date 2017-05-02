@@ -9,11 +9,6 @@ import (
 	"github.com/jwowillo/landgrab/game"
 )
 
-// TODO: TestLegalMoves.
-// TODO: TestIsLegalPlay.
-//   Make sure to test immutability.
-// TODO: TestLegalPlay.
-
 // BenchmarkLegalPlays benchmarks the performance of finding the legal
 // game.Plays from a game.State.
 func BenchmarkLegalPlays(b *testing.B) {
@@ -58,6 +53,371 @@ func BenchmarkIsLegalMove(b *testing.B) {
 	}
 }
 
+// TestLegalPlays tests that game.LegalPlays makes all legal game.Plays and all
+// made game.Plays are legal.
+func TestLegalPlays(t *testing.T) {
+	t.Parallel()
+	rules1 := game.NewRules(30*time.Second, 1, 1, 1, 1, 1)
+	rules2 := game.NewRules(30*time.Second, 2, 1, 1, 1, 1)
+	p1 := game.NewPiece(1, 1, 1)
+	p2 := game.NewPiece(2, 1, 1)
+	p3 := game.NewPiece(3, 1, 1)
+	p4 := game.NewPiece(4, 1, 1)
+	cases := []struct {
+		State *game.State
+		Plays []game.Play
+	}{
+		{
+			State: game.NewState(rules1, normal1{}, normal2{}),
+			Plays: []game.Play{
+				game.Play{},
+				game.Play{game.NewMove(p1, game.East)},
+				game.Play{game.NewMove(p1, game.SouthEast)},
+				game.Play{game.NewMove(p1, game.South)},
+				game.Play{game.NewMove(p1, game.West)},
+				game.Play{game.NewMove(p1, game.SouthWest)},
+			},
+		},
+		{
+			State: game.NewStateFromInfo(
+				rules2,
+				game.Player2,
+				normal1{}, normal2{},
+				map[game.Cell]game.Piece{
+					game.NewCell(4, 0): p3,
+					game.NewCell(4, 4): p4,
+				},
+			),
+			Plays: []game.Play{
+				game.Play{},
+				game.Play{game.NewMove(p3, game.North)},
+				game.Play{game.NewMove(p3, game.NorthEast)},
+				game.Play{game.NewMove(p3, game.East)},
+				game.Play{game.NewMove(p4, game.North)},
+				game.Play{game.NewMove(p4, game.NorthWest)},
+				game.Play{game.NewMove(p4, game.West)},
+				game.Play{
+					game.NewMove(p3, game.North),
+					game.NewMove(p4, game.North),
+				},
+				game.Play{
+					game.NewMove(p3, game.North),
+					game.NewMove(p4, game.NorthWest),
+				},
+				game.Play{
+					game.NewMove(p3, game.North),
+					game.NewMove(p4, game.West),
+				},
+				game.Play{
+					game.NewMove(p3, game.NorthEast),
+					game.NewMove(p4, game.North),
+				},
+				game.Play{
+					game.NewMove(p3, game.NorthEast),
+					game.NewMove(p4, game.NorthWest),
+				},
+				game.Play{
+					game.NewMove(p3, game.NorthEast),
+					game.NewMove(p4, game.West),
+				},
+				game.Play{
+					game.NewMove(p3, game.East),
+					game.NewMove(p4, game.North),
+				},
+				game.Play{
+					game.NewMove(p3, game.East),
+					game.NewMove(p4, game.NorthWest),
+				},
+				game.Play{
+					game.NewMove(p3, game.East),
+					game.NewMove(p4, game.West),
+				},
+			},
+		},
+		{
+			State: game.NewStateFromInfo(
+				rules2,
+				game.Player2,
+				normal1{}, normal2{},
+				map[game.Cell]game.Piece{
+					game.NewCell(4, 0): p3,
+					game.NewCell(4, 1): p4,
+				},
+			),
+			Plays: []game.Play{
+				game.Play{},
+				game.Play{game.NewMove(p3, game.North)},
+				game.Play{game.NewMove(p3, game.NorthEast)},
+				game.Play{game.NewMove(p4, game.NorthWest)},
+				game.Play{game.NewMove(p4, game.North)},
+				game.Play{game.NewMove(p4, game.NorthEast)},
+				game.Play{game.NewMove(p4, game.East)},
+				game.Play{
+					game.NewMove(p3, game.North),
+					game.NewMove(p4, game.North),
+				},
+				game.Play{
+					game.NewMove(p3, game.North),
+					game.NewMove(p4, game.NorthEast),
+				},
+				game.Play{
+					game.NewMove(p3, game.North),
+					game.NewMove(p4, game.East),
+				},
+				game.Play{
+					game.NewMove(p3, game.NorthEast),
+					game.NewMove(p4, game.NorthEast),
+				},
+				game.Play{
+					game.NewMove(p3, game.NorthEast),
+					game.NewMove(p4, game.East),
+				},
+				game.Play{
+					game.NewMove(p3, game.NorthEast),
+					game.NewMove(p4, game.NorthWest),
+				},
+			},
+		},
+		{
+			State: game.NewStateFromInfo(
+				rules2,
+				game.Player2,
+				normal1{}, normal2{},
+				map[game.Cell]game.Piece{
+					game.NewCell(3, 0): p1,
+					game.NewCell(3, 1): p2,
+					game.NewCell(4, 0): p3,
+					game.NewCell(4, 1): p4,
+				},
+			),
+			Plays: []game.Play{
+				game.Play{},
+				game.Play{game.NewMove(p3, game.North)},
+				game.Play{game.NewMove(p3, game.NorthEast)},
+				game.Play{game.NewMove(p4, game.NorthWest)},
+				game.Play{game.NewMove(p4, game.North)},
+				game.Play{game.NewMove(p4, game.NorthEast)},
+				game.Play{game.NewMove(p4, game.East)},
+				game.Play{
+					game.NewMove(p3, game.North),
+					game.NewMove(p4, game.North),
+				},
+				game.Play{
+					game.NewMove(p3, game.North),
+					game.NewMove(p4, game.NorthEast),
+				},
+				game.Play{
+					game.NewMove(p3, game.North),
+					game.NewMove(p4, game.East),
+				},
+				game.Play{
+					game.NewMove(p3, game.NorthEast),
+					game.NewMove(p4, game.NorthEast),
+				},
+				game.Play{
+					game.NewMove(p3, game.NorthEast),
+					game.NewMove(p4, game.East),
+				},
+				game.Play{
+					game.NewMove(p3, game.NorthEast),
+					game.NewMove(p4, game.NorthWest),
+				},
+				game.Play{
+					game.NewMove(p3, game.NorthEast),
+					game.NewMove(p4, game.North),
+				},
+				game.Play{
+					game.NewMove(p3, game.North),
+					game.NewMove(p4, game.NorthWest),
+				},
+			},
+		},
+	}
+	for _, test := range cases {
+		ps := game.LegalPlays(test.State)
+		for _, p := range ps {
+			if !game.IsLegalPlay(test.State, p) {
+				t.Errorf(
+					"game.LegalPlays(%v) contains %v",
+					test.State, p,
+				)
+			}
+			hasMatched := false
+			for _, cp := range test.Plays {
+				actual := make(map[game.Move]struct{})
+				expected := make(map[game.Move]struct{})
+				for _, m := range cp {
+					actual[m] = struct{}{}
+				}
+				for _, m := range p {
+					expected[m] = struct{}{}
+				}
+				hasMatched = hasMatched || reflect.DeepEqual(
+					actual,
+					expected,
+				)
+			}
+			if !hasMatched {
+				t.Errorf(
+					"game.LegalPlays(%v) dosn't contain %v",
+					test.State, p,
+				)
+			}
+		}
+	}
+}
+
+// IsLegalPlay tests if combinations of game.Moves are legal.
+func TestIsLegalPlay(t *testing.T) {
+	t.Parallel()
+	rules := game.NewRules(30*time.Second, 2, 1, 1, 1, 1)
+	p0 := game.NewPiece(0, 1, 1)
+	p1 := game.NewPiece(1, 1, 1)
+	p2 := game.NewPiece(2, 1, 1)
+	p3 := game.NewPiece(3, 1, 1)
+	p4 := game.NewPiece(4, 1, 1)
+	cases := []struct {
+		State   *game.State
+		Play    game.Play
+		IsLegal bool
+	}{
+		{
+			State:   game.NewState(rules, normal1{}, normal2{}),
+			Play:    nil,
+			IsLegal: true,
+		},
+		{
+			State:   game.NewState(rules, normal1{}, normal2{}),
+			Play:    game.Play{},
+			IsLegal: true,
+		},
+		{
+			State: game.NewStateFromInfo(
+				rules,
+				game.Player1,
+				normal1{}, normal2{},
+				map[game.Cell]game.Piece{
+					game.NewCell(0, 1): p1,
+					game.NewCell(0, 3): p2,
+				},
+			),
+			Play: game.Play{
+				game.NewMove(p1, game.SouthEast),
+				game.NewMove(p2, game.SouthWest),
+			},
+			IsLegal: false,
+		},
+		{
+			State:   game.NewState(rules, normal1{}, normal2{}),
+			Play:    game.Play{game.NewMove(p1, game.South)},
+			IsLegal: true,
+		},
+		{
+			State: game.NewState(rules, normal1{}, normal2{}),
+			Play: game.Play{
+				game.NewMove(p1, game.South),
+				game.NewMove(p2, game.South),
+			},
+			IsLegal: true,
+		},
+		{
+			State:   game.NewState(rules, normal1{}, normal2{}),
+			Play:    game.Play{game.NewMove(p0, game.South)},
+			IsLegal: false,
+		},
+		{
+			State:   game.NewState(rules, normal1{}, normal2{}),
+			Play:    game.Play{game.NewMove(p3, game.South)},
+			IsLegal: false,
+		},
+		{
+			State: game.NewState(rules, normal1{}, normal2{}),
+			Play: game.Play{
+				game.NewMove(p1, game.South),
+				game.NewMove(p1, game.South),
+			},
+			IsLegal: false,
+		},
+		{
+			State: game.NewState(rules, normal1{}, normal2{}),
+			Play: game.Play{
+				game.NewMove(p1, game.South),
+				game.NewMove(p2, game.North),
+			},
+			IsLegal: false,
+		},
+		{
+			State: game.NewState(rules, normal1{}, normal2{}),
+			Play: game.Play{
+				game.NewMove(p1, game.North),
+				game.NewMove(p2, game.North),
+			},
+			IsLegal: false,
+		},
+		{
+			State: game.NewStateFromInfo(
+				rules,
+				game.Player1,
+				normal1{}, normal2{},
+				map[game.Cell]game.Piece{
+					game.NewCell(0, 0): p1,
+					game.NewCell(0, 1): p2,
+					game.NewCell(1, 0): p3,
+					game.NewCell(1, 1): p4,
+				},
+			),
+			Play: game.Play{
+				game.NewMove(p1, game.South),
+				game.NewMove(p2, game.South),
+			},
+			IsLegal: true,
+		},
+		{
+			State: game.NewStateFromInfo(
+				rules,
+				game.Player1,
+				normal1{}, normal2{},
+				map[game.Cell]game.Piece{
+					game.NewCell(0, 0): p1,
+					game.NewCell(0, 1): p2,
+				},
+			),
+			Play: game.Play{
+				game.NewMove(p1, game.East),
+				game.NewMove(p2, game.East),
+			},
+			IsLegal: false,
+		},
+		{
+			State: game.NewStateFromInfo(
+				rules,
+				game.Player1,
+				normal1{}, normal2{},
+				map[game.Cell]game.Piece{
+					game.NewCell(0, 0): p1,
+					game.NewCell(0, 1): p2,
+				},
+			),
+			Play: game.Play{
+				game.NewMove(p2, game.East),
+				game.NewMove(p1, game.East),
+			},
+			IsLegal: false,
+		},
+	}
+	for _, test := range cases {
+		if game.IsLegalPlay(test.State, test.Play) != test.IsLegal {
+			t.Errorf(
+				"game.IsLegalPlay(%v, %v) = %v, want %v",
+				test.State, test.Play,
+				!test.IsLegal, test.IsLegal,
+			)
+		}
+	}
+}
+
+// TestLegalMoves tests that LegalMoves returns all legal game.Moves and only
+// legal game.Moves.
 func TestLegalMoves(t *testing.T) {
 	t.Parallel()
 	rules := game.NewRules(30*time.Second, 2, 1, 1, 1, 1)

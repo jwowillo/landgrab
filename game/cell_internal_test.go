@@ -72,4 +72,7 @@ func TestCellMap(t *testing.T) {
 			}
 		}
 	}
+	m.Get(NoCell)
+	m.Set(NoCell, NoPieceID)
+	m.Remove(NoCell)
 }

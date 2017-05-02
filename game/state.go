@@ -1,8 +1,5 @@
 package game
 
-// TODO: Refactor this code. Improve names.
-// TODO: Add channels for legal moves and plays to design.
-
 // State encapsulates all of the game data in an immutable fashion.
 type State struct {
 	player1PiecesAlive, player2PiecesAlive int

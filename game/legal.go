@@ -12,14 +12,25 @@ func LegalPlays(s *State) []Play {
 // IsLegalPlay returns true iff the Play is legal at the current State.
 //
 // A Play is legal iff all Moves in the play are legal after performing the
-// Moves preceding them.
+// Moves preceding them and the same Piece doesnt move more than once.
 func IsLegalPlay(s *State, p Play) bool {
 	s = clone(s)
+	used := make([]bool, 2*s.Rules().PieceCount())
 	for _, m := range p {
-		if m != NoMove && !IsLegalMove(s, m) {
+		c := nextCell(s.CellForPiece(m.Piece()), m.Direction())
+		if s.PlayerForPiece(s.PieceForCell(c)) == s.CurrentPlayer() {
+			return false
+		}
+	}
+	for _, m := range p {
+		if s.PlayerForPiece(m.Piece()) != s.CurrentPlayer() {
+			return false
+		}
+		if used[m.Piece().ID()-1] || m != NoMove && !IsLegalMove(s, m) {
 			return false
 		}
 		applyMove(s, m)
+		used[m.Piece().ID()-1] = true
 	}
 	return true
 }

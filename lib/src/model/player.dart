@@ -10,6 +10,7 @@ String playerIDToString(PlayerID id) {
     case PlayerID.player2:
       return 'player 2';
   }
+  return 'no player';
 }
 
 PlayerID stringToPlayerID(String x) {
@@ -21,6 +22,7 @@ PlayerID stringToPlayerID(String x) {
     case 'player 2':
       return PlayerID.player2;
   }
+  return PlayerID.noPlayer;
 }
 
 /// Player of a game.

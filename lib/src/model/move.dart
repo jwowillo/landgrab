@@ -30,6 +30,7 @@ String directionToString(Direction d) {
     case Direction.northWest:
       return 'north-west';
   }
+  return '';
 }
 
 Direction stringToDirection(String x) {
@@ -51,6 +52,7 @@ Direction stringToDirection(String x) {
     case 'north-west':
       return Direction.northWest;
   }
+  return Direction.north;
 }
 
 class Move {

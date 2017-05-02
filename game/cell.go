@@ -49,29 +49,32 @@ func newCellMap(s int) cellMap {
 
 // Set the key Cell to the PieceID.
 func (l cellMap) Set(c Cell, id PieceID) {
-	if c == NoCell {
+	i := l.index(c)
+	if i < 0 || i >= len(l.cells) {
 		return
 	}
-	l.cells[l.index(c)] = id
+	l.cells[i] = id
 }
 
 // Get the PieceID at the key Cell from the mapping.
 //
 // Also return a bool that is true iff the mapping contained the Cell as a key.
 func (l cellMap) Get(c Cell) (PieceID, bool) {
-	if c == NoCell {
+	i := l.index(c)
+	if i < 0 || i >= len(l.cells) {
 		return NoPieceID, false
 	}
-	pid := l.cells[l.index(c)]
+	pid := l.cells[i]
 	return pid, pid != NoPieceID
 }
 
 // Remove the Cell and its mapped PieceID from the mapping.
 func (l cellMap) Remove(c Cell) {
-	if c == NoCell {
+	i := l.index(c)
+	if i < 0 || i >= len(l.cells) {
 		return
 	}
-	l.cells[l.index(c)] = NoPieceID
+	l.cells[i] = NoPieceID
 }
 
 // index of a Cell in the mapping.
