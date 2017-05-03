@@ -14,23 +14,19 @@ func LegalPlays(s *State) []Play {
 // A Play is legal iff all Moves in the play are legal after performing the
 // Moves preceding them and the same Piece doesnt move more than once.
 func IsLegalPlay(s *State, p Play) bool {
-	s = clone(s)
 	used := make([]bool, 2*s.Rules().PieceCount())
+	cm := newCellMap(s.Rules().BoardSize())
 	for _, m := range p {
+		if !IsLegalMove(s, m) || used[m.Piece().ID()-1] {
+			return false
+		}
 		c := nextCell(s.CellForPiece(m.Piece()), m.Direction())
-		if s.PlayerForPiece(s.PieceForCell(c)) == s.CurrentPlayer() {
+		piece, ok := cm.Get(c)
+		if ok && s.PlayerForPiece(piece) == s.CurrentPlayer() {
 			return false
 		}
-	}
-	for _, m := range p {
-		if s.PlayerForPiece(m.Piece()) != s.CurrentPlayer() {
-			return false
-		}
-		if used[m.Piece().ID()-1] || m != NoMove && !IsLegalMove(s, m) {
-			return false
-		}
-		applyMove(s, m)
 		used[m.Piece().ID()-1] = true
+		cm.Set(c, m.Piece())
 	}
 	return true
 }

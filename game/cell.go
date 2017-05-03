@@ -34,38 +34,38 @@ func (c Cell) Column() int {
 // have to start at 1 everywhere. That breaks too many conventions.
 var NoCell = Cell{-1, -1}
 
-// cellMap is a mapping which efficiently relates Cells to PieceIDs by taking
+// cellMap is a mapping which efficiently relates Cells to Pieces by taking
 // advantage of the Cell and grid structure to perfectly hash the Cells into a
 // slice.
 type cellMap struct {
 	size  int
-	cells []PieceID
+	cells []Piece
 }
 
 // newCellMap where the grid has sides of the given size.
 func newCellMap(s int) cellMap {
-	return cellMap{size: s, cells: make([]PieceID, s*s)}
+	return cellMap{size: s, cells: make([]Piece, s*s)}
 }
 
 // Set the key Cell to the PieceID.
-func (l cellMap) Set(c Cell, id PieceID) {
+func (l cellMap) Set(c Cell, p Piece) {
 	i := l.index(c)
 	if i < 0 || i >= len(l.cells) {
 		return
 	}
-	l.cells[i] = id
+	l.cells[i] = p
 }
 
 // Get the PieceID at the key Cell from the mapping.
 //
 // Also return a bool that is true iff the mapping contained the Cell as a key.
-func (l cellMap) Get(c Cell) (PieceID, bool) {
+func (l cellMap) Get(c Cell) (Piece, bool) {
 	i := l.index(c)
 	if i < 0 || i >= len(l.cells) {
-		return NoPieceID, false
+		return NoPiece, false
 	}
-	pid := l.cells[i]
-	return pid, pid != NoPieceID
+	p := l.cells[i]
+	return p, p != NoPiece
 }
 
 // Remove the Cell and its mapped PieceID from the mapping.
@@ -74,7 +74,7 @@ func (l cellMap) Remove(c Cell) {
 	if i < 0 || i >= len(l.cells) {
 		return
 	}
-	l.cells[i] = NoPieceID
+	l.cells[i] = NoPiece
 }
 
 // index of a Cell in the mapping.
@@ -84,5 +84,5 @@ func (l cellMap) index(c Cell) int {
 
 // clone the cellMap into a new one.
 func (l cellMap) clone() cellMap {
-	return cellMap{size: l.size, cells: append([]PieceID{}, l.cells...)}
+	return cellMap{size: l.size, cells: append([]Piece{}, l.cells...)}
 }
