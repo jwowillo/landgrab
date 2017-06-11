@@ -1,17 +1,29 @@
 package web
 
 import (
+	"log"
+	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/jwowillo/landgrab/api"
+	"github.com/jwowillo/static"
 	"github.com/jwowillo/trim/application"
 	"github.com/jwowillo/trim/controller"
 )
 
 // New ...
 func New(sd, h, sf string) *application.Application {
+	static.SetLogger(log.New(os.Stderr, "", 0))
+	build := sd
+	if sd == "" {
+		build = "build"
+	}
+	dl := static.NewGithubDownloader("jwowillo", "landgrab")
+	if err := static.DartProject(dl, "landgrab", build); err != nil {
+		return nil
+	}
 	clientConf, apiConf, staticConf := configs(sd, h, sf)
 	app := application.NewWebWithConfig(
 		clientConf,

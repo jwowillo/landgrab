@@ -96,11 +96,11 @@ func random(ps []game.Play) game.Play {
 // Returns a list of game.Plays that all had the highest found value from the
 // given game.State. To find this, the value of the next game.State from the
 // current one is minimized, since the next game.State is for the enemy.
-func best(s *game.State, ps []game.Play) []game.Play {
+func best(s *game.State) []game.Play {
 	best := max
 	bestDistance := max
 	var bestPlays []game.Play
-	for _, p := range ps {
+	for p := range game.LegalPlaysPipe(s) {
 		n := game.NextStateWithPlay(s, p)
 		v := value(n)
 		d := totalDistance(n)

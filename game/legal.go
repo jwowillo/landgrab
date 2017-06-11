@@ -1,12 +1,49 @@
 package game
 
+import "sync"
+
+const (
+	// TODO: Update this as a proportion to the legal moves space.
+	bufferSize = 100
+	// TODO: Update this to a number propertional to the available logical
+	// CPUs.
+	readers = 10
+)
+
 // LegalPlays returns all the legal Plays for the State's current Player.
 func LegalPlays(s *State) []Play {
 	bs := bucketByPiece(s)
 	for i := range bs {
 		bs[i] = append(bs[i], NoMove)
 	}
-	return combinations(s, bs)
+	return legalCombinations(s, bs)
+}
+
+// LegalPlaysPipe is a pipe which outputs legal game.Plays.
+func LegalPlaysPipe(s *State) chan Play {
+	bs := bucketByPiece(s)
+	for i := range bs {
+		bs[i] = append(bs[i], NoMove)
+	}
+	ps := make(chan Play, bufferSize)
+	go func() {
+		var wg sync.WaitGroup
+		cs := combinationPipe(s, bs)
+		for i := 0; i < readers; i++ {
+			wg.Add(1)
+			go func() {
+				for combo := range cs {
+					if IsLegalPlay(s, combo) {
+						ps <- removeMove(NoMove, combo)
+					}
+				}
+				wg.Done()
+			}()
+		}
+		wg.Wait()
+		close(ps)
+	}()
+	return ps
 }
 
 // IsLegalPlay returns true iff the Play is legal at the current State.
@@ -21,12 +58,12 @@ func IsLegalPlay(s *State, p Play) bool {
 			return false
 		}
 		c := nextCell(s.CellForPiece(m.Piece()), m.Direction())
-		piece, ok := cm.Get(c)
-		if ok && s.PlayerForPiece(piece) == s.CurrentPlayer() {
+		pid, ok := cm.Get(c)
+		if ok && s.playerForPieceID(pid) == s.CurrentPlayer() {
 			return false
 		}
 		used[m.Piece().ID()-1] = true
-		cm.Set(c, m.Piece())
+		cm.Set(c, m.Piece().ID())
 	}
 	return true
 }
@@ -86,9 +123,9 @@ func bucketByPiece(s *State) [][]Move {
 	return bucketed
 }
 
-// combinations of the buckets returns all combinations with one Move from each
-// bucket using all buckets.
-func combinations(s *State, buckets [][]Move) []Play {
+// legalCombinations of the buckets returns all combinations with one Move from
+// each bucket using all buckets which represent legal Plays.
+func legalCombinations(s *State, buckets [][]Move) []Play {
 	sizes := make([]int, len(buckets))
 	for i, bucket := range buckets {
 		sizes[i] = len(bucket)
@@ -103,6 +140,26 @@ func combinations(s *State, buckets [][]Move) []Play {
 		}
 		increment(indices, sizes)
 	}
+	return combos
+}
+
+// combinationPipe is a pipe which outputs game.Plays which aren't necessarily
+// legal.
+func combinationPipe(s *State, buckets [][]Move) chan Play {
+	sizes := make([]int, len(buckets))
+	for i, bucket := range buckets {
+		sizes[i] = len(bucket)
+	}
+	n := combinationCount(sizes)
+	indices := make([]int, len(buckets))
+	combos := make(chan Play, bufferSize)
+	go func() {
+		for i := 0; i < n; i++ {
+			combos <- combinationForIndices(buckets, indices)
+			increment(indices, sizes)
+		}
+		close(combos)
+	}()
 	return combos
 }
 

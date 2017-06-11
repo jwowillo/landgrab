@@ -5,29 +5,23 @@
 #
 # all target makes all targets in the Makefile.
 
-all: run_cli run_web run_arena doc
+all: landgrab_run_cli landgrab_run_web landgrab_run_arena doc
 
-# run_cli target makes the cli app.
-run_cli:
+# landgrab_run_cli target makes the cli app.
+landgrab_run_cli:
 	$(call log,$@)
 	$(call make,$@)
 
-# run_web target makes the client web app and API which is served from it.
-run_web: pub
+# landgrab_run_web target makes the client web app and API which is served from
+# it.
+landgrab_run_web:
 	$(call log,$@)
 	$(call make,$@)
 
-#run_arena target makes the run-arena app.
-run_arena:
+# landgrab_run_arena target makes the run-arena app.
+landgrab_run_arena:
 	$(call log,$@)
 	$(call make,$@)
-
-# pub installs pub dependencies if necessary.
-pub:
-	$(call log,$@)
-	pub get
-	pub build
-	@echo
 
 # clean built files.
 clean:
@@ -37,15 +31,14 @@ clean:
 	rm -rf .pub
 	rm -rf .packages
 
-# make a go target in the app directory with the passed name.
+# make a go target in the cmd directory with the passed name.
 #
-# A go main package must exist with the passed name as a subpackage of app.
+# A go main package must exist with the passed name as a subpackage of cmd.
 #
 # An example call is:
 #   $(call make,<name>)
 define make
-	cd app/$(1) && go build; \
-	mv $(1) $$GOPATH/bin/landgrab_$(1)
+	cd cmd/$(1) && go install
 	@echo
 endef
 

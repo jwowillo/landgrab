@@ -65,10 +65,10 @@ func (cli *CLI) Run(factory *game.PlayerFactory, p1, p2 game.DescribedPlayer) {
 			p1, p2,
 			pieces(s),
 		)
+		s = game.NextState(s)
 		if cli.shouldWait && !isHuman {
 			cli.waitForEnter()
 		}
-		s = game.NextState(s)
 	}
 	printState(cli.rw, s)
 	cli.writeFunc()

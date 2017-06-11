@@ -13,7 +13,7 @@ func BenchmarkCellMapOperations(b *testing.B) {
 		for j := 0; j < cellMapSize; j++ {
 			for k := 0; k < cellMapSize; k++ {
 				c := NewCell(j, k)
-				m.Set(c, NewPiece(1, 1, 1))
+				m.Set(c, 1)
 				m.Get(c)
 				m.Remove(c)
 			}
@@ -37,17 +37,17 @@ func TestCellMap(t *testing.T) {
 	m := newCellMap(cellMapSize).clone()
 	for i := 0; i < 11; i++ {
 		for j := 0; j < 11; j++ {
-			m.Set(NewCell(i, j), NewPiece(1, 1, 1))
+			m.Set(NewCell(i, j), 1)
 		}
 	}
 	for i := 0; i < 11; i++ {
 		for j := 0; j < 11; j++ {
-			if p, ok := m.Get(NewCell(i, j)); p.ID() != 1 || !ok {
+			if pid, ok := m.Get(NewCell(i, j)); pid != 1 || !ok {
 				t.Errorf(
-					"p=%v, ok=%v := "+
+					"pid=%v, ok=%v := "+
 						"m.Get(NewCell(%d, %d)), "+
 						"want pid=%v, ok=%v",
-					p, ok,
+					pid, ok,
 					i, j,
 					1, true,
 				)
@@ -73,6 +73,6 @@ func TestCellMap(t *testing.T) {
 		}
 	}
 	m.Get(NoCell)
-	m.Set(NoCell, NoPiece)
+	m.Set(NoCell, NoPieceID)
 	m.Remove(NoCell)
 }

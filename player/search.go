@@ -24,5 +24,5 @@ func (p Search) Description() string {
 // Play by searching for the highest value game.State within a set search radius
 // and returning the game.Play that leads to it.
 func (p Search) Play(s *game.State) game.Play {
-	return random(best(s, game.LegalPlays(s)))
+	return random(best(s))
 }

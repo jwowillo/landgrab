@@ -8,7 +8,7 @@ type State struct {
 	players                                []Player
 	pieces                                 pieceIDMap
 	piecesToCells                          pieceMap
-	cellsToPieces                          cellMap
+	cellsToPieceIDs                        cellMap
 }
 
 // NewState creates an initial game State where the game is being played by
@@ -30,8 +30,8 @@ func NewState(r Rules, p1, p2 Player) *State {
 		pieces.Set(p2id, p2)
 		cs.Set(p1, c1)
 		cs.Set(p2, c2)
-		ps.Set(c1, p1)
-		ps.Set(c2, p2)
+		ps.Set(c1, p1id)
+		ps.Set(c2, p2id)
 	}
 	return &State{
 		player1PiecesAlive: r.PieceCount(),
@@ -39,7 +39,7 @@ func NewState(r Rules, p1, p2 Player) *State {
 		currentPlayer:      Player1,
 		rules:              r,
 		piecesToCells:      cs,
-		cellsToPieces:      ps,
+		cellsToPieceIDs:    ps,
 		players:            []Player{Player1: p1, Player2: p2},
 		pieces:             pieces,
 	}
@@ -68,7 +68,7 @@ func NewStateFromInfo(
 		}
 		ps.Set(p.ID(), p)
 		cs.Set(p, c)
-		cm.Set(c, p)
+		cm.Set(c, p.ID())
 	}
 	return &State{
 		player1PiecesAlive: p1Alive,
@@ -78,7 +78,7 @@ func NewStateFromInfo(
 		players:            []Player{Player1: p1, Player2: p2},
 		pieces:             ps,
 		piecesToCells:      cs,
-		cellsToPieces:      cm,
+		cellsToPieceIDs:    cm,
 	}
 }
 
@@ -166,8 +166,11 @@ func (s *State) CellForPiece(p Piece) Cell {
 // PieceForCell returns the Piece in a Cell of NoPiece if the Cell is empty at
 // the current State.
 func (s *State) PieceForCell(c Cell) Piece {
-	if p, ok := s.cellsToPieces.Get(c); ok {
-		return p
+	if pid, ok := s.cellsToPieceIDs.Get(c); ok {
+		if p, ok := s.pieces.Get(pid); ok {
+			return p
+		}
+		return NoPiece
 	}
 	return NoPiece
 }
@@ -176,7 +179,11 @@ func (s *State) PieceForCell(c Cell) Piece {
 //
 // NoPlayer is returned if no Player owns the Piece.
 func (s *State) PlayerForPiece(p Piece) PlayerID {
-	id := int(p.ID())
+	return s.playerForPieceID(p.ID())
+}
+
+func (s *State) playerForPieceID(pid PieceID) PlayerID {
+	id := int(pid)
 	pc := s.Rules().PieceCount()
 	if id > 0 && id <= pc {
 		return Player1
@@ -261,7 +268,7 @@ func clone(s *State) *State {
 		rules:              s.Rules(),
 		pieces:             s.pieces.clone(),
 		piecesToCells:      s.piecesToCells.clone(),
-		cellsToPieces:      s.cellsToPieces.clone(),
+		cellsToPieceIDs:    s.cellsToPieceIDs.clone(),
 	}
 }
 
@@ -335,8 +342,8 @@ func handleDestroyed(s *State, ms Play) {
 func applyMove(s *State, m Move) {
 	previous := s.CellForPiece(m.Piece())
 	next := nextCell(previous, m.Direction())
-	if p, ok := s.cellsToPieces.Get(next); ok {
-		if s.PlayerForPiece(p) == s.CurrentPlayer() {
+	if pid, ok := s.cellsToPieceIDs.Get(next); ok {
+		if s.playerForPieceID(pid) == s.CurrentPlayer() {
 			return
 		}
 	}
@@ -349,8 +356,8 @@ func applyMove(s *State, m Move) {
 		return
 	}
 	s.piecesToCells.Set(m.Piece(), next)
-	s.cellsToPieces.Set(next, m.Piece())
-	s.cellsToPieces.Remove(previous)
+	s.cellsToPieceIDs.Set(next, m.Piece().ID())
+	s.cellsToPieceIDs.Remove(previous)
 }
 
 // removePiece occurances in list of Pieces.

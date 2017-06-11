@@ -24,5 +24,5 @@ func (p Greedy) Description() string {
 // Play the turn by returning a random game.Play in the set of the highest-value
 // legal game.Plays from the game.State.
 func (p Greedy) Play(s *game.State) game.Play {
-	return random(best(s, game.LegalPlays(s)))
+	return random(best(s))
 }
