@@ -10,22 +10,22 @@ import (
 )
 
 func main() {
-	s := server.New(host, port)
+	s := server.New(url, port)
 	s.AddHeader("Access-Control-Allow-Origin", "*")
 	s.AddHeader("Access-Control-Allow-Headers", "Authorization")
 	if port != 80 {
-		host += fmt.Sprintf(":%d", port)
+		url += fmt.Sprintf(":%d", port)
 	}
-	s.Serve(web.New("", host, filepath.Join("build", "web")))
+	s.Serve(web.New("", url, filepath.Join("build", "web")))
 }
 
 var (
-	host string
+	url  string
 	port int
 )
 
 func init() {
-	flag.StringVar(&host, "host", "localhost", "host to run on")
+	flag.StringVar(&url, "url", "localhost", "URL to listen from")
 	flag.IntVar(&port, "port", 5000, "port to run on")
 	flag.Parse()
 }

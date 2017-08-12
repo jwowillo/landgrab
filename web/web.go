@@ -40,7 +40,7 @@ func New(sd, h, sf string) *application.Application {
 	return app.Application
 }
 
-// configs to use for the Application based on the host the trim.Application
+// configs to use for the Application based on the URL the trim.Application
 // will be served on.
 func configs(sd, h, sf string) (
 	application.ClientConfig,

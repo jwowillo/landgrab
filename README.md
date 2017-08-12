@@ -62,5 +62,5 @@ are:
 Run the web application with `landgrab_run_web` after running `make run_web`.
 Accepted flags are:
 
-* `--host`:
+* `--url`:
 * `--port`:
